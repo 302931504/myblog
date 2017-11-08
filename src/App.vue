@@ -1,23 +1,27 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
+    <main-backstage></main-backstage>
     <router-view/>
   </div>
 </template>
 
 <script>
-export default {
-  name: 'app'
-}
+  import Login from './components/login/login';
+  import MainBackstage from './components/mainBackStage/mainBackStage';
+
+  export default {
+    components: {
+      Login,
+      MainBackstage    
+    }
+  };
 </script>
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  width: 100%;
+  height: 100%;
+  color: #fff;
+  background: #E0E0E0;
 }
 </style>

@@ -1,15 +1,19 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
+import Vue from 'vue';
+import Router from 'vue-router';
 
-Vue.use(Router)
+Vue.use(Router);
+
+const MainBackstage = (resolve) => {
+    import('../components/mainBackStage/mainBackStage').then((module) => {
+        resolve(module);
+    });
+};
 
 export default new Router({
   routes: [
-    {
-      path: '/',
-      name: 'Hello',
-      component: HelloWorld
-    }
+  {
+    path: '/admin/mainBackstage',
+    component: MainBackstage
+  }
   ]
-})
+});

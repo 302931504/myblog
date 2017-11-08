@@ -12,6 +12,9 @@ const express = require('express')
 const webpack = require('webpack')
 const proxyMiddleware = require('http-proxy-middleware')
 const webpackConfig = require('./webpack.dev.conf')
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
 
 // default port where dev server listens for incoming traffic
 const port = process.env.PORT || config.dev.port
@@ -22,6 +25,33 @@ const autoOpenBrowser = !!config.dev.autoOpenBrowser
 const proxyTable = config.dev.proxyTable
 
 const app = express()
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(cookieParser('good-doer'));
+app.use(session({
+  secret: 'good-doer',
+  resave: true,
+  saveUninitialized: true
+}));
+
+const apiRouter = express.Router()
+apiRouter.post('/login', (req, res) => {
+  const username = req.body.username
+  const password = req.body.password
+  if (username === 'admin' || password === '123456') {
+    req.session.user = {
+      username: username,
+      password: password
+    }
+    res.json({status: 0, info: '登录成功'})
+  } else {
+    res.json({status: -1, info: '不存在此账号'})
+  }
+})
+app.use('/api', apiRouter)
+
 const compiler = webpack(webpackConfig)
 
 const devMiddleware = require('webpack-dev-middleware')(compiler, {
@@ -103,3 +133,4 @@ module.exports = {
     server.close()
   }
 }
+ 
