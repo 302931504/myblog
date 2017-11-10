@@ -15,6 +15,9 @@ const webpackConfig = require('./webpack.dev.conf')
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/blog',{useMongoClient:true});
+const Blog = require('../server/models/artical.js')
 
 // default port where dev server listens for incoming traffic
 const port = process.env.PORT || config.dev.port
@@ -50,6 +53,71 @@ apiRouter.post('/login', (req, res) => {
     res.json({status: -1, info: '不存在此账号'})
   }
 })
+
+apiRouter.post('/saveBlog', (req, res) => {
+  if (!req.session.user) {
+    res.json({status: -1, info: '请先登录'})
+  } else{
+    Blog.create({
+      title: req.body.title,
+      content: req.body.content,
+      summary: req.body.summary,
+      label: req.body.label,
+      model: req.body.model
+    }, function(err, blog){
+      if (err) {
+        console.log(err)
+      } else {
+        res.json({status: 0, info: '保存成功', data: blog})
+      }
+    })
+  }
+})
+
+apiRouter.get('/adminGetAll', (req, res) => {
+  if (!req.session.user) {
+    res.json({status: -1, info: '请先登录'})
+  } else {
+    Blog.getAll(function(err, blogs) {
+      if (err) {
+        console.log(err);
+      } else {
+        res.json({status: 0, data: blogs})
+      }
+    })
+  }
+})
+
+apiRouter.get('/adminGetByPage', (req, res) => {
+  if (!req.session.user) {
+    res.json({status: -1, info: '请先登录'})
+  } else {
+    var page = req.body.page;
+    Blog.getByPage(page, function(err, blogs){
+      if (err) {
+        console.log(err);
+      } else {
+        res.json({status: 0, data: blogs});
+      }
+    })
+  }
+})
+
+apiRouter.post('/adminDeletBlog', (req, res) => {
+  if (!req.session.user) {
+    res.json({status: -1, info: '请先登录'});
+  } else {
+    let id = req.body.id;
+    Blog.remove({_id: id}, (err) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.json({status: 0, info: '删除成功'});
+      }
+    })
+  }
+})
+
 app.use('/api', apiRouter)
 
 const compiler = webpack(webpackConfig)

@@ -11,15 +11,15 @@
     </div>
     <div class="options">
       <ul>
-        <router-link tag="li" class="option" to="/admin/blog">博文管理 &nbsp;&nbsp;&nbsp;<i class="icon-pencil"></i></router-link>
-        <router-link tag="li" class="option" to="/admin/walkingblog">行博管理 &nbsp;&nbsp;&nbsp;<i class="icon-quill"></i></router-link>
-        <router-link tag="li" class="option" to="/admin/leaveMess">留言管理 &nbsp;&nbsp;&nbsp;<i class="icon-file-text2"></i></router-link>
-        <router-link tag="li" class="option" to="/admin/followUser">追踪用户管理 &nbsp;&nbsp;&nbsp;<i class="icon-users"></i></router-link>
+        <router-link tag="li" class="option" to="/admin/mainBackstage/blog">长文章 <i class="icon-pencil2"></i></router-link>
+        <router-link tag="li" class="option" to="/admin/mainBackstage/walkingblog">文字 <i class="icon-quill"></i></router-link>
+        <router-link tag="li" class="option" to="/admin/mainBackstage/leaveMess">留言 <i class="icon-eyedropper"></i></router-link>
+        <router-link tag="li" class="option" to="/admin/mainBackstage/followUser">用户追踪 <i class="icon-users"></i></router-link>
         <router-link tag="li" class="option"></router-link>
       </ul>
     </div>
     <div class="logout">
-      <i class="icon-enter"></i> &nbsp;&nbsp;&nbsp;<button type="button" class="logoutBtn">退出</button>
+      <i class="icon-exit"></i> <button type="button" class="logoutBtn">退出</button>
     </div>
   </div>
 </template>
@@ -33,12 +33,12 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 250px;
+    width: 20%;
     height: 100%;
     background: #4F4F4F;
     .logo{
       img{
-        width: 250px;
+        width: 100%;
       }
     }
     .header{

@@ -11,6 +11,7 @@
       </div>
     </div>
     <attention :text="attText" :isOK="attIcon" ref="attentionBox"></attention>
+    <router-view/>
   </div> 
 </template>
 

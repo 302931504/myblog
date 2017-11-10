@@ -1,13 +1,13 @@
 <template>
   <div id="app">
-    <main-backstage></main-backstage>
+<!--     <main-backstage></main-backstage> -->
     <router-view/>
   </div>
 </template>
 
 <script>
-  import Login from './components/login/login';
-  import MainBackstage from './components/mainBackStage/mainBackStage';
+  import Login from './admin/login/login';
+  import MainBackstage from './admin/mainBackStage/mainBackStage';
 
   export default {
     components: {

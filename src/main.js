@@ -4,8 +4,12 @@ import Vue from 'vue';
 import App from './App';
 import router from './router';
 import axios from 'axios';
+import mavonEditor from 'mavon-editor';
+import 'mavon-editor/dist/css/index.css';
 
 import './common/less/index.less';
+
+Vue.use(mavonEditor);
 var instance = axios.create({
 	headers: {'content-type': 'application/x-www-form-urlencoded'}
 });
