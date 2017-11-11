@@ -21,8 +21,8 @@ const MainBackstage = (resolve) => {
     });
 };
 
-const BlogList = (resolve) => {
-    import('../admin/blogList/blogList').then((module) => {
+const Blog = (resolve) => {
+    import('../admin/blog/blog').then((module) => {
         resolve(module);
     });
 };
@@ -44,18 +44,18 @@ const FollowUser = (resolve) => {
         resolve(module);
     });
 };
-/*
+
 const ArticalEdit = (resolve) => {
     import('../admin/artical-edit/artical-edit').then((module) => {
         resolve(module);
     });
 };
 
-const Blog = (resolve) => {
-    import('../admin/blog/blog').then((module) => {
+const Draft = (resolve) => {
+    import('../admin/draft/draft').then((module) => {
         resolve(module);
     });
-}; */
+}; 
 
 export default new Router({
   routes: [
@@ -77,7 +77,7 @@ export default new Router({
             },
             {
               path: 'blog',
-              component: BlogList
+              component: Blog
             },
             {
               path: 'message',
@@ -86,6 +86,14 @@ export default new Router({
             {
               path: 'users',
               component: FollowUser
+            },
+            {
+              path: 'editBlog',
+              component: ArticalEdit
+            },
+            {
+              path: 'draft',
+              component: Draft
             }
           ]
         }

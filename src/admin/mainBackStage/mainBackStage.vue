@@ -8,7 +8,12 @@
     </div>
     <div class="content" ref="content" style="marginLeft: 200px">
       <content-bar :navList="navList" @clickNav="clickNav" :currentName="currentName" @closeNav="close"></content-bar>
-      <router-view/>
+      <div class="routerViewWrapper">
+        <div class="routerView">
+          <router-view/>
+        </div>
+      </div>
+      <author></author>
     </div>
   </div>
 </template>
@@ -17,6 +22,7 @@
   import NavigationBar from '../navigationBar/navigationBar';
   import TopBar from '../topBar/topBar';
   import ContentBar from '../contentBar/contentBar';
+  import Author from '../author/author';
   import {mapGetters, mapActions} from 'vuex';
 
   const NAVBAR_WIDTH = 200;
@@ -62,7 +68,8 @@
     components: {
       NavigationBar,
       TopBar,
-      ContentBar
+      ContentBar,
+      Author
     }
   };
 </script>
@@ -81,10 +88,16 @@
     .content{
       height: 100%;
       margin-top: 60px;
-      overflow: hidden;
       border-left: 2px solid #1AA094;
       border-top: 5px solid #1AA094;
       transition: all .6s;
+      .routerViewWrapper{
+        height: 500px;
+        overflow: auto;
+        .routerView{
+          margin: 10px 10px 0;
+        }
+      }
     }
   }
 </style>

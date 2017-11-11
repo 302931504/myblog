@@ -1,7 +1,8 @@
 <template>
-  <div class="blogWrapper">
-    <search-box :options="options"></search-box>
+  <div class="draftWrapper">
+    <search-box :options="options" @clickOption="clickOption"></search-box>
     <blog-list></blog-list>
+    <router-view/>
   </div>
 </template>
 
@@ -13,12 +14,18 @@
     data () {
       return {
         options: [
-          {text: '置顶文章', name: 'topBlogBtn'},
+          {text: '新增文章', name: 'editBlog'},
+          {text: '现在发布', name: 'topBlogBtn'},
           {text: '批量删除', name: 'deleteAllBtn'}
         ]
       };
     },
     methods: {
+      clickOption (name) {
+        if (name === 'editBlog') {
+          this.$router.push({path: `/admin/mainBackStage/${name}`});
+        }
+      }
     },
     components: {
       SearchBox,
@@ -28,7 +35,4 @@
 </script>
 
 <style scoped lang="less" rel="stylesheet/less">
-  .blogWrapper{
-    color: #000;
-  }
 </style>

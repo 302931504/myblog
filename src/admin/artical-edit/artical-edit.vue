@@ -1,24 +1,57 @@
 <template>
   <div class="detailtWrapper">
-    <div class="header">
-      <div class="title-box">
-        <input type="text" v-model="title" class="title" placeholder="请填写标题">
-        <textarea v-model="summary" class="summary" placeholder="文章概要"></textarea>
+    <div class="blogEdit">
+      <h3 class="title">添加文章</h3>
+      <div class="icon"><span class="icon-cancel-circle"></span></div>
+    </div>
+    <div class="content">
+      <div class="con-item titleBox">
+        <div class="label">
+          <label>文章标题</label>
+        </div>
+        <div class="input titleInput">
+          <input type="text" name="title" class="title" placeholder="请输入文章标题">
+        </div>
       </div>
-      <div class="tags">
-        <input type="text" class="tag-input tagVal" v-model="tagVal" placeholder="标签,以'/'分割">
-        <input type="text" class="tag-input model" v-model="model" placeholder="类型">
+      <div class="con-item modelBox">
+        <div class="label">
+          <label>文章分类</label>
+        </div>
+        <div class="input modelInput">
+          <input type="text" name="model" class="model" value="javaScript" readonly>
+          <span class="icon-cog"></span>
+        </div>
+      </div>
+      <div class="con-item tagsBox">
+        <div class="label">
+          <label>标签</label>
+        </div>
+        <div class="input tagsInput">
+          <input type="text" name="tags" class="tags" placeholder="请输入标签，以‘/’分割">
+        </div>
+      </div>
+      <div class="con-item summaryBox">
+        <div class="label">
+          <label>内容摘要</label>
+        </div>
+        <div class="input summaryInput">
+          <textarea name="summary" class="summary" placeholder="请输入文章摘要"></textarea>
+        </div>
+      </div>
+      <div class="con-item editorBox">
+        <div class="label">
+          <label>文章内容</label>
+        </div>
+        <div class="input editorInput">
+          <mavon-editor v-model="artical" style="width: 100%; height: 400px" @save="saveArtical"></mavon-editor>
+        </div>
       </div>
     </div>
-    <div class="editor">
-      <mavon-editor v-model="artical" style="height: 100%" @save="saveArtical"></mavon-editor>
-    </div>
-    <attention ref="attentionBox" :text="attText" :isOK="attIcon"></attention>
   </div>
 </template>
 
 <script>
-  import qs from 'qs';
+  // import qs from 'qs';
   import Attention from '../../base/attention/attention';
 
   export default {
@@ -34,43 +67,6 @@
       };
     },
     methods: {
-      addTag () {
-        if (this.tagVal === '') {
-          return;
-        }
-        this.tags.push(this.tagVal);
-        this.tagVal = '';
-      },
-      saveArtical (value, render) {
-        if (this.title === '') {
-          this.showAttBox('请输入标题');
-        } else if (this.artical === '') {
-          this.showAttBox('请输入内容');
-        } else {
-          this.$http.post('api/saveBlog', qs.stringify({
-            title: this.title,
-            content: render,
-            summary: this.summary,
-            label: this.tagVal,
-            model: this.model
-          })).then((res) => {
-            let data = res.data;
-            if (data.status === 0) {
-              this.showAttBox(data.info, true);
-            }
-          }).catch(err => err);
-        } 
-      },
-      showAttBox (text, attIcon) {
-        this.attText = text;
-        this.attIcon = attIcon;
-        this.$refs.attentionBox.show();
-      }
-    },
-    watch: {
-      summary (newVal) {
-        console.log(newVal);
-      }
     },
     components: {
       Attention
@@ -80,55 +76,75 @@
 
 <style scoped lang="less" rel="stylesheet/less">
   .detailtWrapper{
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 80%;
-    height: 100%;
-    background: #fff;
-    .header{
-      input{
-        outline: none;
-      }
+    color: #333;
+    padding-bottom: 20px;
+    .blogEdit{
+      display: flex;
+      justify-content: space-between;
+      height: 42px;
+      line-height: 42px;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+      background-color: #F8F8F8;
+      border-radius: 2px 2px 0 0;
       padding: 0 20px;
-      .title{
-        width: 100%;
-        height: 44px;
-        font-size: 26px;
-        color: #000;
-      }
-      .summary{
-        width: 100%;
-        height: 50px;
-        color: #ADADAD;
-        outline: none;
-        resize: none;
-        border: none;
-      }
-      .tags{
-        display: flex;
-        ul{
-          display: flex;
-        }
-        .tag-input{
-          color: #fff;
-          margin: 0 4px;
-          padding: 2px 8px;
-          max-width: 100px;
-          border-radius: 4px;
-          background: #BEBEBE;
-        }
-        .tagVal{
-          max-width:150px; 
+      .icon{
+        height: 42px;
+        line-height: 42px;
+        cursor: pointer;
+        &:hover{
+          color: #ADADAD;
         }
       }
     }
-    .editor{
-      position: absolute;
-      top: 20%;
-      right: 0;
-      width: 100%;
-      height: 80%;
+    .content{
+      margin: 10px 10px 0;
+      .con-item{
+        display: flex;
+        margin-bottom: 15px;
+      }
+      .label{
+        padding: 9px 15px;
+        width: 80px;
+        font-weight: 400;
+        text-align: right;
+      }
+      input{
+        width: 100%;
+        height: 38px;
+        line-height: 38px;
+        padding-left: 10px;
+        border: 1px solid #e6e6e6;
+        border-radius: 2px;
+        outline: none;
+      }
+     .titleInput{
+        width: 90%;
+      }
+      .tagsInput{
+        width: 60%;
+      }
+      .modelInput{
+        position: relative;
+        .icon-cog{
+          position: absolute;
+          right: 10px;
+          top: 50%;
+          margin-top: -8px;
+        }
+      }
+      .summaryInput{
+        width: 90%;
+        textarea{
+          width: 99%;
+          height: 100px;
+          font-size: 16px;
+          padding: 6px 10px;
+          border: 1px solid #e6e6e6;
+          resize: none;
+          outline: none;
+        }
+      }
     }
   }
 </style>
