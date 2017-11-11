@@ -46,9 +46,6 @@
 
 <style scoped lang="less" rel="stylesheet/less">
   .articalWrapper{
-    position: fixed;
-    top: 0;
-    right: 0;
     width: 80%;
     height: 100%;
     background: #F0F0F0;

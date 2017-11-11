@@ -22,6 +22,5 @@
   width: 100%;
   height: 100%;
   color: #fff;
-  background: #E0E0E0;
 }
 </style>

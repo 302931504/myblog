@@ -1,75 +1,87 @@
 <template>
-  <div class="navigationBarWrapper">
-    <div class="logo">
-      <img src="./logo.png" alt="">
+  <div class="navigationWrapper">
+    <div class="avatar">
+      <img src="./rick.png" alt="">
+      <p>你好！我是一个好人</p>
     </div>
-    <div class="header">
-      <div class="img">
-        <img src="./rick.png" alt="">
-      </div>
-      <div class="name">一个好人</div>
-    </div>
-    <div class="options">
+    <div class="navBar">
       <ul>
-        <router-link tag="li" class="option" to="/admin/mainBackstage/blog">长文章 <i class="icon-pencil2"></i></router-link>
-        <router-link tag="li" class="option" to="/admin/mainBackstage/walkingblog">文字 <i class="icon-quill"></i></router-link>
-        <router-link tag="li" class="option" to="/admin/mainBackstage/leaveMess">留言 <i class="icon-eyedropper"></i></router-link>
-        <router-link tag="li" class="option" to="/admin/mainBackstage/followUser">用户追踪 <i class="icon-users"></i></router-link>
-        <router-link tag="li" class="option"></router-link>
+        <li v-for="item in navList" 
+            :class="item.name === currentName ? 'active' : ''" 
+            @click="clickNav(item)"><span :class="'icon-' + item.name"></span> {{item.text}}</li>
       </ul>
-    </div>
-    <div class="logout">
-      <i class="icon-exit"></i> <button type="button" class="logoutBtn">退出</button>
     </div>
   </div>
 </template>
 
 <script>
-    
+    export default {
+      data () {
+        return {
+          navList: [
+            {text: '后台首页', name: 'home'},
+            {text: '文章列表', name: 'blog'},
+            {text: '留言管理', name: 'message'},
+            {text: '用户追踪', name: 'users'}
+          ]
+        };
+      },
+      props: {
+        currentName: {
+          type: String,
+          default: 'home'
+        }
+      },
+      methods: {
+        clickNav (item) {
+          this.$emit('clickNav', item);
+        }
+      }
+    };
 </script>
 
 <style scoped lang="less" rel="stylesheet/less">
-  .navigationBarWrapper{
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 20%;
+  .navigationWrapper{
+    /* position: fixed;
+    top: 60px;
+    left: 0; */
+    width: 200px;
     height: 100%;
-    background: #4F4F4F;
-    .logo{
-      img{
-        width: 100%;
-      }
-    }
-    .header{
+    overflow-y: hidden;
+    background-color: #393D49;
+    .avatar{
+      width: 200px;
+      height: 120px;
+      padding-top: 15px;
+      padding-bottom: 5px;
       text-align: center;
-      padding-bottom: 20px;
-      border-bottom: 1px solid #6C6C6C;
       img{
-        width: 50px;
-        height: 50px;
+        width: 76px;
         border-radius: 50%;
-        margin-top: 20px;
-        margin-bottom: 6px;
+        border: 4px solid #44576b;
+        margin-bottom: 15px;
+      }
+      p{
+        font-size: 12px;
       }
     }
-    .options{
-      text-align: center;
-      padding: 40px 0;
-      .option{
-        padding: 10px 0;
+    .navBar{
+      margin-top: 20px;
+      width: 200px;
+      overflow: hidden;
+      li{
+        font-size: 14px;
+        line-height: 45px;
+        padding-left: 20px;
         &:hover{
-          background: #8E8E8E;
+          background-color: #7B7B7B;
+          border-left: 6px solid #009688;
+          transition: all 0.6s;
         }
       }
-    }
-    .logout{
-      position: absolute;
-      bottom: 20px;
-      left: 20px;
-      .logoutBtn{
-        width: 80px;
-        height: 30px;
+      .active{
+        background-color: #1AA094;
+        color: #fff;
       }
     }
   }

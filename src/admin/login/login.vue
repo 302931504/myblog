@@ -1,5 +1,5 @@
 <template>
-  <div class="loginWrapper">
+  <div class="loginWrapper" v-show="!isLogin">
     <div class="loginBox">
       <div class="logoWrapper">
         <img src="./logo.png" alt="good-doer">
@@ -11,7 +11,6 @@
       </div>
     </div>
     <attention :text="attText" :isOK="attIcon" ref="attentionBox"></attention>
-    <router-view/>
   </div> 
 </template>
 
@@ -25,7 +24,8 @@
         username: '',
         password: '',
         attText: '',
-        attIcon: true
+        attIcon: true,
+        isLogin: false
       };
     },
     methods: {
@@ -42,6 +42,8 @@
             const data = res.data;
             if (data.status === 0) {
               console.log(data.info);
+              this.isLogin = true;
+              this.$router.push({path: '/admin/mainBackStage'});
             } else {
               this.showAttBox(data.info, false);
             }
@@ -61,6 +63,9 @@
 </script>
 
 <style scoped lang="less" rel="stylesheet/less">
+  .loginWrapper{
+    height: 100%;
+  }
   .loginBox{
     position: absolute;
     width: 500px;
