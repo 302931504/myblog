@@ -10,30 +10,30 @@
         <button type="button" class="loginBtn" @click="clickLoginBtn">登录</button>
       </div>
     </div>
-    <attention :text="attText" :isOK="attIcon" ref="attentionBox"></attention>
+    <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
   </div> 
 </template>
 
 <script>
   import qs from 'qs';
   import Attention from '../../base/attention/attention';
+  import {showAttentionMixin} from '../../common/js/mixin';
 
   export default {
+    mixins: [showAttentionMixin],
     data () {
       return {
         username: '',
         password: '',
-        attText: '',
-        attIcon: true,
         isLogin: false
       };
     },
     methods: {
       clickLoginBtn () {
         if (this.username === '') {
-          this.showAttBox('请输入账号', false);
+          this.showAttention('请输入账号', false);
         } else if (this.password === '') {
-          this.showAttBox('请输入密码', false);
+          this.showAttention('请输入密码', false);
         } else {
           this.$http.post('api/login', qs.stringify({
             username: this.username,
@@ -45,15 +45,10 @@
               this.isLogin = true;
               this.$router.push({path: '/admin/mainBackStage'});
             } else {
-              this.showAttBox(data.info, false);
+              this.showAttention(data.info, false);
             }
           }).catch(err => err);
         }
-      },
-      showAttBox (text, attIcon) {
-        this.attText = text;
-        this.attIcon = attIcon;
-        this.$refs.attentionBox.show();
       }
     },
     components: {

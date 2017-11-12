@@ -17,6 +17,9 @@
           <div class="avatar">
             <img src="./rick.png" alt="">
             <span class="name">一个好人</span>
+            <div class="optionList">
+              <option-list></option-list>
+            </div>
           </div>
         </li>
       </ul>
@@ -25,11 +28,16 @@
 </template>
 
 <script>
+  import OptionList from '../../base/option-list/option-list';
+
   export default {
     methods: {
       clickOpen () {
         this.$emit('openNav');
       }
+    },
+    components: {
+      OptionList
     }
   };
 </script>
@@ -87,6 +95,7 @@
           }
         }
         .info{
+          position: relative;
           .avatar{
             img{
               width: 35px;
@@ -94,6 +103,11 @@
               border-radius: 50%;
               vertical-align: middle;
               margin-right: 5px;
+            }
+            .optionList{
+              position: absolute;
+              top: 65px;
+              left: 0;
             }
           }
         }

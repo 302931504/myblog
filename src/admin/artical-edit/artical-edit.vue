@@ -10,7 +10,7 @@
           <label>文章标题</label>
         </div>
         <div class="input titleInput">
-          <input type="text" name="title" class="title" placeholder="请输入文章标题">
+          <input type="text" name="title" class="title" v-model="title" placeholder="请输入文章标题">
         </div>
       </div>
       <div class="con-item modelBox">
@@ -18,7 +18,7 @@
           <label>文章分类</label>
         </div>
         <div class="input modelInput">
-          <input type="text" name="model" class="model" value="javaScript" readonly>
+          <input type="text" name="model" class="model" v-model="model" value="javaScript" readonly>
           <span class="icon-cog"></span>
         </div>
       </div>
@@ -27,7 +27,7 @@
           <label>标签</label>
         </div>
         <div class="input tagsInput">
-          <input type="text" name="tags" class="tags" placeholder="请输入标签，以‘/’分割">
+          <input type="text" name="tags" class="tags" v-model="tagVal" placeholder="请输入标签，以‘/’分割">
         </div>
       </div>
       <div class="con-item summaryBox">
@@ -35,7 +35,7 @@
           <label>内容摘要</label>
         </div>
         <div class="input summaryInput">
-          <textarea name="summary" class="summary" placeholder="请输入文章摘要"></textarea>
+          <textarea name="summary" class="summary" v-model="summary" placeholder="请输入文章摘要"></textarea>
         </div>
       </div>
       <div class="con-item editorBox">
@@ -43,30 +43,42 @@
           <label>文章内容</label>
         </div>
         <div class="input editorInput">
-          <mavon-editor v-model="artical" style="width: 100%; height: 400px" @save="saveArtical"></mavon-editor>
+          <mavon-editor v-model="artical" style="width: 100%; min-height: 400px" @save="saveArtical"></mavon-editor>
         </div>
       </div>
     </div>
+    <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
   </div>
 </template>
 
 <script>
   // import qs from 'qs';
   import Attention from '../../base/attention/attention';
+  import {showAttentionMixin} from '../../common/js/mixin';
 
   export default {
+    mixins: [showAttentionMixin],
     data () {
       return {
         title: '',
         summary: '',
         tagVal: '',
         artical: '',
-        model: '',
-        attText: '',
-        attIcon: false
+        model: ''
       };
     },
     methods: {
+      saveArtical () {
+        if (this.title === '') {
+          this.showAttention('请输入文章标题', false);
+        } else if (this.tagVal === '') {
+          this.showAttention('请输入文章标签', false);
+        } else if (this.summary === '') {
+          this.showAttention('请输入文章摘要', false);
+        } else if (this.artical === '') {
+          this.showAttention('请输入文章内容', false);
+        }
+      }
     },
     components: {
       Attention
