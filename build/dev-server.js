@@ -72,27 +72,34 @@ const apiRouter = express.Router()
 apiRouter.post('/saveBlog', (req, res) => {
   /*if (!req.session.user) {
     res.json({status: -1, info: '请先登录'})
-  } else{*/
-    var classify_id;
+  } else{*/ 
     var text = req.body.classify_text;
-    var sql = 'SELECT classify_id FROM classify WHERE classify_text = ?';
+    var sql = `SELECT classify_id FROM classify WHERE classify_text = ?`;
     var sqlParam = [text];
     connection.query(sql,sqlParam,function (err, result) {
+      let classify_id;
       if (err) {
-        var sql2 = 'INSERT INTO classify(classify_text) VALUES(?)';
-        var sql2Param = [text];
-        connection.query(sql2,sql2Param,function (err, result) {
-          if(err){
-            console.log('[INSERT ERROR] - ',err.message);
-            return;
-          }
-          res.json({status: 0, info: '新分类创建成功'});  
-        })
-      }
-      classify_id = result[0].classify_id;
-    
-      var addSql = 'INSERT INTO blog(blog_title,classify_id,blog_tags,blog_description,blog_content) VALUES (?,?,?,?,?)';
-      var addSqlParams = [req.body.title,classify_id,req.body.tags,req.body.description,req.body.content];
+        console.log('[INSERT ERROR] - ',err.message);
+        return;
+      } else if (!result[0]) {
+          console.log('null');
+          var sql2 = 'INSERT INTO classify(classify_text) VALUES(?)';
+          var sql2Param = [text];
+          connection.query(sql2,sql2Param,function (err, result) {
+            if(err){
+              console.log('[INSERT ERROR] - ',err.message);
+              return;
+            }
+            res.json({status: 0, info: '新分类创建成功'});  
+            // classify_id = result.classify_id;
+            console.log(result);
+          })
+        } else {
+          console.log('in');
+          // classify_id = result[0].classify_id;
+        }
+      var addSql = 'INSERT INTO blog(blog_title,classify_id,blog_tags,blog_description,blog_content,blog_isShow) VALUES (?,?,?,?,?,?)';
+      var addSqlParams = [req.body.title,'1',req.body.tags,req.body.description,req.body.content,req.body.isShow];
       connection.query(addSql,addSqlParams,function (err, result) {
         if(err){
           console.log('[INSERT ERROR] - ',err.message);
@@ -113,6 +120,30 @@ apiRouter.get('/getClassify',(req,res) => {
       return;
     }
     res.json({status: 0, data: result, info: '获取成功'});
+  })
+})
+
+//获取草稿箱文章列表
+apiRouter.get('/getDraftList', (req, res) => {
+  var sql = 'SELECT blog_id, blog_title, classify_text, blog_tags, blog_createTime, blog_updateTime FROM blog b, classify c WHERE b.classify_id = c.classify_id AND blog_isShow = 0';
+  connection.query(sql, function (err, result) {
+    if(err) {
+      console.log('[INSERT ERROR] - ',err.message);
+      return;
+    }
+    res.json({status: 0, data: result, info: '获取成功'});
+  })
+})
+
+//删除某篇文章
+apiRouter.get('/deleteBlog', (req, res) => {
+  var sql = `DELETE FROM blog WHERE blog_id = ${req.query.id}`;
+  connection.query(sql, function (err, result) {
+    if(err) {
+      console.log('[INSERT ERROR] - ',err.message);
+      return;
+    }
+    res.json({status: 0, info: '删除成功'});
   })
 })
 

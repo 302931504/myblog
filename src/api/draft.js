@@ -1,8 +1,8 @@
 // import qs from 'qs';
 import axios from 'axios';
 
-export function getDraftByPage (page) {
-	return axios.get('/api/getDraft?page=' + page).then((res) => {
+export function getDraftByPage () {
+	return axios.get('/api/getDraftList').then((res) => {
 		return Promise.resolve(res.data);
 	}).catch(err => err);
 };
@@ -14,7 +14,7 @@ export function getDraftCount () {
 };
 
 export function deletBlog (id) {
-	return axios.get('/api/deletBlog?id=' + id).then((res) => {
+	return axios.get('/api/deleteBlog?id=' + id).then((res) => {
 		return Promise.resolve(res.data);
 	}).catch(err => err);
 };

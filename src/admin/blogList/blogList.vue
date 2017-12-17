@@ -11,21 +11,21 @@
             <th>更新时间</th>
             <th>发布时间</th>
             <th>操作</th>
-          </tr>
+          </tr> 
         </thead>
         <tbody>
           <tr v-for="item in blogs">
             <td>
               <input type="checkbox" class="checkBlog">
             </td>
-            <td style="text-align: left">{{item.title}}</td>
-            <td>{{item.model}}</td>
-            <td>{{item.label}}</td>
-            <td>{{_initTime(item.time.updateTime)}}</td>
-            <td>{{_initTime(item.time.createTime)}}</td>
+            <td style="text-align: left">{{item.blog_title}}</td>
+            <td>{{item.classify_text}}</td>
+            <td>{{item.blog_tags}}</td>
+            <td>{{_initTime(item.blog_updateTime)}}</td>
+            <td>{{_initTime(item.blog_createTime)}}</td>
             <td>
               <button type="button" class="edit" @click="editBlog(item)">编辑</button>
-              <button type="button" class="delete" @click="_deletBlog(item._id)">删除</button>
+              <button type="button" class="delete" @click="_deletBlog(item.blog_id)">删除</button>
             </td>
           </tr>
         </tbody>

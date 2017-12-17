@@ -39,7 +39,8 @@
         this.pushNav(nav);
       },
       _getDraftByPage () {
-        getDraftByPage(1).then((res) => {
+        getDraftByPage().then((res) => {
+          console.log(res);
           if (res.status === 0) {
             this.blogs = res.data;
           }

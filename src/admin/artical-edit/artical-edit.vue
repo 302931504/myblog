@@ -26,13 +26,8 @@
             </div>
           </div>
         </div>
-        <div class="custom">
-          <div class="label">
-            <label>自定义分类</label>
-          </div>
-          <div class="input">
-            <input type="text" name="model" class="model" v-model="model">
-          </div>
+        <div class="manageLabel">
+          <button type="button">管理分类</button>
         </div>
       </div>
       <div class="con-item tagsBox">
@@ -51,6 +46,24 @@
           <textarea name="summary" class="summary" v-model="summary" placeholder="请输入文章摘要"></textarea>
         </div>
       </div>
+      <div class="con-item showType">
+        <div class="postNow">
+          <div class="label">
+            <label>立即发布</label>
+          </div>
+          <div class="input radios">
+            <input type="radio" name="isShow" value="1" v-model="checked">
+          </div>
+        </div>
+        <div class="saveDraft">
+          <div class="label">
+            <label>存草稿箱</label>
+          </div>
+          <div class="input radios">
+            <input type="radio" name="isShow" value="0" v-model="checked">
+          </div>
+        </div>
+      </div>
       <div class="con-item editorBox">
         <div class="label">
           <label>文章内容</label>
@@ -61,12 +74,14 @@
       </div>
     </div>
     <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
+    <label-list></label-list>
   </div>
 </template>
 
 <script>
   // import qs from 'qs';
   import Attention from '../../base/attention/attention';
+  import LabelList from '../../admin/labelList/labelList';
   import OptionList from '../../base/option-list/option-list';
   import {showAttentionMixin} from '../../common/js/mixin';
   import {saveBlog, getClassify} from '../../api/editor';
@@ -82,7 +97,8 @@
         artical: '',
         model: '',
         showList: false,
-        options: []
+        options: [],
+        checked: 0
       };
     },
     computed: {
@@ -135,7 +151,8 @@
           classify_text: this.model,
           tags: this.tags,
           description: this.summary,
-          content: this.artical
+          content: this.artical,
+          isShow: this.checked
         };
         saveBlog(blog).then(res => {
           console.log(res);
@@ -154,7 +171,8 @@
     },
     components: {
       Attention,
-      OptionList
+      OptionList,
+      LabelList
     }
   };
 </script>
@@ -187,7 +205,7 @@
       .con-item{
         display: flex;
         margin-bottom: 15px;
-        .default, .custom{
+        .default, .postNow, .saveDraft{
           display: flex;
         }
       }
@@ -212,6 +230,14 @@
       }
       .tagsInput{
         width: 60%;
+      }
+      .manageLabel{
+        margin-left: 20px;
+        button{
+          width: 100px;
+          height: 38px;
+          color: #333;
+        }
       }
       .modelInput{
         position: relative;
@@ -239,6 +265,16 @@
           border: 1px solid #e6e6e6;
           resize: none;
           outline: none;
+        }
+      }
+      .showType{
+        width: 60%;
+        .radios{
+          input{
+            width: 20px;
+            height: 20px;
+            margin-top: 8px;
+          }
         }
       }
     }

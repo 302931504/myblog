@@ -7,7 +7,8 @@ export function saveBlog (item) {
     classify_text: item.classify_text,
     tags: item.tags,
     description: item.description,
-    content: item.content
+    content: item.content,
+    isShow: item.isShow
   })).then((res) => {
     return Promise.resolve(res.data);
   }).catch(err => err);
