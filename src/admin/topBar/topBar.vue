@@ -7,18 +7,23 @@
       <div class="openNav" @click="clickOpen"><span class="icon-menu"></span></div>
       <div class="searchWrapper">
         <input type="text" class="search" placeholder="关键字搜索">
-      </div>
+      </div> 
     </div>
     <div class="right">
       <ul>
-        <li>系统公告</li>
-        <li>锁屏</li>
-        <li class="info">
+        <li class="notice">
+          <div><i class="icon-bullhorn"></i> 系统公告</div>
+          <div class="remindBox">
+            <remind content="系统公告在这里" :isShow="showRemind"></remind>
+          </div>
+        </li>
+        <li @click.stop="lockScreen"><i class="icon-lock"></i> 锁屏</li>
+        <li class="info" @mouseover="optionOver" @mouseout="optionOut">
           <div class="avatar">
             <img src="./rick.png" alt="">
-            <span class="name">一个好人</span>
-            <div class="optionList">
-              <option-list></option-list>
+            <span class="name">一个好人 <i ref="circle" class="icon-circle"></i></span>
+            <div class="optionList" v-show="showList === true">
+              <option-list :options="options" :show="showList" ref="optionList" @clickoption="clickoption"></option-list>
             </div>
           </div>
         </li>
@@ -26,32 +31,69 @@
     </div>
   </div>
 </template>
-
+ 
 <script>
   import OptionList from '../../base/option-list/option-list';
+  import Remind from '../../base/remind/remind';
+  import {mapActions, mapMutations} from 'vuex';
+  import {circleMixin} from '../../common/js/mixin';
 
   export default {
+    mixins: [circleMixin],
+    data () {
+      return {
+        options: [
+          {text: '修改密码', name: 'setup', router: true, routername: 'setup'},
+          {text: '退出', name: 'logout', router: true, routername: 'login'}
+        ],
+        showRemind: true
+      };
+    },
+    created () {
+      setTimeout(() => {
+        this.showRemind = false;
+      }, 5000);
+    },
     methods: {
       clickOpen () {
         this.$emit('openNav');
-      }
+      },
+      clickoption (item) {
+        if (item.name === 'setup') {
+          this.$router.push({path: `/admin/mainBackStage/${item.name}`});
+          this.pushNav(item);
+          this.setCurrentName(item.name);
+        } if (item.name === 'logout') {
+          this.$router.push({path: `/admin/${item.routername}`});
+        }
+      },
+      lockScreen () {
+        this.$emit('lock');
+      },
+      ...mapActions([
+        'pushNav'
+      ]),
+      ...mapMutations({
+        setCurrentName: 'SET_CURRENTNAME'
+      })
     },
     components: {
-      OptionList
+      OptionList,
+      Remind
     }
   };
 </script>
 
 <style scoped lang="less" rel="stylesheet/less">
   .topBarWrapper{
-    position: fixed;
+    position: relative;
     display: flex;
     justify-content: space-between;
     top: 0;
     left: 0;
     width: 100%;
     height: 60px;
-    z-index: 1000px;
+    z-index: 999;
     background-color: #23262E;
     line-height: 60px;
     .left{
@@ -89,14 +131,23 @@
         font-size: 14px;
         li{
           padding: 0 20px;
+          transition: all .3s;
           &:hover{
-            border-bottom: 5px solid #000;
-            transition: all .3s;
+            border-bottom: 5px solid #000; 
+          }
+          &.notice{
+            position: relative;
+            .remindBox{
+              position: absolute;
+              top: 50px;
+              left: 0;
+            }
           }
         }
         .info{
           position: relative;
           .avatar{
+            width: 100%;
             img{
               width: 35px;
               height: 35px;
@@ -104,7 +155,12 @@
               vertical-align: middle;
               margin-right: 5px;
             }
+            .icon-circle{
+              display: inline-block;
+              transition: all .2s;
+            }
             .optionList{
+              width: 100%;
               position: absolute;
               top: 65px;
               left: 0;

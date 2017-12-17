@@ -33,12 +33,6 @@ const HomePage = (resolve) => {
     });
 };
 
-const LeaveMess = (resolve) => {
-    import('../admin/leaveMess/leaveMess').then((module) => {
-        resolve(module);
-    });
-};
-
 const FollowUser = (resolve) => {
     import('../admin/followUser/followUser').then((module) => {
         resolve(module);
@@ -53,6 +47,18 @@ const ArticalEdit = (resolve) => {
 
 const Draft = (resolve) => {
     import('../admin/draft/draft').then((module) => {
+        resolve(module);
+    });
+}; 
+
+const Mess = (resolve) => {
+    import('../admin/mess/mess').then((module) => {
+        resolve(module);
+    });
+}; 
+
+const UserCenter = (resolve) => {
+    import('../admin/user-center/user-center').then((module) => {
         resolve(module);
     });
 }; 
@@ -80,11 +86,7 @@ export default new Router({
               component: Blog
             },
             {
-              path: 'message',
-              component: LeaveMess
-            },
-            {
-              path: 'users',
+              path: 'follower',
               component: FollowUser
             },
             {
@@ -94,6 +96,14 @@ export default new Router({
             {
               path: 'draft',
               component: Draft
+            },
+            {
+              path: 'mess',
+              component: Mess
+            },
+            {
+              path: 'setup',
+              component: UserCenter
             }
           ]
         }

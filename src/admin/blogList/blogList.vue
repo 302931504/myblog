@@ -14,178 +14,51 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr v-for="item in blogs">
             <td>
               <input type="checkbox" class="checkBlog">
             </td>
-            <td style="text-align: left">css3用transition实现边框动画效果</td>
-            <td>基础知识</td>
-            <td>css3、JavaScript、es6</td>
-            <td>2017-04-14</td>
-            <td>2017-04-14</td>
+            <td style="text-align: left">{{item.title}}</td>
+            <td>{{item.model}}</td>
+            <td>{{item.label}}</td>
+            <td>{{_initTime(item.time.updateTime)}}</td>
+            <td>{{_initTime(item.time.createTime)}}</td>
             <td>
-              <button type="button" class="edit">编辑</button>
-              <button type="button" class="delete">删除</button>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <input type="checkbox" class="checkBlog">
-            </td>
-            <td style="text-align: left">css3用transition实现边框动画效果</td>
-            <td>基础知识</td>
-            <td>css3</td>
-            <td>2017-04-14</td>
-            <td>2017-04-14</td>
-            <td>
-              <button type="button" class="edit">编辑</button>
-              <button type="button" class="delete">删除</button>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <input type="checkbox" class="checkBlog">
-            </td>
-            <td style="text-align: left">css3用transition实现边框动画效果</td>
-            <td>基础知识</td>
-            <td>css3</td>
-            <td>2017-04-14</td>
-            <td>2017-04-14</td>
-            <td>
-              <button type="button" class="edit">编辑</button>
-              <button type="button" class="delete">删除</button>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <input type="checkbox" class="checkBlog">
-            </td>
-            <td style="text-align: left">css3用transition实现边框动画效果</td>
-            <td>基础知识</td>
-            <td>css3</td>
-            <td>2017-04-14</td>
-            <td>2017-04-14</td>
-            <td>
-              <button type="button" class="edit">编辑</button>
-              <button type="button" class="delete">删除</button>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <input type="checkbox" class="checkBlog">
-            </td>
-            <td style="text-align: left">css3用transition实现边框动画效果</td>
-            <td>基础知识</td>
-            <td>css3</td>
-            <td>2017-04-14</td>
-            <td>2017-04-14</td>
-            <td>
-              <button type="button" class="edit">编辑</button>
-              <button type="button" class="delete">删除</button>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <input type="checkbox" class="checkBlog">
-            </td>
-            <td style="text-align: left">css3用transition实现边框动画效果</td>
-            <td>基础知识</td>
-            <td>css3</td>
-            <td>2017-04-14</td>
-            <td>2017-04-14</td>
-            <td>
-              <button type="button" class="edit">编辑</button>
-              <button type="button" class="delete">删除</button>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <input type="checkbox" class="checkBlog">
-            </td>
-            <td style="text-align: left">css3用transition实现边框动画效果</td>
-            <td>基础知识</td>
-            <td>css3</td>
-            <td>2017-04-14</td>
-            <td>2017-04-14</td>
-            <td>
-              <button type="button" class="edit">编辑</button>
-              <button type="button" class="delete">删除</button>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <input type="checkbox" class="checkBlog">
-            </td>
-            <td style="text-align: left">css3用transition实现边框动画效果</td>
-            <td>基础知识</td>
-            <td>css3</td>
-            <td>2017-04-14</td>
-            <td>2017-04-14</td>
-            <td>
-              <button type="button" class="edit">编辑</button>
-              <button type="button" class="delete">删除</button>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <input type="checkbox" class="checkBlog">
-            </td>
-            <td style="text-align: left">css3用transition实现边框动画效果</td>
-            <td>基础知识</td>
-            <td>css3</td>
-            <td>2017-04-14</td>
-            <td>2017-04-14</td>
-            <td>
-              <button type="button" class="edit">编辑</button>
-              <button type="button" class="delete">删除</button>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <input type="checkbox" class="checkBlog">
-            </td>
-            <td style="text-align: left">css3用transition实现边框动画效果</td>
-            <td>基础知识</td>
-            <td>css3</td>
-            <td>2017-04-14</td>
-            <td>2017-04-14</td>
-            <td>
-              <button type="button" class="edit">编辑</button>
-              <button type="button" class="delete">删除</button>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <input type="checkbox" class="checkBlog">
-            </td>
-            <td style="text-align: left">css3用transition实现边框动画效果</td>
-            <td>基础知识</td>
-            <td>css3</td>
-            <td>2017-04-14</td>
-            <td>2017-04-14</td>
-            <td>
-              <button type="button" class="edit">编辑</button>
-              <button type="button" class="delete">删除</button>
+              <button type="button" class="edit" @click="editBlog(item)">编辑</button>
+              <button type="button" class="delete" @click="_deletBlog(item._id)">删除</button>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
-    <ul class="pageBtn">
-      <li>上一页</li>
-      <li>1</li>
-      <li class="active">2</li>
-      <li>3</li>
-      <li>下一页</li>
-    </ul>
   </div>
 </template>
 
 <script>
+  import {initTime} from '../../common/js/util';
+  import {deletBlog} from '../../api/draft';
+
   export default {
-    methods: {
+    props: {
+      blogs: {
+        type: Array,
+        default: function () {
+          return [];
+        }
+      }
     },
-    components: {
+    methods: {
+      editBlog (item) {
+        this.$emit('edit', item);
+      },
+      _initTime (time) {
+        return initTime(time);
+      },
+      _deletBlog (id) {
+        deletBlog(id).then(res => {
+          console.log(res);
+        });
+      }
     }
   };
 </script>
@@ -236,23 +109,6 @@
           }
         }
       } 
-    }
-    .pageBtn{
-      display: flex;
-      float: right;
-      margin: 20px 0 20px 0;
-      li{
-        padding: 0 15px;
-        height: 28px;
-        line-height: 28px;
-        font-size: 12px;
-        border: 1px solid #e2e2e2;
-        margin-left: -1px;
-        &.active{
-          color: #fff;
-          background: #009688;
-        }
-      }
     }
   }
 </style>

@@ -1,13 +1,15 @@
 <template>
   <div class="blogWrapper">
-    <search-box :options="options"></search-box>
+    <search-box :options="options" placeholder="请输入关键字"></search-box>
     <blog-list></blog-list>
+    <page-btn></page-btn>
   </div>
 </template>
 
 <script>
   import SearchBox from '../searchBox/searchBox';
   import BlogList from '../blogList/blogList';
+  import PageBtn from '../../base/page-btn/page-btn';
 
   export default {
     data () {
@@ -22,7 +24,8 @@
     },
     components: {
       SearchBox,
-      BlogList
+      BlogList,
+      PageBtn
     }
   };
 </script>

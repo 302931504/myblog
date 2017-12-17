@@ -1,35 +1,56 @@
 <template>
   <div class="draftWrapper">
-    <search-box :options="options" @clickOption="clickOption"></search-box>
-    <blog-list></blog-list>
-    <router-view/>
+    <search-box :options="options"></search-box>
+    <blog-list :blogs="blogs" @edit="editBlog"></blog-list>
   </div>
 </template>
-
+ 
 <script>
   import SearchBox from '../searchBox/searchBox';
   import BlogList from '../blogList/blogList';
+  import {getDraftByPage} from '../../api/draft';
+  import {mapMutations, mapActions} from 'vuex';
 
   export default {
     data () {
       return {
         options: [
-          {text: '新增文章', name: 'editBlog'},
           {text: '现在发布', name: 'topBlogBtn'},
           {text: '批量删除', name: 'deleteAllBtn'}
-        ]
+        ],
+        blogs: []
       };
-    },
-    methods: {
-      clickOption (name) {
-        if (name === 'editBlog') {
-          this.$router.push({path: `/admin/mainBackStage/${name}`});
-        }
-      }
     },
     components: {
       SearchBox,
       BlogList
+    },
+    created () {
+      this._getDraftByPage();
+    },
+    methods: {
+      editBlog (item) {
+        this.$router.push({path: '/admin/mainBackStage/editBlog'});
+        this.setEditBlog(item);
+        const nav = {
+          text: item.title,
+          name: 'editBlog'
+        };
+        this.pushNav(nav);
+      },
+      _getDraftByPage () {
+        getDraftByPage(1).then((res) => {
+          if (res.status === 0) {
+            this.blogs = res.data;
+          }
+        }).catch(err => err);
+      },
+      ...mapMutations({
+        setEditBlog: 'SET_EDITBLOG'
+      }),
+      ...mapActions([
+        'pushNav'
+      ])
     }
   };
 </script>

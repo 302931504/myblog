@@ -1,23 +1,48 @@
 <template>
   <div class="searchBoxWrapper">
-    <input type="text" name="search" placeholder="请输入关键字">
-    <button class="searchBtn" type="button">查询</button>
+    <div class="inputWrapper" @click="showList = true">
+      <input type="text" name="search" :placeholder="placeholder" :readonly="readonly">
+      <div class="optionListWrapper" v-show="readonly && showList">
+        <option-list></option-list>
+      </div>
+    </div>
+    <button class="searchBtn" type="button" v-show="!readonly">查询</button>
     <button v-for="item in options" :class="item.name" type="button" @click="clickOption(item.name)">{{item.text}}</button>
   </div>
 </template>
 
 <script>
+  import OptionList from '../../base/option-list/option-list';
+
   export default {
+    data () {
+      return {
+        showList: false
+      };
+    },
     props: {
       options: {
         type: Array,
-        default: []
+        default: function () {
+          return [];
+        }
+      },
+      readonly: {
+        type: Boolean,
+        default: false
+      },
+      placeholder: {
+        type: String,
+        default: ''
       }
     },
     methods: {
       clickOption (name) {
         this.$emit('clickOption', name);
       }
+    },
+    components: {
+      OptionList
     }
   };
 </script>
@@ -29,6 +54,16 @@
     border-radius: 0 2px 2px 0;
     border-left: 5px solid #009688;
     padding: 10px;
+    .inputWrapper{
+      display: inline-block;
+      position: relative;
+      .optionListWrapper{
+        position: absolute;
+        top: 4px;
+        left: 0;
+        width: 100%;
+      }
+    }
     input{
       vertical-align: middle;
       height: 38px;

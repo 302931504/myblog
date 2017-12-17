@@ -18,4 +18,13 @@ export const deleteNav = function ({commit, state}, {name}) {
 		return nav.name === name;
 	});
     commit(types.DELETE_NAV, index);
+};  
+
+export const deleteOthers = function ({commit, state}) {
+	const index = state.navList.findIndex((nav) => {
+		return nav.name === state.currentName;
+	});
+	const item = state.navList[index];
+	commit(types.DELETE_ALL_NAV);
+	commit(types.PUSH_NAVLIST, item);
 };

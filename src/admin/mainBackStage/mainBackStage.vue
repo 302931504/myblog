@@ -1,20 +1,23 @@
 <template>
   <div class="mainBackWrapper">
     <div class="topBarWrapper">
-      <top-bar @openNav="toggleNavBar"></top-bar>
+      <top-bar @openNav="toggleNavBar" @lock="lockScreen"></top-bar>
     </div>
     <div class="nav" ref="navBar">
       <navigation-bar @clickNav="clickNav" :currentName="currentName"></navigation-bar>
     </div>
     <div class="content" ref="content" style="marginLeft: 200px">
       <content-bar :navList="navList" @clickNav="clickNav" :currentName="currentName" @closeNav="close"></content-bar>
-      <div class="routerViewWrapper">
-        <div class="routerView">
-          <router-view/>
+        <div class="routerViewWrapper">
+          <div class="routerView">
+            <transition name="upglide">
+              <router-view/>
+            </transition>
+          </div>
         </div>
-      </div>
-      <author></author>
     </div>
+    <author></author>
+    <lock-screen class="screen" v-show="lock" :showFlag="lock" @clear="clear"></lock-screen>
   </div>
 </template>
 
@@ -23,22 +26,23 @@
   import TopBar from '../topBar/topBar';
   import ContentBar from '../contentBar/contentBar';
   import Author from '../author/author';
-  import {mapGetters, mapActions} from 'vuex';
+  import LockScreen from '../../base/lock-screen/lock-screen';
+  import {mapGetters, mapActions, mapMutations} from 'vuex';
 
   const NAVBAR_WIDTH = 200;
 
   export default {
     data () {
       return {
-        currentName: 'home',
-        pastName: []
+        lock: false
       };
     },
     computed: {
       ...mapGetters([
-        'navList'
+        'navList',
+        'currentName'
         ])
-    },
+    }, 
     methods: {
       toggleNavBar () {
         const left = this.$refs.navBar.style.left;
@@ -53,30 +57,49 @@
       clickNav (item) {
         this.$router.push({path: `/admin/mainBackStage/${item.name}`});
         this.pushNav(item);
-        this.currentName = item.name;
+        this.setCurrentName(item.name);
       },
       close (name) {
         this.deleteNav(name);
-        this.$router.go(-1);
-        this.currentName = this.navList[this.navList.length - 1].name;
+        this.setCurrentName(this.navList[this.navList.length - 1].name);
+        this.$router.push({path: `/admin/mainBackStage/${this.currentName}`});
+      },
+      lockScreen () {
+        this.lock = true;
+      },
+      clear (pass) {
+        if (pass === '123456') {
+          this.lock = false;
+        }
       },
       ...mapActions([
         'pushNav',
         'deleteNav'
-      ])
+      ]),
+      ...mapMutations({
+        setCurrentName: 'SET_CURRENTNAME'
+      })
     },
     components: {
       NavigationBar,
       TopBar,
       ContentBar,
-      Author
+      Author,
+      LockScreen
     }
   };
 </script>
 
 <style scoped lang="less" rel="stylesheet/less">
   .mainBackWrapper{
+    position: relative;
     height: 100%;
+    .screen{
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+    }
     .nav{
       position: fixed;
       top: 60px;
@@ -87,7 +110,7 @@
     }
     .content{
       height: 100%;
-      margin-top: 60px;
+      /* margin-top: 60px; */
       border-left: 2px solid #1AA094;
       border-top: 5px solid #1AA094;
       transition: all .6s;
@@ -99,5 +122,13 @@
         }
       }
     }
+  }
+  .upglide-enter-active, .upglide-leave-active{
+    opacity: 1;
+    transition: all .4s linear;
+  }
+  .upglide-enter, .upglide-leave-to{
+    opacity: 0;
+    transform: translate3d(0, -100%, 0);  
   }
 </style>

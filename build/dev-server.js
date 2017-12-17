@@ -17,7 +17,21 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/blog',{useMongoClient:true});
-const Blog = require('../server/models/artical.js')
+
+var mysql = require('mysql');
+var connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: 'liushuai',
+  database: 'blogtest'
+});
+ 
+connection.connect();
+ 
+connection.query('SELECT 1 + 1 AS solution', function (error, results, fields) {
+  if (error) throw error;
+  console.log('The solution is: ', results[0].solution);
+});
 
 // default port where dev server listens for incoming traffic
 const port = process.env.PORT || config.dev.port
@@ -40,7 +54,7 @@ app.use(session({
 }));
 
 const apiRouter = express.Router()
-apiRouter.post('/login', (req, res) => {
+/*apiRouter.post('/login', (req, res) => {
   const username = req.body.username
   const password = req.body.password
   if (username === 'admin' || password === '123456') {
@@ -52,71 +66,56 @@ apiRouter.post('/login', (req, res) => {
   } else {
     res.json({status: -1, info: '不存在此账号'})
   }
-})
+})*/
 
+//新增文章
 apiRouter.post('/saveBlog', (req, res) => {
-  if (!req.session.user) {
+  /*if (!req.session.user) {
     res.json({status: -1, info: '请先登录'})
-  } else{
-    Blog.create({
-      title: req.body.title,
-      content: req.body.content,
-      summary: req.body.summary,
-      label: req.body.label,
-      model: req.body.model
-    }, function(err, blog){
+  } else{*/
+    var classify_id;
+    var text = req.body.classify_text;
+    var sql = 'SELECT classify_id FROM classify WHERE classify_text = ?';
+    var sqlParam = [text];
+    connection.query(sql,sqlParam,function (err, result) {
       if (err) {
-        console.log(err)
-      } else {
-        res.json({status: 0, info: '保存成功', data: blog})
+        var sql2 = 'INSERT INTO classify(classify_text) VALUES(?)';
+        var sql2Param = [text];
+        connection.query(sql2,sql2Param,function (err, result) {
+          if(err){
+            console.log('[INSERT ERROR] - ',err.message);
+            return;
+          }
+          res.json({status: 0, info: '新分类创建成功'});  
+        })
       }
-    })
-  }
+      classify_id = result[0].classify_id;
+    
+      var addSql = 'INSERT INTO blog(blog_title,classify_id,blog_tags,blog_description,blog_content) VALUES (?,?,?,?,?)';
+      var addSqlParams = [req.body.title,classify_id,req.body.tags,req.body.description,req.body.content];
+      connection.query(addSql,addSqlParams,function (err, result) {
+        if(err){
+          console.log('[INSERT ERROR] - ',err.message);
+          return;
+        }  
+        res.json({status: 0, info: '保存成功'});  
+      }) 
+    });   
+  // }
+});
+
+//获取分类
+apiRouter.get('/getClassify',(req,res) => {
+  var sql = 'SELECT * FROM classify';
+  connection.query(sql,function (err, result) {
+    if(err){
+      console.log('[INSERT ERROR] - ',err.message);
+      return;
+    }
+    res.json({status: 0, data: result, info: '获取成功'});
+  })
 })
 
-apiRouter.get('/adminGetAll', (req, res) => {
-  if (!req.session.user) {
-    res.json({status: -1, info: '请先登录'})
-  } else {
-    Blog.getAll(function(err, blogs) {
-      if (err) {
-        console.log(err);
-      } else {
-        res.json({status: 0, data: blogs})
-      }
-    })
-  }
-})
-
-apiRouter.get('/adminGetByPage', (req, res) => {
-  if (!req.session.user) {
-    res.json({status: -1, info: '请先登录'})
-  } else {
-    var page = req.body.page;
-    Blog.getByPage(page, function(err, blogs){
-      if (err) {
-        console.log(err);
-      } else {
-        res.json({status: 0, data: blogs});
-      }
-    })
-  }
-})
-
-apiRouter.post('/adminDeletBlog', (req, res) => {
-  if (!req.session.user) {
-    res.json({status: -1, info: '请先登录'});
-  } else {
-    let id = req.body.id;
-    Blog.remove({_id: id}, (err) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.json({status: 0, info: '删除成功'});
-      }
-    })
-  }
-})
 
 app.use('/api', apiRouter)
 

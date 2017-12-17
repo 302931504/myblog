@@ -21,13 +21,15 @@ var ArticalSchema = mongoose.Schema({
       default: new Date()
     }
   },
-  isOK: {
+  online: {
     type: Boolean,
     default: false
   }
 });
 
 const page_limit_number = 5;
+const admin_page_limit_number = 10;
+
 ArticalSchema.statics = {
 
   getAll: function (callback) {
@@ -35,23 +37,31 @@ ArticalSchema.statics = {
                .sort('time.updateTime')
                .exec(callback); 
   },
-  getByPage: function (page, callback) {
-    return this.find({})
-               .sort('time.updateTime')
-               .skip(page_limit_number * (page - 1))
-               .limit(page_limit_number)
+  getDraftCount: function (callback) {
+    return this.count({online: false})
+               .exec(callback);
+  },
+  getDraftByPage: function (page, callback) {
+    return this.find({online: false})
+               .sort({'time.updateTime': -1})
+               .skip(admin_page_limit_number * (page - 1)) 
+               .limit(admin_page_limit_number)
                .exec(callback);
   },
   getOnlineAll: function (callback) {
-    return this.find({isOK: true})
+    return this.find({online: true})
                .sort('time.updateTime') 
                .exec(callback);
-  },
+  }, 
   getOnlineByPage: function (page, callback) {
-    return this.find({isOK: true})
+    return this.find({online: true})
                .sort('time.updateTime')
                .skip(page_limit_number * (page - 1))
                .limit(page_limit_number)
+               .exec(callback);
+  },
+  deleteOneBlog: function (id, callback) {
+    return this.findOneAndRemove({_id: id})
                .exec(callback);
   }
 }

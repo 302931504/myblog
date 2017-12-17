@@ -1,8 +1,8 @@
 <template>
-  <div class="detailtWrapper">
+  <div class="detailtWrapper" @click.stop="showList = false">
     <div class="blogEdit">
       <h3 class="title">添加文章</h3>
-      <div class="icon"><span class="icon-cancel-circle"></span></div>
+      <div class="icon" @click="closeEditor"><span class="icon-closeAll"></span></div>
     </div>
     <div class="content">
       <div class="con-item titleBox">
@@ -14,12 +14,25 @@
         </div>
       </div>
       <div class="con-item modelBox">
-        <div class="label">
-          <label>文章分类</label>
+        <div class="default">
+          <div class="label">
+            <label>文章分类</label>
+          </div>
+          <div class="input modelInput" @click.stop="chooseModel">
+            <input type="text" name="model" class="model" v-model="model" value="javaScript" readonly>
+            <span ref="circle" class="icon-circle"></span>
+            <div class="optionList" v-show="showList === true">
+              <option-list :options="options" :show="showList" @clickoption="clickoption"></option-list>
+            </div>
+          </div>
         </div>
-        <div class="input modelInput">
-          <input type="text" name="model" class="model" v-model="model" value="javaScript" readonly>
-          <span class="icon-cog"></span>
+        <div class="custom">
+          <div class="label">
+            <label>自定义分类</label>
+          </div>
+          <div class="input">
+            <input type="text" name="model" class="model" v-model="model">
+          </div>
         </div>
       </div>
       <div class="con-item tagsBox">
@@ -27,7 +40,7 @@
           <label>标签</label>
         </div>
         <div class="input tagsInput">
-          <input type="text" name="tags" class="tags" v-model="tagVal" placeholder="请输入标签，以‘/’分割">
+          <input type="text" name="tags" class="tags" v-model="tags" placeholder="请输入标签，以‘/’分割">
         </div>
       </div>
       <div class="con-item summaryBox">
@@ -54,7 +67,10 @@
 <script>
   // import qs from 'qs';
   import Attention from '../../base/attention/attention';
+  import OptionList from '../../base/option-list/option-list';
   import {showAttentionMixin} from '../../common/js/mixin';
+  import {saveBlog, getClassify} from '../../api/editor';
+  import {mapGetters} from 'vuex';
 
   export default {
     mixins: [showAttentionMixin],
@@ -62,10 +78,21 @@
       return {
         title: '',
         summary: '',
-        tagVal: '',
+        tags: '',
         artical: '',
-        model: ''
+        model: '',
+        showList: false,
+        options: []
       };
+    },
+    computed: {
+      ...mapGetters([
+        'editBlog'
+      ])
+    },
+    created () {
+      this.initBlog();
+      this._getClassify(); 
     },
     methods: {
       saveArtical () {
@@ -77,11 +104,57 @@
           this.showAttention('请输入文章摘要', false);
         } else if (this.artical === '') {
           this.showAttention('请输入文章内容', false);
+        } else {
+          this._saveBlog();
         }
+      },
+      initBlog () {
+        this.title = this.editBlog.title;
+        this.artical = this.editBlog.content;
+        this.summary = this.editBlog.summary;
+        this.tagVal = this.editBlog.label;
+        this.model = this.editBlog.model;
+      },
+      chooseModel () {
+        this.showList = !this.showList;
+        if (this.showList) {
+          this.$refs.circle.style.transform = 'rotate(180deg)';
+        } else {
+          this.$refs.circle.style.transform = '';
+        }
+      },
+      clickoption (item) {
+        this.model = item.text;
+      },
+      closeEditor () {
+        this.$router.go(-1);
+      },
+      _saveBlog () {
+        const blog = {
+          title: this.title,
+          classify_text: this.model,
+          tags: this.tags,
+          description: this.summary,
+          content: this.artical
+        };
+        saveBlog(blog).then(res => {
+          console.log(res);
+        });
+      },
+      _getClassify () {
+        getClassify().then(res => {
+          console.log(res);
+          let i = 0;
+          console.log(res.data.length);
+          for (i; i < res.data.length; i++) {
+            this.options.push({id: res.data[i].classify_id, text: res.data[i].classify_text});
+          };
+        });  
       }
     },
     components: {
-      Attention
+      Attention,
+      OptionList
     }
   };
 </script>
@@ -114,6 +187,9 @@
       .con-item{
         display: flex;
         margin-bottom: 15px;
+        .default, .custom{
+          display: flex;
+        }
       }
       .label{
         padding: 9px 15px;
@@ -129,6 +205,7 @@
         border: 1px solid #e6e6e6;
         border-radius: 2px;
         outline: none;
+        box-sizing: border-box;
       }
      .titleInput{
         width: 90%;
@@ -138,11 +215,18 @@
       }
       .modelInput{
         position: relative;
-        .icon-cog{
+        .icon-circle{
           position: absolute;
           right: 10px;
           top: 50%;
           margin-top: -8px;
+          transition: all .2s;
+        }
+        .optionList{
+          width: 100%;
+          position: absolute;
+          top: 44px;
+          left: 0;
         }
       }
       .summaryInput{
