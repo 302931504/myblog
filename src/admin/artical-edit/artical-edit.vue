@@ -74,7 +74,7 @@
       </div>
     </div>
     <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
-    <label-list></label-list>
+    <label-list class="labelList" :labelList="options"></label-list>
   </div>
 </template>
 
@@ -277,6 +277,12 @@
           }
         }
       }
+    }
+    .labelList{
+      position: fixed;
+      top: 25%;
+      left: 30%;
+      z-index: 9998;
     }
   }
 </style>
