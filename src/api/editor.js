@@ -19,3 +19,15 @@ export function getClassify () {
 		return Promise.resolve(res.data);
 	}).catch(err => err);
 };
+
+export function deleteClassify (id) {
+  return axios.get('/api/deleteClassify?classify_id=' + id).then((res) => {
+    return Promise.resolve(res.data);
+  }).catch(err => err);
+};
+
+export function addClassify (text) {
+  return axios.get('/api/addClassify?classify_text=' + text).then((res) => {
+    return Promise.resolve(res.data);
+  }).catch(err => err);
+};

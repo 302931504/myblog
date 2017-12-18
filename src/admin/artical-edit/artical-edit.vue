@@ -27,7 +27,7 @@
           </div>
         </div>
         <div class="manageLabel">
-          <button type="button">管理分类</button>
+          <button type="button" @click.stop="showLabelList">管理分类</button>
         </div>
       </div>
       <div class="con-item tagsBox">
@@ -74,7 +74,7 @@
       </div>
     </div>
     <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
-    <label-list class="labelList" :labelList="options"></label-list>
+    <label-list class="labelList" :labelList="options" :showFlag="showFlag" @closeLabelList="closeLabelList" @deleteLabel='deleteLabel' @addLabel="addLabel"></label-list>
   </div>
 </template>
 
@@ -98,7 +98,8 @@
         model: '',
         showList: false,
         options: [],
-        checked: 0
+        checked: 0,
+        showFlag: false
       };
     },
     computed: {
@@ -144,6 +145,21 @@
       },
       closeEditor () {
         this.$router.go(-1);
+      },
+      showLabelList () {
+        this.showFlag = true;
+      },
+      closeLabelList () {
+        this.showFlag = false;
+      },
+      deleteLabel (id) {
+        let index = this.options.findIndex((item) => {
+          return item.id === id;
+        });
+        this.options.splice(index, 1);
+      },
+      addLabel (item) {
+        this.options.push(item);
       },
       _saveBlog () {
         const blog = {

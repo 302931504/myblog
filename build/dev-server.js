@@ -91,15 +91,12 @@ apiRouter.post('/saveBlog', (req, res) => {
               return;
             }
             res.json({status: 0, info: '新分类创建成功'});  
-            // classify_id = result.classify_id;
-            console.log(result);
           })
         } else {
-          console.log('in');
-          // classify_id = result[0].classify_id;
+          classify_id = result[0].classify_id;
         }
       var addSql = 'INSERT INTO blog(blog_title,classify_id,blog_tags,blog_description,blog_content,blog_isShow) VALUES (?,?,?,?,?,?)';
-      var addSqlParams = [req.body.title,'1',req.body.tags,req.body.description,req.body.content,req.body.isShow];
+      var addSqlParams = [req.body.title,classify_id,req.body.tags,req.body.description,req.body.content,req.body.isShow];
       connection.query(addSql,addSqlParams,function (err, result) {
         if(err){
           console.log('[INSERT ERROR] - ',err.message);
@@ -144,6 +141,70 @@ apiRouter.get('/deleteBlog', (req, res) => {
       return;
     }
     res.json({status: 0, info: '删除成功'});
+  })
+})
+
+//删除某个分类
+apiRouter.get('/deleteClassify', (req, res) => {
+  var sql = 'SELECT COUNT(*) AS num FROM blog WHERE classify_id = ?';
+  var sqlParam = [req.query.classify_id];
+  connection.query(sql,sqlParam,function(err, result) {
+    if(err) {
+      console.log('[INSERT ERROR] - ',err.message);
+      return;
+    }
+    if(result[0].num > 0){
+      res.json({status: -1, info: '该分类有文章存在不能删除'});
+    }
+    if(result[0].num === 0){
+      var delSql = 'DELETE FROM classify WHERE classify_id = ?';
+      var delSqlParam = [req.query.classify_id];
+      connection.query(delSql,delSqlParam,function (err, result) {
+        if(err) {
+          console.log('[INSERT ERROR] - ',err.message);
+          return;
+        }
+        res.json({status: 0, info: '删除成功'});
+      })
+    }
+  })
+})
+
+//新增分类
+apiRouter.get('/addClassify', (req, res) => {
+  var sql = 'SELECT COUNT(*) AS num FROM classify WHERE classify_text = ?';
+  var sqlParam = [req.query.classify_text];
+  connection.query(sql,sqlParam,function(err, result) {
+    if(err) {
+      console.log('[INSERT ERROR] - ',err.message);
+      return;
+    }
+    if(result[0].num>0){
+      res.json({status: -1, info: '已存在该分类'});
+    }
+    if(result[0].num===0){
+      var addSql = 'INSERT INTO classify(classify_text) VALUES(?)';
+      var addSqlParam = [req.query.classify_text];
+      connection.query(addSql,addSqlParam,function(err, result) {
+        if(err) {
+          console.log('[INSERT ERROR] - ',err.message);
+          return;
+        }
+        res.json({status: 0, info: '创建成功', data: result.insertId});
+      })
+    }
+  })
+})
+
+//获取线上文章列表
+apiRouter.get('/getOnlineBlog', (req, res) => {
+  var sql = 'SELECT blog_id, blog_title, classify_text, blog_tags, blog_createTime, blog_updateTime FROM blog b, classify c WHERE b.classify_id = c.classify_id AND blog_isShow = 1';
+  connection.query(sql, function (err, result) {
+    if(err) {
+      console.log('[INSERT ERROR] - ',err.message);
+      return;
+    }
+    res.json({status: 0, data: result, info: '获取成功'});
   })
 })
 

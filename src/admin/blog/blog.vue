@@ -1,7 +1,7 @@
 <template>
   <div class="blogWrapper">
     <search-box :options="options" placeholder="请输入关键字"></search-box>
-    <blog-list></blog-list>
+    <blog-list :blogs="blogs"></blog-list>
     <page-btn></page-btn>
   </div>
 </template>
@@ -10,6 +10,7 @@
   import SearchBox from '../searchBox/searchBox';
   import BlogList from '../blogList/blogList';
   import PageBtn from '../../base/page-btn/page-btn';
+  import {getOnlineBlog} from '../../api/blog';
 
   export default {
     data () {
@@ -17,10 +18,19 @@
         options: [
           {text: '置顶文章', name: 'topBlogBtn'},
           {text: '批量删除', name: 'deleteAllBtn'}
-        ]
+        ],
+        blogs: []
       };
     },
+    created () {
+      this._getOnlineBlog();
+    },
     methods: {
+      _getOnlineBlog () {
+        getOnlineBlog().then((res) => {
+          this.blogs = res.data;
+        }).catch(err => err);
+      }
     },
     components: {
       SearchBox,

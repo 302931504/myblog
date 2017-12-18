@@ -1,29 +1,40 @@
 <template>
     <transition name="showslide">
       <div class="content" v-show="showFlag">
-        <span class="icon-cross"></span>
+        <p class="editBtn" @click.stop="editLabelList">编辑</p>
+        <span class="icon-cross" @click.stop="closeLabelList"></span>
         <div class="list">
           <ul>
-            <li v-for="item in labelList">{{item.text}}<span @click.stop="deleteLabel" class="icon-closeAll"></span></li>
+            <li v-for="item in labelList">{{item.text}}
+            <span @click.stop="deleteLabel(item.id)" class="icon-closeAll" v-show="showCross"></span></li>
           </ul>
         </div>
         <div class="addNew">
-          <input type="text" name="">
-          <button type="button">添加</button>
+          <input type="text" name="" v-model="newLabel">
+          <button type="button" @click.stop="addLabel">添加</button>
         </div>
-        <div class="sureBtn">
-          <button type="button">确定</button>
+        <p class="text">{{errMessage}}</p>
+        <div class="sureBtn" v-show="showCross">
+          <button type="button" @click.stop="sure">确定</button>
         </div>
       </div>
     </transition>
 </template>
 
 <script>
+  import {deleteClassify, addClassify} from '../../api/editor';
   export default {
+    data () {
+      return {
+        showCross: false,
+        newLabel: '',
+        errMessage: ''
+      };
+    },
     props: {
       showFlag: {
         type: Boolean,
-        default: true
+        default: false
       },
       labelList: {
         type: Array,
@@ -33,8 +44,37 @@
       }
     },
     methods: {
-      deleteLabel () {
-        alert('123');
+      deleteLabel (id) {
+        deleteClassify(id).then((res) => {
+          if (res.status === 0) {
+            this.$emit('deleteLabel', id);
+            this.errMessage = res.info;
+          } else {
+            this.errMessage = res.info;
+          }
+        }).catch(err => err);
+      },
+      addLabel () {
+        addClassify(this.newLabel).then((res) => {
+          console.log(res);
+          if (res.status === 0) {
+            const item = {id: res.data, text: this.newLabel};
+            this.$emit('addLabel', item);
+            this.errMessage = res.info;
+          } else {
+            this.errMessage = res.info;
+          }
+        }).catch(err => err);
+      },
+      editLabelList () {
+        this.showCross = true;
+      },
+      closeLabelList () {
+        this.showCross = false;
+        this.$emit('closeLabelList');
+      },
+      sure () {
+        this.showCross = false;
       }
     }
   };
@@ -51,6 +91,12 @@
     border: 2px solid #ccc;
     box-shadow: 8px 8px 5px #888888;
     overflow-y: auto;
+    .editBtn{
+      font-size: 14px;
+      color: #0000E3;
+      text-decoration: underline;
+      cursor: pointer;
+    }
     .icon-cross{
       position: absolute;
       top: 4px;
@@ -98,6 +144,12 @@
           opacity: .8;
         }
       }
+    }
+    .text{
+      color: red;
+      font-size: 14px;
+      text-align: center;
+      margin-top: 20px;
     }
     .sureBtn{
       position: absolute;
