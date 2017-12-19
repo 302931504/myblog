@@ -24,3 +24,12 @@ export function initTime (time) {
 	let newtime = Year + '-' + Month + '-' + Day + ' ' + Hours + ':' + Minutes + ':' + Seconds;
 	return newtime;
 };
+
+export function checkEmail (email) {
+	var regex = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((.[a-zA-Z0-9_-]{2,3}){1,2})$/;
+	if (regex.test(email)) {
+		return true;
+	} else {
+		return false;
+	}
+};

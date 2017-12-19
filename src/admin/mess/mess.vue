@@ -2,34 +2,7 @@
   <div class="messWrapper">
     <search-box :options="[]" :readonly="true"></search-box>
     <div class="content">
-      <table>
-        <tbody>
-          <tr>
-            <td style="text-align: left; line-height: 25px">
-              <h3>小王</h3>
-              <p>我爱你爱着你就像老鼠爱大米</p>
-            </td>
-            <td>2017-11-14 12:55</td>
-            <td>已回复</td>
-            <td>
-              <button type="button" class="answer">回复</button>
-              <button type="button" class="delete">删除</button>
-            </td>
-          </tr>
-          <tr>
-            <td style="text-align: left; line-height: 25px">
-              <h3>小王</h3>
-              <p>我爱你爱着你就像老鼠爱大米我爱你爱着你就像老鼠爱大米我爱你爱着你就像老鼠爱大米我爱你爱着你就像老鼠爱大米</p>
-            </td>
-            <td>2017-11-14 12:55</td>
-            <td>已回复</td>
-            <td>
-              <button type="button" class="answer">回复</button>
-              <button type="button" class="delete">删除</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <message-board :bbsList="bbs"></message-board>
     </div>
     <page-btn></page-btn>
   </div>
@@ -37,12 +10,64 @@
 
 <script>
   import SearchBox from '../searchBox/searchBox';
+  import MessageBoard from '../../base/message-board/message-board';
   import PageBtn from '../../base/page-btn/page-btn';
+  import {getBBSList, getBBSChildList} from '../../api/bbs';
 
   export default {
+    data () {
+      return {
+        bbs: []
+      };
+    },
     components: {
       SearchBox,
-      PageBtn
+      PageBtn,
+      MessageBoard
+    },
+    created () {
+      this._getBBSList();
+    },
+    methods: {
+      _getBBSList () {
+        getBBSList().then(res => {
+          let arr = res.data;
+          if (res.status === 0) {
+            for (let i = 0; i < arr.length; i++) {
+              this.bbs.push({id: arr[i].bbs_id,
+                    reply_id: arr[i].reply_id,
+                    email: arr[i].user_email,
+                    name: arr[i].user_name,
+                    content: arr[i].bbs_content,
+                    time: arr[i].bbs_time,
+                    child: []});
+            }
+            this._getBBSChildList();
+            console.log(this.bbs);
+          }
+        });
+      },
+      _getBBSChildList () {
+        getBBSChildList().then(res => {
+          console.log(res);
+          let arr2 = res.data;
+          if (res.status === 0) {
+            for (let i = 0; i < this.bbs.length; i++) {
+              for (let j = 0; j < arr2.length; j++) {
+                if (this.bbs[i].id === arr2[j].parent_id) {
+                  this.bbs[i].child.push({id: arr2[j].bbs_child_id,
+                       sender_email: arr2[j].sender_email,
+                       sender_name: arr2[j].sender_name,
+                       receiver_email: arr2[j].receiver_email,
+                       receiver_name: arr2[j].receiver_name,
+                       content: arr2[j].bbs_child_content,
+                       time: arr2[j].bbs_child_time});
+                }
+              }
+            }
+          }
+        });
+      }
     }
   };
 </script>
@@ -52,41 +77,6 @@
     color: #333;
     .content{
       margin-top: 10px;
-      table{
-        width: 100%;
-        border: 1px solid #e2e2e2;
-        td{
-          font-size: 14px;
-          padding: 9px 15px;
-          min-height: 20px;
-          line-height: 20px;
-          text-align: center;
-          border-bottom: 1px solid #e2e2e2;
-          vertical-align: middle;
-          h3{
-            font-weight: 400;
-          }
-          p{
-            max-width: 300px;
-            word-break: break-all;
-            color: #8d8d8d;
-          }
-          button{
-            height: 22px;
-            line-height: 22px;
-            padding: 0 5px;
-            font-size: 12px;
-            border: none;
-            color: #fff;
-            &.answer{
-              background: #009688;
-            }
-            &.delete{
-              background: #1E9FFF;
-            }
-          }
-        }
-      }
     }
   }
 </style>

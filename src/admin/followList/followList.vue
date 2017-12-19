@@ -10,13 +10,13 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
+        <tr v-for="item in userList">
           <td><input type="checkbox" class="checkBlog"></td>
-          <td>林伟明</td>
-          <td>123456@qq.com</td>
+          <td>{{item.user_name}}</td>
+          <td>{{item.user_email}}</td>
           <td>
-            <button type="button" class="edit">编辑</button>
-            <button type="button" class="delete">删除</button>
+            <button type="button" class="edit" @click.stop="editUser(item)">编辑</button>
+            <button type="button" class="delete" @click.stop="deleteUser(item.user_id)">删除</button>
           </td>
         </tr>
       </tbody>
@@ -25,7 +25,23 @@
 </template>
 
 <script>
-    
+  export default {
+    props: {
+      userList: {
+        type: Array,
+        default: function () {
+          return [];
+        }
+      }
+    },
+    methods: {
+      deleteUser (id) {
+        this.$emit('deleteUser', id);
+      },
+      editUser (item) {
+      }
+    }
+  };
 </script>
 
 <style scoped lang="less" rel="stylesheet/less">

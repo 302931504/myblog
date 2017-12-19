@@ -208,6 +208,81 @@ apiRouter.get('/getOnlineBlog', (req, res) => {
   })
 })
 
+//获取用户列表
+apiRouter.get('/getUserList', (req, res) => {
+  var sql = 'SELECT * FROM users';
+  connection.query(sql,function(err, result) {
+    if(err) {
+      console.log('[INSERT ERROR] - ',err.message);
+      return;
+    }
+    res.json({status: 0, info: '获取成功', data: result});
+  })
+})
+//新增订阅
+apiRouter.post('/addFollow', (req, res) => {
+  var sql = 'SELECT COUNT(*) AS num FROM users WHERE user_email = ?';
+  var sqlParam = [req.body.user_email];
+  connection.query(sql,sqlParam,function(err, result) {
+    if(err) {
+      console.log('[INSERT ERROR] - ',err.message);
+      return;
+    }
+    if(result[0].num > 0) {
+      res.json({status: -1, info: '该邮箱已经订阅博客'});
+    }
+    if(result[0].num === 0) {
+      var addSql = 'INSERT INTO users(user_email, user_name) VALUES(?,?)';
+      var addSqlParam = [req.body.user_email, req.body.user_name];
+      connection.query(addSql,addSqlParam,function(err, result) {
+        if(err) {
+          console.log('[INSERT ERROR] - ',err.message);
+          return;
+        }
+        res.json({status: 0, info: '新增成功', data: result.insertId});
+      })
+    }
+  })
+})
+
+//删除某个用户
+apiRouter.get('/deleteUser', (req, res) => {
+  var delSql = 'DELETE FROM users WHERE user_id = ?';
+  var delSqlParam = [req.query.user_id];
+  connection.query(delSql,delSqlParam,function(err, result) {
+    if(err) {
+      console.log('[INSERT ERROR] - ',err.message);
+      res.json({status: -1, info: '错误！删除失败'});
+      return;
+    }
+    res.json({status: 0, info: '删除成功'});
+  })
+})
+
+//获取父留言板列表
+apiRouter.get('/getBBSList', (req, res) => {
+  var sql = 'SELECT * FROM bbs WHERE reply_id = 0';
+  connection.query(sql,function(err, result) {
+    if(err) {
+      console.log('[INSERT ERROR] - ',err.message);
+      return;
+    }
+    res.json({status: 0, info: '获取成功', data: result});
+  })
+})
+
+//获取子留言板列表
+apiRouter.get('/getBBSChildList', (req, res) => {
+  var sql = 'SELECT * FROM bbs_child';
+  connection.query(sql,function(err, result) {
+    if(err) {
+      console.log('[INSERT ERROR] - ',err.message);
+      return;
+    }
+    res.json({status: 0, info: '获取成功', data: result});
+  })  
+})
+
 
 app.use('/api', apiRouter)
 
