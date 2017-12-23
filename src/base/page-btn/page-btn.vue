@@ -15,7 +15,6 @@
 <style scoped lang="less" rel="stylesheet/less">
   .pageBtn{
     display: flex;
-    float: right;
     margin: 20px 0 20px 0;
     li{
       padding: 0 15px;

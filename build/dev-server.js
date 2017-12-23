@@ -261,7 +261,7 @@ apiRouter.get('/deleteUser', (req, res) => {
 
 //获取父留言板列表
 apiRouter.get('/getBBSList', (req, res) => {
-  var sql = 'SELECT * FROM bbs WHERE reply_id = 0';
+  var sql = 'SELECT * FROM bbs WHERE reply_id = 0 ORDER BY bbs_time DESC';
   connection.query(sql,function(err, result) {
     if(err) {
       console.log('[INSERT ERROR] - ',err.message);
@@ -281,6 +281,19 @@ apiRouter.get('/getBBSChildList', (req, res) => {
     }
     res.json({status: 0, info: '获取成功', data: result});
   })  
+})
+
+//新增留言
+apiRouter.post('/addBBS', (req, res) => {
+  var addSql = 'INSERT INTO bbs(reply_id, user_email, user_name, bbs_content) VALUES(?,?,?,?)';
+  var addSqlParams = [req.body.reply_id, req.body.user_email, req.body.user_name, req.body.bbs_content];
+  connection.query(addSql, addSqlParams, function(err, result) {
+    if(err) {
+      console.log('[INSERT ERROR] - ',err.message);
+      return;
+    }
+    res.json({status: 0, info: '发表成功'});
+  })
 })
 
 

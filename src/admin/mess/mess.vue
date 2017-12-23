@@ -3,27 +3,24 @@
     <search-box :options="[]" :readonly="true"></search-box>
     <div class="content">
       <message-board :bbsList="bbs"></message-board>
+      <div><page-btn></page-btn></div>
+      <comment @addBBS="_addBBS"></comment>
     </div>
-    <page-btn></page-btn>
   </div>
 </template>
 
 <script>
   import SearchBox from '../searchBox/searchBox';
   import MessageBoard from '../../base/message-board/message-board';
+  import Comment from '../../base/comment/comment';
   import PageBtn from '../../base/page-btn/page-btn';
-  import {getBBSList, getBBSChildList} from '../../api/bbs';
+  import {getBBSList, getBBSChildList, addBBS} from '../../api/bbs';
 
   export default {
     data () {
       return {
         bbs: []
       };
-    },
-    components: {
-      SearchBox,
-      PageBtn,
-      MessageBoard
     },
     created () {
       this._getBBSList();
@@ -67,7 +64,19 @@
             }
           }
         });
+      }, 
+      _addBBS (item) {
+        item.reply_id = 0;
+        addBBS(item).then(res => {
+          console.log(res);
+        });
       }
+    },
+    components: {
+      SearchBox,
+      PageBtn,
+      MessageBoard,
+      Comment
     }
   };
 </script>
