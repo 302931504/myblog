@@ -29,13 +29,13 @@
     methods: {
       publish () {
         const item = {
-          reply_id: -1,
+          type: -1,
+          parent_id: -1,
           user_email: this.email,
           user_name: this.nickname,
           bbs_content: this.content
         };
         this.$emit('addBBS', item);
-        this.$router.go(0);
       }
     }
   };

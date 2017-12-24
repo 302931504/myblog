@@ -122,8 +122,15 @@ apiRouter.get('/getClassify',(req,res) => {
 
 //获取草稿箱文章列表
 apiRouter.get('/getDraftList', (req, res) => {
-  var sql = 'SELECT blog_id, blog_title, classify_text, blog_tags, blog_createTime, blog_updateTime FROM blog b, classify c WHERE b.classify_id = c.classify_id AND blog_isShow = 0';
-  connection.query(sql, function (err, result) {
+  const limit = 10;
+  let offset = (req.query.page - 1) * limit;
+  var sql = `SELECT blog_id, blog_title, classify_text, blog_tags, blog_createTime, blog_updateTime 
+             FROM blog b, classify c 
+             WHERE b.classify_id = c.classify_id AND blog_isShow = 0
+             ORDER BY blog_updateTime DESC
+             LIMIT ?,?`;
+  var sqlParams = [offset, limit];
+  connection.query(sql, sqlParams, function (err, result) {
     if(err) {
       console.log('[INSERT ERROR] - ',err.message);
       return;
@@ -261,7 +268,7 @@ apiRouter.get('/deleteUser', (req, res) => {
 
 //获取父留言板列表
 apiRouter.get('/getBBSList', (req, res) => {
-  var sql = 'SELECT * FROM bbs WHERE reply_id = 0 ORDER BY bbs_time DESC';
+  var sql = 'SELECT * FROM bbs WHERE reply_id = 0 AND type = 0 ORDER BY bbs_time DESC';
   connection.query(sql,function(err, result) {
     if(err) {
       console.log('[INSERT ERROR] - ',err.message);
@@ -285,8 +292,8 @@ apiRouter.get('/getBBSChildList', (req, res) => {
 
 //新增留言
 apiRouter.post('/addBBS', (req, res) => {
-  var addSql = 'INSERT INTO bbs(reply_id, user_email, user_name, bbs_content) VALUES(?,?,?,?)';
-  var addSqlParams = [req.body.reply_id, req.body.user_email, req.body.user_name, req.body.bbs_content];
+  var addSql = 'INSERT INTO bbs(type, user_email, user_name, bbs_content) VALUES(?,?,?,?)';
+  var addSqlParams = [req.body.type, req.body.user_email, req.body.user_name, req.body.bbs_content];
   connection.query(addSql, addSqlParams, function(err, result) {
     if(err) {
       console.log('[INSERT ERROR] - ',err.message);
@@ -296,6 +303,149 @@ apiRouter.post('/addBBS', (req, res) => {
   })
 })
 
+//新增子留言
+apiRouter.post('/addChildBBS', (req, res) => {
+  var addSql = `INSERT INTO bbs_child(parent_id, user_email, user_name, bbs_child_content)
+                VALUES (?,?,?,?)`;
+  var addSqlParams = [req.body.parent_id, req.body.user_email, req.body.user_name,req.body.bbs_child_content];
+  connection.query(addSql, addSqlParams, function(err, result) {
+    if(err) {
+      console.log('[INSERT ERROR] - ',err.message);
+      return;
+    }
+    res.json({status: 0, info: '回复成功'});
+  })
+})
+
+//删除父留言
+apiRouter.get('/deleteBBS', (req, res) => {
+  var Sql = 'SELECT COUNT(*) AS num FROM bbs_child WHERE parent_id = ?';
+  var SqlParam = [req.query.bbs_id];
+  connection.query(Sql, SqlParam, function(err, result) {
+    if(err) {
+      console.log('[INSERT ERROR] - ',err.message);
+      return;
+    }
+    if (result[0].num > 0) {
+      var delSql = 'DELETE FROM bbs_child WHERE parent_id = ?';
+      connection.query(delSql, SqlParam, function(err, result) {
+        if(err) {
+          console.log('[INSERT ERROR] - ',err.message);
+          return;
+        }
+      })
+    }
+    var delSql2 = 'DELETE FROM bbs WHERE bbs_id = ?';            
+    connection.query(delSql2, SqlParam, function(err, result) {
+      if(err) {
+        console.log('[INSERT ERROR] - ',err.message);
+        return;
+      }
+      res.json({status: 0, info: '删除成功'});
+    })
+  })
+});
+
+//删除某条子留言
+apiRouter.get('/deleteChildBBS', (req, res) => {
+  var  delSql = `DELETE
+                 FROM bbs_child
+                 WHERE bbs_child_id = ?`;
+  var delSqlParam = [req.query.id];
+  connection.query(delSql, delSqlParam, function(err, result) {
+    if(err) {
+      console.log('[INSERT ERROR] - ',err.message);
+      return;
+    }
+    res.json({status: 0, info: '删除成功'});
+  })
+});
+
+//新增行博
+apiRouter.post('/addWalkingBlog', (req, res) => {
+  var addSql = `INSERT INTO walking_blog(walking_blog_content, walking_blog_tags)
+                VALUES(?,?)`;
+  var addSqlParams = [req.body.content, req.body.tags];
+  connection.query(addSql, addSqlParams, function(err, result) {
+    if(err) {
+      console.log('[INSERT ERROR] - ',err.message);
+      return;
+    }
+    res.json({status: 0, info: '添加成功'});
+  })              
+})
+
+//获取行博
+apiRouter.get('/getWalkingBlog', (req, res) => {
+  var sql = `SELECT * FROM walking_blog`;
+  connection.query(sql, function(err, result) {
+    if(err) {
+      console.log('[INSERT ERROR] - ',err.message);
+      return;
+    }
+    res.json({status: 0, info: '获取成功', data: result});
+  })
+})
+
+//获取线上文章数
+apiRouter.get('/getOnlineArticleCount', (req, res) => {
+  var sql = 'SELECT COUNT(*) AS num FROM blog WHERE blog_isShow = 1';
+  connection.query(sql, function(err, result) {
+    if(err) {
+      console.log('[INSERT ERROR] - ',err.message);
+      return;
+    }
+    res.json({status: 0, info: '获取成功', data: result[0].num});
+  })
+})
+
+//获取草稿箱文章数
+apiRouter.get('/getdraftCount', (req, res) => {
+  var sql = 'SELECT COUNT(*) AS num FROM blog WHERE blog_isShow = 0';
+  connection.query(sql, function(err, result) {
+    if(err) {
+      console.log('[INSERT ERROR] - ',err.message);
+      return;
+    }
+    res.json({status: 0, info: '获取成功', data: result[0].num});
+  })
+})
+
+//获取留言数
+apiRouter.get('/getbbsCount', (req, res) => {
+  var sql = 'SELECT COUNT(*) AS num FROM bbs WHERE type = 0';
+  connection.query(sql, function(err, result) {
+    if(err) {
+      console.log('[INSERT ERROR] - ',err.message);
+      return;
+    }
+    res.json({status: 0, info: '获取成功', data: result[0].num});
+  })
+})
+
+//获取用户数
+apiRouter.get('/getuserCount', (req, res) => {
+  var sql = 'SELECT COUNT(*) AS num FROM users';
+  connection.query(sql, function(err, result) {
+    if(err) {
+      console.log('[INSERT ERROR] - ',err.message);
+      return;
+    }
+    res.json({status: 0, info: '获取成功', data: result[0].num});
+  })
+})
+
+//获取行博数
+apiRouter.get('/getblogCount', (req, res) => {
+  var sql = 'SELECT COUNT(*) AS num FROM walking_blog';
+  connection.query(sql, function(err, result) {
+    if(err) {
+      console.log('[INSERT ERROR] - ',err.message);
+      return;
+    }
+    res.json({status: 0, info: '获取成功', data: result[0].num});
+  })
+})
 
 app.use('/api', apiRouter)
 

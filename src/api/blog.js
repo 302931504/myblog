@@ -5,3 +5,9 @@ export function getOnlineBlog () {
     return Promise.resolve(res.data);
   }).catch(err => err);
 };
+
+export function getOnlineArticleCount () {
+  return axios.get('/api/getOnlineArticleCount').then((res) => {
+    return Promise.resolve(res.data);
+  }).catch(err => err);
+};

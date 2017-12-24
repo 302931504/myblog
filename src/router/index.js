@@ -63,6 +63,12 @@ const UserCenter = (resolve) => {
     });
 }; 
 
+const WalkingBlog = (resolve) => {
+    import('../admin/walking-blog/walking-blog').then((module) => {
+        resolve(module);
+    });
+}; 
+
 export default new Router({
   routes: [
     {
@@ -104,6 +110,10 @@ export default new Router({
             {
               path: 'setup',
               component: UserCenter
+            },
+            {
+              path: 'walkingBlog',
+              component: WalkingBlog
             }
           ]
         }

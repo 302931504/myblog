@@ -4,7 +4,7 @@
         <router-link @click.native="click('留言管理', 'mess')" tag="li" class="option" to="/admin/mainBackStage/mess">
           <div class="icon mess-icon"><span class="fonts-icon icon-mess"></span></div>
           <div class="info">
-            <p class="number">20</p>
+            <p class="number">{{bbsCount}}</p>
             <p>留言管理</p>
           </div>
         </router-link>
@@ -18,28 +18,28 @@
         <router-link @click.native="click('用户追踪', 'follower')" tag="li" class="option" to="/admin/mainBackStage/follower">
           <div class="icon follow-icon"><span class="fonts-icon icon-follower"></span></div>
           <div class="info">
-            <p class="number">20</p>
+            <p class="number">{{usersCount}}</p>
             <p>用户追踪</p>
           </div>
         </router-link>
-        <li class="option">
+        <router-link @click.native="click('行博', 'walkingBlog')" tag="li" class="option" to="/admin/mainBackStage/walkingBlog">
           <div class="icon img-icon"><span class="fonts-icon icon-images"></span></div>
           <div class="info">
-            <p class="number">20</p>
-            <p>图片</p>
+            <p class="number">{{walkingBlogCount}}</p>
+            <p>行博</p>
           </div>
-        </li>
+        </router-link>
         <router-link @click.native="click('草稿箱', 'draft')" tag="li" class="option" to="/admin/mainBackStage/draft">
           <div class="icon draft-icon"><span class="fonts-icon icon-draft"></span></div>
           <div class="info">
-            <p class="number">{{draftNum}}</p>
+            <p class="number">{{draftCount}}</p>
             <p>草稿箱</p>
           </div>
         </router-link>
         <router-link @click.native="click('文章列表', 'blog')" tag="li" class="option" to="/admin/mainBackStage/blog">
           <div class="icon blog-icon"><span class="fonts-icon icon-blog"></span></div>
           <div class="info">
-            <p class="number">20</p>
+            <p class="number">{{onlineArticleCount}}</p>
             <p>线上文章</p>
           </div>
         </router-link>
@@ -49,18 +49,25 @@
 </template>
 
 <script>
-  import {mapActions, mapMutations} from 'vuex';
-  import {getDraftCount} from '../../api/draft';
+  import {mapGetters, mapMutations, mapActions} from 'vuex';
+  import {getdraftCount} from '../../api/draft';
+  import {getbbsCount} from '../../api/bbs';
+  import {getOnlineArticleCount} from '../../api/blog';
+  import {getuserCount} from '../../api/users';
+  import {getblogCount} from '../../api/walking-blog';
 
   export default {
-    data () {
-      return {
-        draftNum: 0
-      };
+    computed: {
+      ...mapGetters([
+        'draftCount',
+        'bbsCount',
+        'onlineArticleCount',
+        'usersCount',
+        'walkingBlogCount'
+      ])
     },
     created () {
-      this._getDraftCount();
-      console.log('123');
+      this.getCount();
     },
     methods: {
       click (text, name) {
@@ -68,10 +75,30 @@
         this.pushNav(item);
         this.setCurrentName(name);
       },
-      _getDraftCount () {
-        getDraftCount().then((res) => {
+      getCount () {
+        getdraftCount().then((res) => {
           if (res.status === 0) {
-            this.draftNum = res.data;
+            this.setDraftCount(res.data);
+          }
+        });
+        getbbsCount().then(res => {
+          if (res.status === 0) {
+            this.setBBSCount(res.data);
+          }
+        });
+        getOnlineArticleCount().then(res => {
+          if (res.status === 0) {
+            this.setOnlineCount(res.data);
+          }
+        });
+        getuserCount().then(res => {
+          if (res.status === 0) {
+            this.setUserCount(res.data);
+          }
+        });
+        getblogCount().then(res => {
+          if (res.status === 0) {
+            this.setWalkingBlogCount(res.data);
           }
         });
       },
@@ -79,7 +106,12 @@
         'pushNav'
       ]),
       ...mapMutations({
-        setCurrentName: 'SET_CURRENTNAME'
+        setCurrentName: 'SET_CURRENTNAME',
+        setDraftCount: 'SET_DFAFTCOUNT',
+        setBBSCount: 'SET_BBSCOUNT',
+        setOnlineCount: 'SET_ONLINEARTICLECOUNT',
+        setUserCount: 'SET_USERCOUNT',
+        setWalkingBlogCount: 'SET_WALKINGBLOGCOUNT'
       })
     }
   };

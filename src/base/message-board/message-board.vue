@@ -1,8 +1,8 @@
 <template>
-  <div class="wrapper">
-    <div class="content">
+  <div class="messBwrapper">
+    <div class="bbsContent">
       <ul class="parent-mess" @mouseout="currentIndex = -1">
-        <li v-for="(item, index) in bbsList" @mouseover="mouseover(index)">
+        <li v-for="(item, index) in bbsList" @mouseover="pmouseover(index)">
           <div class="an-info">
             <h3>{{item.name}}</h3>
             <div class="action">
@@ -12,16 +12,16 @@
           <div class="an-content" v-html="item.content"></div>
           <div class="an-time">
             <span class="time">{{_initTime(item.time)}}</span>
-            <span class="answer">回复</span>
-            <span class="delete">删除</span>
+            <span class="answer" @click.stop="answer(item)">回复</span>
+            <span class="delete" @click.stop="deletebbs(item.id)">删除</span>
           </div>
           <div class="child-mess" v-show="item.child.length > 0">
-            <ul>
-              <li style="border-bottom: none" v-for="child in item.child">
+            <ul @mouseout="currentChildIndex = -1">
+              <li style="border-bottom: none" v-for="(child, index) in item.child" @mouseover="cmouseover(index)">
                 <div class="child-an-con">
                   <div class="child-an-title">
-                    <p>{{child.sender_name}}<span>回复</span>{{child.receiver_name}}:</p>
-                    <p class="child-text">{{child.content}}</p>
+                    <p><span>{{child.user_name}}:</span><span class="child-text">{{child.content}}</span>
+                    <span class="delete" v-show="index === currentChildIndex" @click.stop="deleteChild(child.id)">删除</span></p>
                   </div>
                   <div class="child-an-time">{{_initTime(child.time)}}</div>
                 </div>
@@ -39,7 +39,8 @@
   export default {
     data () {
       return {
-        currentIndex: -1
+        currentIndex: -1,
+        currentChildIndex: -1
       };
     },
     props: {
@@ -54,15 +55,27 @@
       _initTime (time) {
         return initTime(time);
       },
-      mouseover (index) {
+      pmouseover (index) {
         this.currentIndex = index;
+      },
+      cmouseover (index) {
+        this.currentChildIndex = index;
+      },
+      answer (item) {
+        this.$emit('answer', item);
+      },
+      deletebbs (id) {
+        this.$emit('deletebbs', id);
+      },
+      deleteChild (id) {
+        this.$emit('deleteChild', id);
       }
     }
   };
 </script>
 
-<style scoped lang="less" rel="stylesheet/less">
-  .content{
+<style lang="less" rel="stylesheet/less">
+  .bbsContent{
     padding: 40px;
     background: #fff;
     .parent-mess li{
@@ -85,6 +98,23 @@
       .an-content{
         padding: 10px;
         color: #000;
+        blockquote{
+          display: block;
+          margin-bottom: 5px;
+          padding: 10px 14px;
+          font-size: 12px;
+          border-left: 3px solid #eee;
+          background-color: #f8f8f8;
+          word-break: break-all;
+          word-wrap: break-word;
+          white-space: pre-line;
+          pre{
+            font-weight: bold;
+            word-break: break-all;
+            word-wrap: break-word;
+            white-space: pre-line;
+          }
+        }
       }
       .an-time{
         font-size: 13px;
@@ -103,11 +133,15 @@
           display: flex;
           span{
             font-size: 14px;
-            color: #999;
             margin: 0 6px;
           }
           .child-text{
+            color: #999;
             margin-left: 10px;
+          }
+          .delete{
+            color: #999;
+            font-size: 13px;
           }
         }
         .child-an-time{
@@ -117,16 +151,8 @@
         }
       }
     }
-    blockquote{
-      display: block;
-      margin-bottom: 5px;
-      padding: 10px 14px;
-      font-size: 12px;
-      border-left: 3px solid #eee;
-      background-color: #f8f8f8;
-      word-break: break-all;
-      word-wrap: break-word;
-      white-space: pre-line;
+    .quote, .delete, .answer{
+      cursor: pointer;
     }
   }
 </style>

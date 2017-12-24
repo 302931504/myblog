@@ -2,9 +2,12 @@
   <div class="messWrapper">
     <search-box :options="[]" :readonly="true"></search-box>
     <div class="content">
-      <message-board :bbsList="bbs"></message-board>
-      <div><page-btn></page-btn></div>
+      <message-board :bbsList="bbs" @answer="answer" @deletebbs="_deleteBBS" @deleteChild="_deleteChildBBS"></message-board>
+      <page-btn></page-btn>
       <comment @addBBS="_addBBS"></comment>
+      <div class="answerWrapper" v-show="showAnswer">
+        <comment @addBBS="_addChildBBS"></comment>
+      </div>
     </div>
   </div>
 </template>
@@ -14,18 +17,24 @@
   import MessageBoard from '../../base/message-board/message-board';
   import Comment from '../../base/comment/comment';
   import PageBtn from '../../base/page-btn/page-btn';
-  import {getBBSList, getBBSChildList, addBBS} from '../../api/bbs';
+  import {getBBSList, getBBSChildList, addBBS, addChildBBS, deleteBBS, deleteChildBBS} from '../../api/bbs';
 
   export default {
     data () {
       return {
-        bbs: []
+        bbs: [],
+        showAnswer: false,
+        answerId: -1
       };
     },
     created () {
       this._getBBSList();
     },
     methods: {
+      answer (item) {
+        this.showAnswer = true;
+        this.answerId = item.id;
+      },
       _getBBSList () {
         getBBSList().then(res => {
           let arr = res.data;
@@ -37,6 +46,7 @@
                     name: arr[i].user_name,
                     content: arr[i].bbs_content,
                     time: arr[i].bbs_time,
+                    type: arr[i].type,
                     child: []});
             }
             this._getBBSChildList();
@@ -53,10 +63,8 @@
               for (let j = 0; j < arr2.length; j++) {
                 if (this.bbs[i].id === arr2[j].parent_id) {
                   this.bbs[i].child.push({id: arr2[j].bbs_child_id,
-                       sender_email: arr2[j].sender_email,
-                       sender_name: arr2[j].sender_name,
-                       receiver_email: arr2[j].receiver_email,
-                       receiver_name: arr2[j].receiver_name,
+                       user_email: arr2[j].user_email,
+                       user_name: arr2[j].user_name,
                        content: arr2[j].bbs_child_content,
                        time: arr2[j].bbs_child_time});
                 }
@@ -66,8 +74,28 @@
         });
       }, 
       _addBBS (item) {
-        item.reply_id = 0;
+        item.type = 0;
         addBBS(item).then(res => {
+          console.log(res);
+          this.$router.push({path: '/admin/mainBackStage/mess'});
+        });
+      },
+      _addChildBBS (item) {
+        item.parent_id = this.answerId;
+        addChildBBS(item).then(res => {
+          if (res.status === 0) {
+            this.showAnswer = false;
+            this.$router.replace({path: '/admin/mainBackStage/mess'});
+          }
+        });
+      },
+      _deleteBBS (id) {
+        deleteBBS(id).then(res => {
+          console.log(res);
+        });
+      },
+      _deleteChildBBS (id) {
+        deleteChildBBS(id).then(res => {
           console.log(res);
         });
       }
@@ -86,6 +114,13 @@
     color: #333;
     .content{
       margin-top: 10px;
+      .answerWrapper{
+        position: fixed;
+        top: 30%;
+        left: 30%;
+        background: #fff;
+        box-shadow: 8px 8px 6px #888888;
+      }
     }
   }
 </style>
