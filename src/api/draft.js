@@ -18,3 +18,9 @@ export function getdraftCount () {
 		return Promise.resolve(res.data);
 	}).catch(err => err);
 };
+
+export function getOneBlog (id) {
+	return axios.get('/api/getOneBlog?id=' + id).then(res => {
+		return Promise.resolve(res.data);
+	}).catch(err => err);
+};

@@ -24,7 +24,7 @@
             <td>{{_initTime(item.blog_updateTime)}}</td>
             <td>{{_initTime(item.blog_createTime)}}</td>
             <td>
-              <button type="button" class="edit" @click="editBlog(item)">编辑</button>
+              <button type="button" class="edit" @click="editBlog(item.blog_id)">编辑</button>
               <button type="button" class="delete" @click="_deletBlog(item.blog_id)">删除</button>
             </td>
           </tr>
@@ -48,8 +48,8 @@
       }
     },
     methods: {
-      editBlog (item) {
-        this.$emit('edit', item);
+      editBlog (id) {
+        this.$emit('edit', id);
       },
       _initTime (time) {
         return initTime(time);

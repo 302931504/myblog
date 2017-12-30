@@ -10,20 +10,19 @@
   import SearchBox from '../searchBox/searchBox';
   import BlogList from '../blogList/blogList';
   import PageBtn from '../../base/page-btn/page-btn';
-  import {getDraftByPage} from '../../api/draft'; 
+  import {initPageMixin} from '../../common/js/mixin';
+  import {getDraftByPage, getOneBlog} from '../../api/draft'; 
   import {mapMutations, mapActions, mapGetters} from 'vuex';
 
   export default {
+    mixins: [initPageMixin],
     data () {
       return {
         options: [
           {text: '现在发布', name: 'topBlogBtn'},
           {text: '批量删除', name: 'deleteAllBtn'}
         ],
-        blogs: [],
-        limit: 10,
-        pages: [],
-        currentPage: 1
+        blogs: []
       };
     },
     computed: {
@@ -37,39 +36,24 @@
       PageBtn
     },
     created () {
-      this._getDraftByPage();
-      this.initPage();
+      this.getByPage();
+      this.initPage(this.draftCount);
     },
     methods: {
-      editBlog (item) {
-        this.$router.push({path: '/admin/mainBackStage/editBlog'});
-        this.setEditBlog(item);
-        const nav = {
-          text: item.title,
-          name: 'editBlog'
-        };
-        this.pushNav(nav);
+      editBlog (id) {
+        getOneBlog(id).then(res => {
+          if (res.status === 0) {
+            this.setEditBlog(res.data[0]);
+            const nav = {
+              text: res.data[0].blog_title,
+              name: 'editBlog'
+            };
+            this.pushNav(nav);
+            this.$router.push({path: '/admin/mainBackStage/editBlog'});
+          }
+        }); 
       },
-      initPage () {
-        let pageCount = Math.ceil(this.draftCount / this.limit);
-        for (let i = 0; i < pageCount; i++) {
-          this.pages.push({page: i + 1});
-        }
-        console.log(this.pages);
-      },
-      pre () {
-        this.currentPage -= 1;
-        this._getDraftByPage();
-      },
-      next () {
-        this.currentPage += 1;
-        this._getDraftByPage();
-      },
-      clickPage (page) {
-        this.currentPage = page;
-        this._getDraftByPage();
-      },
-      _getDraftByPage () {
+      getByPage () {
         getDraftByPage(this.currentPage).then((res) => {
           console.log(res);
           if (res.status === 0) {

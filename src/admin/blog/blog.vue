@@ -2,7 +2,7 @@
   <div class="blogWrapper">
     <search-box :options="options" placeholder="请输入关键字"></search-box>
     <blog-list :blogs="blogs"></blog-list>
-    <page-btn></page-btn>
+    <page-btn :pageCount="pages" :currentPage="currentPage" @next="next" @clickPage="clickPage" @pre="pre"></page-btn>
   </div>
 </template>
 
@@ -10,9 +10,12 @@
   import SearchBox from '../searchBox/searchBox';
   import BlogList from '../blogList/blogList';
   import PageBtn from '../../base/page-btn/page-btn';
-  import {getOnlineBlog} from '../../api/blog';
+  import {getOnlineBlogByPage} from '../../api/blog';
+  import {initPageMixin} from '../../common/js/mixin';
+  import {mapGetters} from 'vuex';
 
   export default {
+    mixins: [initPageMixin],
     data () {
       return {
         options: [
@@ -22,12 +25,18 @@
         blogs: []
       };
     },
+    computed: {
+      ...mapGetters([
+        'onlineArticleCount'
+      ])
+    },
     created () {
-      this._getOnlineBlog();
+      this.getByPage();
+      this.initPage(this.onlineArticleCount);
     },
     methods: {
-      _getOnlineBlog () {
-        getOnlineBlog().then((res) => {
+      getByPage () {
+        getOnlineBlogByPage(this.currentPage).then((res) => {
           this.blogs = res.data;
         }).catch(err => err);
       }

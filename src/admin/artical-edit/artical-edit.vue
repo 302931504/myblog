@@ -84,8 +84,8 @@
   import LabelList from '../../admin/labelList/labelList';
   import OptionList from '../../base/option-list/option-list';
   import {showAttentionMixin} from '../../common/js/mixin';
-  import {saveBlog, getClassify} from '../../api/editor';
-  import {mapGetters} from 'vuex';
+  import {saveBlog, getClassify, updateBlog} from '../../api/editor';
+  import {mapGetters, mapMutations} from 'vuex';
 
   export default {
     mixins: [showAttentionMixin],
@@ -115,22 +115,26 @@
       saveArtical () {
         if (this.title === '') {
           this.showAttention('请输入文章标题', false);
-        } else if (this.tagVal === '') {
+        } else if (this.tags === '') {
           this.showAttention('请输入文章标签', false);
         } else if (this.summary === '') {
           this.showAttention('请输入文章摘要', false);
         } else if (this.artical === '') {
           this.showAttention('请输入文章内容', false);
-        } else {
+        } else if (!this.editBlog) {
           this._saveBlog();
+        } else {
+          this._updateBlog();
+          this.setEditBlog({});
         }
       },
       initBlog () {
-        this.title = this.editBlog.title;
-        this.artical = this.editBlog.content;
-        this.summary = this.editBlog.summary;
-        this.tagVal = this.editBlog.label;
-        this.model = this.editBlog.model;
+        this.title = this.editBlog.blog_title;
+        this.artical = this.editBlog.blog_content;
+        this.summary = this.editBlog.blog_description;
+        this.tags = this.editBlog.blog_tags;
+        this.model = this.editBlog.classify_text;
+        this.checked = this.editBlog.blog_isShow;
       },
       chooseModel () {
         this.showList = !this.showList;
@@ -174,6 +178,20 @@
           console.log(res);
         });
       },
+      _updateBlog () {
+        const blog = {
+          id: this.editBlog.blog_id,
+          title: this.title,
+          classify_text: this.model,
+          tags: this.tags,
+          description: this.summary,
+          content: this.artical,
+          isShow: this.checked
+        };
+        updateBlog(blog).then(res => {
+          console.log(res);
+        });
+      },
       _getClassify () {
         getClassify().then(res => {
           console.log(res);
@@ -183,7 +201,10 @@
             this.options.push({id: res.data[i].classify_id, text: res.data[i].classify_text});
           };
         });  
-      }
+      },
+      ...mapMutations({
+        setEditBlog: 'SET_EDITBLOG'
+      })
     },
     components: {
       Attention,

@@ -31,3 +31,17 @@ export function addClassify (text) {
     return Promise.resolve(res.data);
   }).catch(err => err);
 };
+
+export function updateBlog (item) {
+  return axios.post('/api/updateBlog', qs.stringify({
+    id: item.id,
+    title: item.title,
+    classify_text: item.classify_text,
+    tags: item.tags,
+    description: item.description,
+    content: item.content,
+    isShow: item.isShow
+  })).then(res => {
+    return Promise.resolve(res.data);
+  }).catch(err => err);
+};

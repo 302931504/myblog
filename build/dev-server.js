@@ -95,7 +95,8 @@ apiRouter.post('/saveBlog', (req, res) => {
         } else {
           classify_id = result[0].classify_id;
         }
-      var addSql = 'INSERT INTO blog(blog_title,classify_id,blog_tags,blog_description,blog_content,blog_isShow) VALUES (?,?,?,?,?,?)';
+      var addSql = `INSERT INTO blog(blog_title,classify_id,blog_tags,blog_description,blog_content,blog_isShow) 
+                    VALUES (?,?,?,?,?,?)`;
       var addSqlParams = [req.body.title,classify_id,req.body.tags,req.body.description,req.body.content,req.body.isShow];
       connection.query(addSql,addSqlParams,function (err, result) {
         if(err){
@@ -106,6 +107,49 @@ apiRouter.post('/saveBlog', (req, res) => {
       }) 
     });   
   // }
+});
+
+//获取文章
+apiRouter.get('/getOneBlog', (req, res) => {
+  var sql = `SELECT blog_id, blog_title, classify_text, blog_content, blog_tags, blog_description, blog_isShow
+             FROM blog b, classify c
+             WHERE b.classify_id = c.classify_id AND blog_id = ${req.query.id}`;
+  connection.query(sql, function (err, result) {
+    if(err){
+      console.log('[INSERT ERROR] - ',err.message);
+      return;
+    }
+    res.json({status: 0, info: '获取成功', data: result});
+  })
+});
+
+//更新文章
+apiRouter.post('/updateBlog', (req, res) => {
+  var sql = `SELECT classify_id FROM classify WHERE classify_text = ?`;
+  var sqlParam = [req.body.classify_text];
+  connection.query(sql, sqlParam, function(err, result) {
+    if(err){
+      console.log('[INSERT ERROR] - ',err.message);
+      return;
+    }
+    var upSql = `UPDATE blog
+               SET blog_title = ?,
+                   classify_id = ${result[0].classify_id},
+                   blog_tags = ?,
+                   blog_updateTime = NOW(),
+                   blog_description = ?,
+                   blog_content = ?,
+                   blog_isShow = ?
+               WHERE blog_id = ${req.body.id}`;
+    var upSqlParams = [req.body.title, req.body.tags, req.body.description, req.body.content, req.body.isShow];
+    connection.query(upSql, upSqlParams, function (err, result) {
+      if(err){
+        console.log('[INSERT ERROR] - ',err.message);
+        return;
+      }
+      res.json({status: 0, info: '更新成功'});
+    })
+  })
 });
 
 //获取分类
@@ -205,15 +249,22 @@ apiRouter.get('/addClassify', (req, res) => {
 
 //获取线上文章列表
 apiRouter.get('/getOnlineBlog', (req, res) => {
-  var sql = 'SELECT blog_id, blog_title, classify_text, blog_tags, blog_createTime, blog_updateTime FROM blog b, classify c WHERE b.classify_id = c.classify_id AND blog_isShow = 1';
-  connection.query(sql, function (err, result) {
+  const limit = 10;
+  let offset = (req.query.page - 1) * limit;
+  var sql = `SELECT blog_id, blog_title, classify_text, blog_tags, blog_createTime, blog_updateTime
+             FROM blog b, classify c 
+             WHERE b.classify_id = c.classify_id AND blog_isShow = 1
+             ORDER BY blog_updateTime DESC
+             LIMIT ?,?`;
+  var sqlParams = [offset, limit];
+  connection.query(sql, sqlParams, function (err, result) {
     if(err) {
       console.log('[INSERT ERROR] - ',err.message);
       return;
     }
     res.json({status: 0, data: result, info: '获取成功'});
   })
-})
+});
 
 //获取用户列表
 apiRouter.get('/getUserList', (req, res) => {
