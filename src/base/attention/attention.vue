@@ -52,6 +52,7 @@
     margin-left: -30%;
     border-radius: 0 0 6px 6px;
     background: #4F4F4F;
+    z-index: 9998;
     .content{
       display: flex;
       width: 50%;

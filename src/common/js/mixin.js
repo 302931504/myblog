@@ -1,3 +1,7 @@
+import {getClassify} from '../../api/editor';
+import {getOneBlog} from '../../api/draft';
+import {mapMutations, mapActions} from 'vuex';
+
 export const showAttentionMixin = {
   data () {
     return {
@@ -37,7 +41,8 @@ export const initPageMixin = {
     return {
       limit: 10,
       pages: [],
-      currentPage: 1
+      currentPage: 1,
+      showBtn: true
     };
   },
   methods: {
@@ -46,7 +51,6 @@ export const initPageMixin = {
       for (let i = 0; i < pageCount; i++) {
         this.pages.push({page: i + 1});
       }
-      console.log(this.pages);
     },
     pre () {
       this.currentPage -= 1;
@@ -59,6 +63,60 @@ export const initPageMixin = {
     clickPage (page) {
       this.currentPage = page;
       this.getByPage();
+    }
+  }
+};
+
+export const blogMixin = {
+  data () {
+    return {
+      options: []
+    };
+  },
+  methods: {
+    _getClassify () {
+      getClassify().then(res => {
+        if (res.status === 0) {
+          for (let i = 0; i < res.data.length; i++) {
+            this.options.push({text: res.data[i].classify_text, name: 'classify'});
+          }
+        }
+      });
+    },
+    editBlog (id) {
+      getOneBlog(id).then(res => {
+        if (res.status === 0) {
+          this.setEditBlog(res.data[0]);
+          const nav = {
+            text: res.data[0].blog_title,
+            name: 'editBlog'
+          };
+          this.pushNav(nav);
+          this.$router.push({path: '/admin/mainBackStage/editBlog'});
+        }
+      }); 
+    },
+    ...mapMutations({
+      setEditBlog: 'SET_EDITBLOG'
+    }),
+    ...mapActions([
+      'pushNav'
+    ])
+  }
+};
+
+export const cautionMixin = {
+  data () {
+    return {
+      text: '',
+      id: -1,
+      showFlag: false,
+      status: 0
+    };
+  },
+  methods: {
+    cancel () {
+      this.showFlag = false;
     }
   }
 };

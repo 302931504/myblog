@@ -1,11 +1,13 @@
 <template>
   <div class="followUsersWrapper">
+    <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
     <search-box :options="options" @clickOption="clickOption"></search-box>
     <div class="content">
       <follow-list :userList="userList" @deleteUser="_deleteUser"></follow-list>
     </div>
-    <page-btn></page-btn>
-    <follow-edit class="userEdit" v-show="showFlag" :showFlag="showFlag" @close="closeEdit" @addUser="addUser"></follow-edit>
+    <page-btn v-show="usersCount >= 10 && showBtn" :pageCount="pages" :currentPage="currentPage" @next="next" @clickPage="clickPage" @pre="pre"></page-btn>
+    <follow-edit class="userEdit" v-show="showFlag2" :showFlag="showFlag2" @close="closeEdit" @addUser="addUser"></follow-edit>
+    <caution :showFlag="showFlag" :text="text" @cancel="cancel" @sure="sure"></caution>
   </div>
 </template>
 
@@ -14,50 +16,63 @@
   import FollowList from '../followList/followList';
   import PageBtn from '../../base/page-btn/page-btn';
   import FollowEdit from '../../base/followEdit/followEdit';
+  import Caution from '../../admin/caution/caution';
+  import Attention from '../../base/attention/attention';
   import {getUserList, deleteUser} from '../../api/users';
+  import {cautionMixin, showAttentionMixin, initPageMixin} from '../../common/js/mixin';
+  import {mapGetters} from 'vuex';
 
   export default {
+    mixins: [cautionMixin, showAttentionMixin, initPageMixin],
     data () {
       return {
         options: [
-          {text: '添加用户', name: 'topBlogBtn'},
-          {text: '批量删除', name: 'deleteAllBtn'}
+          {text: '添加用户', name: 'addUser'}
         ],
-        showFlag: false,
+        showFlag2: false,
         userList: []
       };
     },
     created () {
-      this._getUserList();
+      this.getByPage();
+      this.initPage(this.usersCount);
+    },
+    computed: {
+      ...mapGetters([
+        'usersCount'
+      ])
     },
     methods: {
-      clickOption (name) {
-        if (name === 'topBlogBtn') {
-          this.showFlag = true;
+      clickOption (text) {
+        if (text === '添加用户') {
+          this.showFlag2 = true;
         }
       },
       closeEdit () {
-        this.showFlag = false;
+        this.showFlag2 = false;
       },
       addUser (item) {
         this.userList.push(item);
       },
-      editUser (item) {
-        this.user = item;
-        this.showChange = true;
-      },
       _deleteUser (id) {
-        deleteUser(id).then(res => {
+        this.showFlag = true;
+        this.text = '确认删除此用户吗？';
+        this.id = id; 
+      },
+      sure () {
+        deleteUser(this.id).then(res => {
           if (res.status === 0) {
             let index = this.userList.findIndex(item => {
-              return item.user_id === id;
+              return item.user_id === this.id;
             });
             this.userList.splice(index, 1);
+            this.showAttention(res.info, true);
+            this.showFlag = false;
           }
         }).catch(err => err);
       },
-      _getUserList () {
-        getUserList().then(res => {
+      getByPage () {
+        getUserList(this.currentPage).then(res => {
           if (res.status === 0) {
             this.userList = res.data;
           }
@@ -68,7 +83,9 @@
       SearchBox,
       FollowList,
       PageBtn,
-      FollowEdit
+      FollowEdit,
+      Caution,
+      Attention
     }
   };
 </script>

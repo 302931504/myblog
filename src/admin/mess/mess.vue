@@ -1,14 +1,16 @@
 <template>
   <div class="messWrapper">
+    <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
     <search-box :options="[]" :readonly="true"></search-box>
     <div class="content">
       <message-board :bbsList="bbs" @answer="answer" @deletebbs="_deleteBBS" @deleteChild="_deleteChildBBS"></message-board>
-      <page-btn></page-btn>
+      <page-btn v-show="bbsCount >= 10 && showBtn" :pageCount="pages" :currentPage="currentPage" @next="next" @clickPage="clickPage" @pre="pre"></page-btn>
       <comment @addBBS="_addBBS"></comment>
       <div class="answerWrapper" v-show="showAnswer">
         <comment @addBBS="_addChildBBS"></comment>
       </div>
     </div>
+    <caution :showFlag="showFlag" :text="text" @cancel="cancel" @sure="sure"></caution>
   </div>
 </template>
 
@@ -17,9 +19,14 @@
   import MessageBoard from '../../base/message-board/message-board';
   import Comment from '../../base/comment/comment';
   import PageBtn from '../../base/page-btn/page-btn';
+  import Attention from '../../base/attention/attention';
+  import Caution from '../../admin/caution/caution';
   import {getBBSList, getBBSChildList, addBBS, addChildBBS, deleteBBS, deleteChildBBS} from '../../api/bbs';
+  import {initPageMixin, showAttentionMixin, cautionMixin} from '../../common/js/mixin';
+  import {mapGetters} from 'vuex';
 
   export default {
+    mixins: [initPageMixin, showAttentionMixin, cautionMixin],
     data () {
       return {
         bbs: [],
@@ -29,6 +36,12 @@
     },
     created () {
       this._getBBSList();
+      this.initPage(this.bbsCount);
+    },
+    computed: {
+      ...mapGetters([
+        'bbsCount'
+      ])
     },
     methods: {
       answer (item) {
@@ -36,7 +49,7 @@
         this.answerId = item.id;
       },
       _getBBSList () {
-        getBBSList().then(res => {
+        getBBSList(this.currentPage).then(res => {
           let arr = res.data;
           if (res.status === 0) {
             for (let i = 0; i < arr.length; i++) {
@@ -50,7 +63,6 @@
                     child: []});
             }
             this._getBBSChildList();
-            console.log(this.bbs);
           }
         });
       },
@@ -76,8 +88,9 @@
       _addBBS (item) {
         item.type = 0;
         addBBS(item).then(res => {
-          console.log(res);
-          this.$router.push({path: '/admin/mainBackStage/mess'});
+          if (res.status === 0) {
+            this.showAttention(res.info, true);
+          }
         });
       },
       _addChildBBS (item) {
@@ -85,26 +98,48 @@
         addChildBBS(item).then(res => {
           if (res.status === 0) {
             this.showAnswer = false;
-            this.$router.replace({path: '/admin/mainBackStage/mess'});
+            this.showAttention(res.info, true);
           }
         });
       },
       _deleteBBS (id) {
-        deleteBBS(id).then(res => {
-          console.log(res);
-        });
+        this.showFlag = true;
+        this.text = '确认删除？';
+        this.id = id;
+        this.status = 0;
+      },
+      sure () {
+        if (this.status === 0) {
+          deleteBBS(this.id).then(res => {
+            if (res.status === 0) {
+              this.showAttention(res.info, true);
+              this.showFlag = false;
+            }
+          });
+        }
+        if (this.status === 1) {
+          deleteChildBBS(this.id).then(res => {
+            if (res.status === 0) {
+              this.showAttention(res.info, true);
+              this.showFlag = false;
+            }
+          });
+        }
       },
       _deleteChildBBS (id) {
-        deleteChildBBS(id).then(res => {
-          console.log(res);
-        });
+        this.showFlag = true;
+        this.text = '确认删除？';
+        this.id = id;
+        this.status = 1;
       }
     },
     components: {
       SearchBox,
       PageBtn,
       MessageBoard,
-      Comment
+      Comment,
+      Attention,
+      Caution
     }
   };
 </script>

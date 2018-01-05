@@ -1,4 +1,4 @@
-// import qs from 'qs';
+import qs from 'qs';
 import axios from 'axios';
 
 export function getDraftByPage (page) {
@@ -13,14 +13,16 @@ export function deletBlog (id) {
 	}).catch(err => err);
 };
 
-export function getdraftCount () {
-	return axios.get('/api/getdraftCount').then((res) => {
+export function getOneBlog (id) {
+	return axios.get('/api/getOneBlog?id=' + id).then(res => {
 		return Promise.resolve(res.data);
 	}).catch(err => err);
 };
 
-export function getOneBlog (id) {
-	return axios.get('/api/getOneBlog?id=' + id).then(res => {
+export function publishBlog (id) {
+	return axios.post('/api/publishBlog', qs.stringify({
+		id: id
+	})).then(res => {
 		return Promise.resolve(res.data);
 	}).catch(err => err);
 };

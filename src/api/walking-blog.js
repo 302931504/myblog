@@ -15,9 +15,3 @@ export function getWalkingBlog () {
     return Promise.resolve(res.data);
   }).catch(err => err);
 };
-
-export function getblogCount () {
-	return axios.get('/api/getblogCount').then((res) => {
-		return Promise.resolve(res.data);
-	}).catch(err => err);
-};

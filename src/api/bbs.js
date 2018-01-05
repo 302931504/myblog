@@ -1,8 +1,8 @@
 import axios from 'axios';
 import qs from 'qs';
 
-export function getBBSList () {
-	return axios.get('/api/getBBSList').then((res) => {
+export function getBBSList (page) {
+	return axios.get('/api/getBBSList?page=' + page).then((res) => {
 		return Promise.resolve(res.data);
 	}).catch(err => err);
 };
@@ -43,12 +43,6 @@ export function deleteBBS (id) {
 
 export function deleteChildBBS (id) {
 	return axios.get('/api/deleteChildBBS?id=' + id).then(res => {
-		return Promise.resolve(res.data);
-	}).catch(err => err);
-};
-
-export function getbbsCount () {
-	return axios.get('/api/getbbsCount').then(res => {
 		return Promise.resolve(res.data);
 	}).catch(err => err);
 };

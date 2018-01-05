@@ -53,20 +53,44 @@ app.use(session({
   saveUninitialized: true
 }));
 
+//登录博客系统
 const apiRouter = express.Router()
-/*apiRouter.post('/login', (req, res) => {
+apiRouter.post('/login', (req, res) => {
   const username = req.body.username
   const password = req.body.password
-  if (username === 'admin' || password === '123456') {
-    req.session.user = {
-      username: username,
-      password: password
+  var sql = `SELECT *, COUNT(*) num FROM manager WHERE m_account = ?`;
+  var sqlParam = [username];
+  connection.query(sql, sqlParam, function (err, result) {
+    if (err) {
+      console.log('[INSERT ERROR] - ',err.message);
+      return;
     }
-    res.json({status: 0, info: '登录成功'})
+    if (result[0].num <= 0) {
+      res.json({status: -1, info: '不存在此账号'});
+    }
+    if (result[0].num > 0) {
+      if (result[0].m_password === password) {
+        res.json({status: 0, info: '登录成功'});
+        req.session.user = {
+          username: username,
+          password: password
+        };
+      } else {
+        res.json({status: -1, info: '密码错误'});
+      }
+    }
+  });
+});
+
+//退出博客系统
+apiRouter.get('/logout', (req, res) => {
+  if (req.session.user === {}) {
+    res.json({status: -1,info: '未登录'});
   } else {
-    res.json({status: -1, info: '不存在此账号'})
+    req.session.user = {};
+    res.json({status: 0,info: '退出成功'});
   }
-})*/
+})
 
 //新增文章
 apiRouter.post('/saveBlog', (req, res) => {
@@ -268,8 +292,11 @@ apiRouter.get('/getOnlineBlog', (req, res) => {
 
 //获取用户列表
 apiRouter.get('/getUserList', (req, res) => {
-  var sql = 'SELECT * FROM users';
-  connection.query(sql,function(err, result) {
+  const limit = 10;
+  let offset = (req.query.page - 1) * limit;
+  var sql = 'SELECT * FROM users LIMIT ?,?';
+  var sqlParams = [offset, limit];
+  connection.query(sql,sqlParams,function(err, result) {
     if(err) {
       console.log('[INSERT ERROR] - ',err.message);
       return;
@@ -319,8 +346,15 @@ apiRouter.get('/deleteUser', (req, res) => {
 
 //获取父留言板列表
 apiRouter.get('/getBBSList', (req, res) => {
-  var sql = 'SELECT * FROM bbs WHERE reply_id = 0 AND type = 0 ORDER BY bbs_time DESC';
-  connection.query(sql,function(err, result) {
+  const limit = 10;
+  let offset = (req.query.page - 1) * limit;
+  var sql = `SELECT * 
+             FROM bbs 
+             WHERE type = 0 
+             ORDER BY bbs_time DESC
+             LIMIT ?,?`;
+  var sqlParams = [offset, limit];
+  connection.query(sql,sqlParams,function(err, result) {
     if(err) {
       console.log('[INSERT ERROR] - ',err.message);
       return;
@@ -438,67 +472,91 @@ apiRouter.get('/getWalkingBlog', (req, res) => {
   })
 })
 
-//获取线上文章数
-apiRouter.get('/getOnlineArticleCount', (req, res) => {
-  var sql = 'SELECT COUNT(*) AS num FROM blog WHERE blog_isShow = 1';
+//获取博客相关数目
+apiRouter.get('/getNum', (req, res) => {
+  var sql = 'SELECT * FROM vw_blog_count';
   connection.query(sql, function(err, result) {
     if(err) {
       console.log('[INSERT ERROR] - ',err.message);
       return;
     }
-    res.json({status: 0, info: '获取成功', data: result[0].num});
+    res.json({status: 0, info: '获取成功', data: result});
   })
 })
 
-//获取草稿箱文章数
-apiRouter.get('/getdraftCount', (req, res) => {
-  var sql = 'SELECT COUNT(*) AS num FROM blog WHERE blog_isShow = 0';
-  connection.query(sql, function(err, result) {
+//获取关键文章
+apiRouter.get('/getKeyBlog', (req, res) => {
+  var sql = `SELECT blog_id, blog_title, classify_text, blog_tags, blog_createTime, blog_updateTime
+             FROM blog b, classify c
+             WHERE b.classify_id = c.classify_id AND blog_isShow = ${req.query.isShow}
+             AND blog_id IN (SELECT DISTINCT blog_id
+                             FROM blog
+                             WHERE blog_content LIKE ? OR blog_title LIKE ? OR blog_title LIKE ? OR classify_text LIKE ?)
+             ORDER BY blog_updateTime DESC`;
+  var sqlParam = [`%${req.query.keyWord}%`, `%${req.query.keyWord}%`, `%${req.query.keyWord}%`, `%${req.query.keyWord}%`];
+  connection.query(sql, sqlParam, function(err, result) {
     if(err) {
       console.log('[INSERT ERROR] - ',err.message);
       return;
     }
-    res.json({status: 0, info: '获取成功', data: result[0].num});
+    res.json({status: 0, info: '获取成功', data: result});
   })
 })
 
-//获取留言数
-apiRouter.get('/getbbsCount', (req, res) => {
-  var sql = 'SELECT COUNT(*) AS num FROM bbs WHERE type = 0';
-  connection.query(sql, function(err, result) {
+//获取相关分类下的文章
+apiRouter.get('/getClassifyBlog', (req, res) => {
+  var sql = `SELECT blog_id, blog_title, classify_text, blog_tags, blog_createTime, blog_updateTime
+             FROM blog b, classify c
+             WHERE b.classify_id = c.classify_id AND blog_isShow = ${req.query.isShow} 
+                AND classify_text = ?
+             ORDER BY blog_updateTime DESC`;
+  var sqlParam = [req.query.text];
+  connection.query(sql, sqlParam, function(err, result) {
     if(err) {
       console.log('[INSERT ERROR] - ',err.message);
       return;
     }
-    res.json({status: 0, info: '获取成功', data: result[0].num});
+    res.json({status: 0, info: '获取成功', data: result});
+  })              
+})
+
+//发布文章
+apiRouter.post('/publishBlog', (req, res) => {
+  var upSql = `UPDATE blog
+               SET blog_isShow = 1
+               WHERE blog_id = ?`;
+  var upSqlParam = [req.body.id];
+  connection.query(upSql, upSqlParam, function(err, result) {
+    if(err) {
+      console.log('[INSERT ERROR] - ',err.message);
+      return;
+    }
+    res.json({status: 0, info: '发布成功'});
   })
 })
 
-//获取用户数
-apiRouter.get('/getuserCount', (req, res) => {
-  var sql = 'SELECT COUNT(*) AS num FROM users';
-  connection.query(sql, function(err, result) {
+//文章移稿
+apiRouter.post('/draftBlog', (req, res) => {
+  var upSql = `UPDATE blog
+               SET blog_isShow = 0
+               WHERE blog_id = ?`;
+  var upSqlParam = [req.body.id];
+  connection.query(upSql, upSqlParam, function(err, result) {
     if(err) {
       console.log('[INSERT ERROR] - ',err.message);
       return;
     }
-    res.json({status: 0, info: '获取成功', data: result[0].num});
-  })
-})
-
-//获取行博数
-apiRouter.get('/getblogCount', (req, res) => {
-  var sql = 'SELECT COUNT(*) AS num FROM walking_blog';
-  connection.query(sql, function(err, result) {
-    if(err) {
-      console.log('[INSERT ERROR] - ',err.message);
-      return;
-    }
-    res.json({status: 0, info: '获取成功', data: result[0].num});
+    res.json({status: 0, info: '移稿成功'});
   })
 })
 
 app.use('/api', apiRouter)
+
+function checkSession (item) {
+  if (!req.session.user) {
+    return false;
+  }
+}
 
 const compiler = webpack(webpackConfig)
 

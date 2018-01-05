@@ -3,12 +3,6 @@ import Router from 'vue-router';
 
 Vue.use(Router);
 
-const Admin = (resolve) => {
-    import('../admin/admin/admin').then((module) => {
-        resolve(module);
-    });
-};
-
 const Login = (resolve) => {
     import('../admin/login/login').then((module) => {
         resolve(module);
@@ -72,50 +66,44 @@ const WalkingBlog = (resolve) => {
 export default new Router({
   routes: [
     {
+      path: '/login',
+      component: Login
+    },
+    {
       path: '/admin',
-      component: Admin,
+      component: MainBackstage,
       children: [
         {
-          path: 'login',
-          component: Login
+          path: 'home',
+          component: HomePage
         },
         {
-          path: 'mainBackStage',
-          component: MainBackstage,
-          children: [
-            {
-              path: 'home',
-              component: HomePage
-            },
-            {
-              path: 'blog',
-              component: Blog
-            },
-            {
-              path: 'follower',
-              component: FollowUser
-            },
-            {
-              path: 'editBlog',
-              component: ArticalEdit
-            },
-            {
-              path: 'draft',
-              component: Draft
-            },
-            {
-              path: 'mess',
-              component: Mess
-            },
-            {
-              path: 'setup',
-              component: UserCenter
-            },
-            {
-              path: 'walkingBlog',
-              component: WalkingBlog
-            }
-          ]
+          path: 'blog',
+          component: Blog
+        },
+        {
+          path: 'follower',
+          component: FollowUser
+        },
+        {
+          path: 'editBlog',
+          component: ArticalEdit
+        },
+        {
+          path: 'draft',
+          component: Draft
+        },
+        {
+          path: 'mess',
+          component: Mess
+        },
+        {
+          path: 'setup',
+          component: UserCenter
+        },
+        {
+          path: 'walkingBlog',
+          component: WalkingBlog
         }
       ]
     }

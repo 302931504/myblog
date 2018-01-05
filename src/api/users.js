@@ -16,14 +16,8 @@ export function deleteUser (id) {
 	}).catch(err => err);
 };
 
-export function getUserList (item) {
-	return axios.get('/api/getUserList').then((res) => {
-		return Promise.resolve(res.data);
-	}).catch(err => err);
-};
-
-export function getuserCount () {
-	return axios.get('/api/getuserCount').then((res) => {
+export function getUserList (page) {
+	return axios.get('/api/getUserList?page=' + page).then((res) => {
 		return Promise.resolve(res.data);
 	}).catch(err => err);
 };

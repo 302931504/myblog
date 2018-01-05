@@ -1,13 +1,13 @@
 <template>
   <div class="searchBoxWrapper">
     <div class="inputWrapper" @click="showList = true">
-      <input type="text" name="search" :placeholder="placeholder" :readonly="readonly">
+      <input type="text" name="search" :placeholder="placeholder" :readonly="readonly" v-model="keyWord">
       <div class="optionListWrapper" v-show="readonly && showList">
         <option-list></option-list>
       </div>
     </div>
-    <button class="searchBtn" type="button" v-show="!readonly">查询</button>
-    <button v-for="item in options" :class="item.name" type="button" @click="clickOption(item.name)">{{item.text}}</button>
+    <button class="searchBtn" type="button" v-show="!readonly" @click="search">查询</button>
+    <button v-for="item in options" :class="item.name" type="button" @click="clickOption(item.text)">{{item.text}}</button>
   </div>
 </template>
 
@@ -17,10 +17,11 @@
   export default {
     data () {
       return {
-        showList: false
+        showList: false,
+        keyWord: ''
       };
     },
-    props: {
+    props: { 
       options: {
         type: Array,
         default: function () {
@@ -37,8 +38,13 @@
       }
     },
     methods: {
-      clickOption (name) {
-        this.$emit('clickOption', name);
+      clickOption (text) {
+        this.$emit('clickOption', text);
+      },
+      search () {
+        if (this.keyWord) {
+          this.$emit('searchKeyBlog', this.keyWord);
+        }
       }
     },
     components: {
@@ -97,16 +103,16 @@
     .searchBtn{
       background-color: #009688;
     }
-    .newBlogBtn{
+    .classify{
       background-color: #1E9FFF;
     }
     .editBlog{
       background-color: #1E9FFF;
     }
-    .topBlogBtn{
+    .addUser{
       background-color: #5FB878;
     }
-    .deleteAllBtn{
+    .publish{
       background-color: #FF5722;
     }
     .text{

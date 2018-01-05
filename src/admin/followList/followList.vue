@@ -15,7 +15,6 @@
           <td>{{item.user_name}}</td>
           <td>{{item.user_email}}</td>
           <td>
-            <button type="button" class="edit" @click.stop="editUser(item)">编辑</button>
             <button type="button" class="delete" @click.stop="deleteUser(item.user_id)">删除</button>
           </td>
         </tr>
@@ -37,8 +36,6 @@
     methods: {
       deleteUser (id) {
         this.$emit('deleteUser', id);
-      },
-      editUser (item) {
       }
     }
   };

@@ -1,5 +1,17 @@
 <template>
   <div class="leaveMessWrapper">
+    <div class="new">
+      <label>账号</label>
+      <input type="text" placeholder="请输入账号" v-model="account">
+    </div>
+    <div class="new">
+      <label>昵称</label>
+      <input type="password" placeholder="请输入昵称" v-model="nickname">
+    </div>
+    <div class="new">
+      <label>邮箱</label>
+      <input type="email" placeholder="请输入邮箱" v-model="email">
+    </div>
     <div class="old">
       <label>旧密码</label>
       <input type="password" placeholder="请输入旧密码" v-model="oldPass">
@@ -23,6 +35,9 @@
   export default {
     data () {
       return {
+        account: '',
+        nickname: '',
+        email: '',
         oldPass: '',
         newPass: '',
         sureNewPass: ''

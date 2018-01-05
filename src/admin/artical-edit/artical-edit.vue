@@ -175,7 +175,9 @@
           isShow: this.checked
         };
         saveBlog(blog).then(res => {
-          console.log(res);
+          if (res.status === 0) {
+            this.showAttention(res.info, true);
+          }
         });
       },
       _updateBlog () {
@@ -189,7 +191,9 @@
           isShow: this.checked
         };
         updateBlog(blog).then(res => {
-          console.log(res);
+          if (res.status === 0) {
+            this.showAttention(res.info, true);
+          }
         });
       },
       _getClassify () {

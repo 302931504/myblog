@@ -55,14 +55,14 @@
         }
       },
       clickNav (item) {
-        this.$router.push({path: `/admin/mainBackStage/${item.name}`});
+        this.$router.push({path: `/admin/${item.name}`});
         this.pushNav(item);
         this.setCurrentName(item.name);
       },
       close (name) {
         this.deleteNav(name);
         this.setCurrentName(this.navList[this.navList.length - 1].name);
-        this.$router.push({path: `/admin/mainBackStage/${this.currentName}`});
+        this.$router.push({path: `/admin/${this.currentName}`});
       },
       lockScreen () {
         this.lock = true;

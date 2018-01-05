@@ -1,5 +1,6 @@
 <template>
   <div class="topBarWrapper">
+    <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
     <div class="left">
       <div class="logo">
         <img src="./logo.png" alt="">
@@ -35,16 +36,18 @@
 <script>
   import OptionList from '../../base/option-list/option-list';
   import Remind from '../../base/remind/remind';
+  import Attention from '../../base/attention/attention';
   import {mapActions, mapMutations} from 'vuex';
-  import {circleMixin} from '../../common/js/mixin';
+  import {circleMixin, showAttentionMixin} from '../../common/js/mixin';
+  import {logout} from '../../api/login';
 
   export default {
-    mixins: [circleMixin],
+    mixins: [circleMixin, showAttentionMixin],
     data () {
       return {
         options: [
-          {text: '修改密码', name: 'setup', router: true, routername: 'setup'},
-          {text: '退出', name: 'logout', router: true, routername: 'login'}
+          {text: '修改资料', name: 'setup', routername: 'setup'},
+          {text: '退出', name: 'logout'}
         ],
         showRemind: true
       };
@@ -60,11 +63,17 @@
       },
       clickoption (item) {
         if (item.name === 'setup') {
-          this.$router.push({path: `/admin/mainBackStage/${item.name}`});
+          this.$router.push({path: `/admin/${item.name}`});
           this.pushNav(item);
           this.setCurrentName(item.name);
         } if (item.name === 'logout') {
-          this.$router.push({path: `/admin/${item.routername}`});
+          logout().then(res => {
+            if (res.status === 0) {
+              this.$router.push({path: `/login`});
+            } else {
+              this.showAttention(res.info, false);
+            }
+          });
         }
       },
       lockScreen () {
@@ -79,7 +88,8 @@
     },
     components: {
       OptionList,
-      Remind
+      Remind,
+      Attention
     }
   };
 </script>

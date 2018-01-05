@@ -6,14 +6,8 @@
 </template>
 
 <script>
-  import Login from './admin/login/login';
-  import MainBackstage from './admin/mainBackStage/mainBackStage';
-
   export default {
-    components: {
-      Login,
-      MainBackstage    
-    }
+    
   };
 </script>
 

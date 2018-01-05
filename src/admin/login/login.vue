@@ -1,5 +1,5 @@
 <template>
-  <div class="loginWrapper" v-show="!isLogin">
+  <div class="loginWrapper">
     <div class="loginBox">
       <div class="logoWrapper">
         <img src="./logo.png" alt="good-doer">
@@ -15,17 +15,16 @@
 </template>
 
 <script>
-  import qs from 'qs';
   import Attention from '../../base/attention/attention';
   import {showAttentionMixin} from '../../common/js/mixin';
+  import {login} from '../../api/login';
 
   export default {
     mixins: [showAttentionMixin],
     data () {
       return {
         username: '',
-        password: '',
-        isLogin: false
+        password: ''
       };
     },
     methods: {
@@ -35,17 +34,16 @@
         } else if (this.password === '') {
           this.showAttention('请输入密码', false);
         } else {
-          this.$http.post('api/login', qs.stringify({
+          const user = {
             username: this.username,
             password: this.password
-          })).then((res) => {
-            const data = res.data;
-            if (data.status === 0) {
-              console.log(data.info);
-              this.isLogin = true;
-              this.$router.push({path: '/admin/mainBackStage'});
+          };
+          login(user).then((res) => {
+            if (res.status === 0) {
+              console.log(res.info);
+              this.$router.push({path: '/admin/home'});
             } else {
-              this.showAttention(data.info, false);
+              this.showAttention(res.info, false);
             }
           }).catch(err => err);
         }
@@ -59,7 +57,10 @@
 
 <style scoped lang="less" rel="stylesheet/less">
   .loginWrapper{
+    width: 100%;
     height: 100%;
+    background: url('./bg.jpg') no-repeat;
+    background-size: cover;
   }
   .loginBox{
     position: absolute;
