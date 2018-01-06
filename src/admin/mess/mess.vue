@@ -4,7 +4,7 @@
     <search-box :options="[]" :readonly="true"></search-box>
     <div class="content">
       <message-board :bbsList="bbs" @answer="answer" @deletebbs="_deleteBBS" @deleteChild="_deleteChildBBS"></message-board>
-      <page-btn v-show="bbsCount >= 10 && showBtn" :pageCount="pages" :currentPage="currentPage" @next="next" @clickPage="clickPage" @pre="pre"></page-btn>
+      <page-btn v-show="bbsCount > 10 && showBtn" :pageCount="pages" :currentPage="currentPage" @next="next" @clickPage="clickPage" @pre="pre"></page-btn>
       <comment @addBBS="_addBBS"></comment>
       <div class="answerWrapper" v-show="showAnswer">
         <comment @addBBS="_addChildBBS"></comment>
@@ -23,7 +23,7 @@
   import Caution from '../../admin/caution/caution';
   import {getBBSList, getBBSChildList, addBBS, addChildBBS, deleteBBS, deleteChildBBS} from '../../api/bbs';
   import {initPageMixin, showAttentionMixin, cautionMixin} from '../../common/js/mixin';
-  import {mapGetters} from 'vuex';
+  import {mapGetters, mapMutations} from 'vuex';
 
   export default {
     mixins: [initPageMixin, showAttentionMixin, cautionMixin],
@@ -68,7 +68,6 @@
       },
       _getBBSChildList () {
         getBBSChildList().then(res => {
-          console.log(res);
           let arr2 = res.data;
           if (res.status === 0) {
             for (let i = 0; i < this.bbs.length; i++) {
@@ -90,6 +89,7 @@
         addBBS(item).then(res => {
           if (res.status === 0) {
             this.showAttention(res.info, true);
+            this.routerGo();
           }
         });
       },
@@ -99,6 +99,7 @@
           if (res.status === 0) {
             this.showAnswer = false;
             this.showAttention(res.info, true);
+            this.routerGo();
           }
         });
       },
@@ -125,13 +126,23 @@
             }
           });
         }
+        setTimeout(() => {
+          this.routerGo();
+        }, 4000);
+      },
+      routerGo () {
+        this.setBackPath(this.$route.path);
+        this.$router.push('/admin/back');
       },
       _deleteChildBBS (id) {
         this.showFlag = true;
         this.text = '确认删除？';
         this.id = id;
         this.status = 1;
-      }
+      },
+      ...mapMutations({
+        setBackPath: 'SET_BACKPATH'
+      })
     },
     components: {
       SearchBox,

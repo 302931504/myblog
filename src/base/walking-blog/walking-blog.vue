@@ -1,38 +1,34 @@
 <template>
-  <div class="walkListWrapper">
-    <ul>
-      <li v-for="item in blogList">
+  <transition name="slide">
+    <div class="walkingBlogWrapper">
+      <div class="blogContent">
         <div class="time">
-          <div class="day">{{getDay(item.time)}}</div>
-          <p class="month">{{getMonth(item.time)}}</p>
+          <div class="day">{{getDay(editBlog.time)}}</div>
+          <p class="month">{{getMonth(editBlog.time)}}</p>
         </div>
         <div class="main">
           <div class="content">
-            {{item.content}}
+            {{editBlog.content}}
           </div>
           <div class="tags">
-            <span v-for="tag in item.tags">● {{tag}}</span>
-          </div>
-          <div class="about">
-            <span>热度({{item.hot}})</span>
-            <span>评论(20)</span>
-            <span @click.stop="clickwalkingBlog(item)">全文链接</span>
+            <span v-for="tag in editBlog.tags">● {{tag}}</span>
           </div>
         </div>
-      </li>
-    </ul>
-  </div>
+      </div>
+      <comment></comment>
+    </div>
+  </transition>
 </template>
 
 <script>
+  import Comment from '../comment/comment';
+  import {mapGetters} from 'vuex';
+
   export default {
-    props: {
-      blogList: {
-        type: Array,
-        default: function () {
-          return [];
-        }
-      }
+    computed: {
+      ...mapGetters([
+        'editBlog'
+      ])
     },
     methods: {
       getDay (time) {
@@ -42,19 +38,25 @@
       getMonth (time) {
         let myDate = new Date(time);
         return myDate.getMonth() + 1;
-      },
-      clickwalkingBlog (id) {
-        this.$emit('selectBlog', id);
       }
+    },
+    components: {
+      Comment
     }
   };
 </script>
 
 <style scoped lang="less" rel="stylesheet/less">
-  .walkListWrapper{
-    li{
+  .walkingBlogWrapper{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    background: #fff;
+    .blogContent{
       display: flex;
-      width: 640px;
       .time{
         width: 80px;
         .day{
@@ -111,16 +113,13 @@
             background: #828d95;
           }
         }
-        .about{
-          font-size: 0;
-          color: #828d95;
-          margin-top: 20px;
-          span{
-            font-size: 12px;
-            margin-right: 25px;
-          }
-        }
       }
     }
+  }
+  .slide-enter-active, .slide-leave-active{
+    transition: all 0.6s;
+  }
+  .slide-enter, .slide-leave-to{
+    transform: translate3d(100%, 0, 0); 
   }
 </style>

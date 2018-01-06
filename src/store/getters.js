@@ -13,3 +13,7 @@ export const onlineArticleCount = state => state.onlineArticleCount;
 export const usersCount = state => state.usersCount;
 
 export const walkingBlogCount = state => state.walkingBlogCount;
+
+export const backPath = state => state.backPath;
+
+export const type = state => state.type;

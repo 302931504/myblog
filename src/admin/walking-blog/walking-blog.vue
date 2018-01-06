@@ -11,14 +11,16 @@
       </div>  
     </div>
     <div class="walkingListBox">
-      <walking-list :blogList="walkingBlogs"></walking-list>
+      <walking-list :blogList="walkingBlogs" @selectBlog="selectBlog"></walking-list>
     </div>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
   import WalkingList from '../../base/walking-list/walking-list'; 
   import {addWalkingBlog, getWalkingBlog} from '../../api/walking-blog';
+  import {mapMutations} from 'vuex';
   export default {
     data () {
       return {
@@ -31,13 +33,20 @@
       this._getWalkingBlog();
     },
     methods: {
+      selectBlog (item) {
+        this.setEditBlog(item);
+        this.$router.push({path: `/admin/walkingBlog/${item.id}`});
+      },
       _addWalkingBlog () {
         const blog = {
           content: this.content,
           tags: this.tags
         };
         addWalkingBlog(blog).then(res => {
-          console.log(res);
+          if (res.status === 0) {
+            this.setBackPath(this.$route.path);
+            this.$router.push('/admin/back');
+          }
         });
       },
       _getWalkingBlog () {
@@ -53,7 +62,11 @@
             }
           }
         });
-      }
+      },
+      ...mapMutations({
+        setEditBlog: 'SET_EDITBLOG',
+        setBackPath: 'SET_BACKPATH'
+      })
     },
     components: {
       WalkingList
@@ -63,6 +76,7 @@
 
 <style scoped lang="less" rel="stylesheet/less">
   .walkBlogWrapper{
+    position: relative;
     color: #000;
     width: 80%;
     margin: 0 auto;

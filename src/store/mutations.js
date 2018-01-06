@@ -30,7 +30,13 @@ const mutation = {
   },
   [types.SET_WALKINGBLOGCOUNT] (state, count) {
     state.walkingBlogCount = count;
-  }
+  },
+  [types.SET_BACKPATH] (state, path) {
+    state.backPath = path;
+  },
+  [types.SET_TYPE] (state, type) {
+    state.type = type;
+  } 
 };
 
 export default mutation;

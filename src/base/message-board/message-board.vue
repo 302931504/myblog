@@ -17,11 +17,11 @@
           </div>
           <div class="child-mess" v-show="item.child.length > 0">
             <ul @mouseout="currentChildIndex = -1">
-              <li style="border-bottom: none" v-for="(child, index) in item.child" @mouseover="cmouseover(index)">
+              <li style="border-bottom: none" v-for="(child, child_index) in item.child" @mouseover="cmouseover(child_index)">
                 <div class="child-an-con">
                   <div class="child-an-title">
                     <p><span>{{child.user_name}}:</span><span class="child-text">{{child.content}}</span>
-                    <span class="delete" v-show="index === currentChildIndex" @click.stop="deleteChild(child.id)">删除</span></p>
+                    <span class="delete" v-show="child_index === currentChildIndex && index === currentIndex" @click.stop="deleteChild(child.id)">删除</span></p>
                   </div>
                   <div class="child-an-time">{{_initTime(child.time)}}</div>
                 </div>

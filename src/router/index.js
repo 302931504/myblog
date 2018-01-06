@@ -63,6 +63,18 @@ const WalkingBlog = (resolve) => {
     });
 }; 
 
+const Back = (resolve) => {
+    import('../base/back/back').then((module) => {
+        resolve(module);
+    });
+}; 
+
+const WalkingBlogDetail = (resolve) => {
+    import('../base/walking-blog/walking-blog').then((module) => {
+        resolve(module);
+    });
+}; 
+
 export default new Router({
   routes: [
     {
@@ -103,7 +115,15 @@ export default new Router({
         },
         {
           path: 'walkingBlog',
-          component: WalkingBlog
+          component: WalkingBlog,
+          children: [{
+            path: ':id',
+            component: WalkingBlogDetail
+          }]
+        },
+        {
+          path: 'back',
+          component: Back
         }
       ]
     }

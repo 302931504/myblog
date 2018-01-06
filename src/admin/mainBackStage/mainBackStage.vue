@@ -42,7 +42,7 @@
         'navList',
         'currentName'
         ])
-    }, 
+    },
     methods: {
       toggleNavBar () {
         const left = this.$refs.navBar.style.left;
@@ -116,7 +116,8 @@
       transition: all .6s;
       .routerViewWrapper{
         height: 500px;
-        overflow: auto;
+        overflow-y: auto;
+        overflow-x: hidden;
         .routerView{
           margin: 10px 10px 0;
         }

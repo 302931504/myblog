@@ -104,7 +104,8 @@
     },
     computed: {
       ...mapGetters([
-        'editBlog'
+        'editBlog',
+        'type'
       ])
     },
     created () {
@@ -121,7 +122,7 @@
           this.showAttention('请输入文章摘要', false);
         } else if (this.artical === '') {
           this.showAttention('请输入文章内容', false);
-        } else if (!this.editBlog) {
+        } else if (!this.type) {
           this._saveBlog();
         } else {
           this._updateBlog();
@@ -129,12 +130,14 @@
         }
       },
       initBlog () {
-        this.title = this.editBlog.blog_title;
-        this.artical = this.editBlog.blog_content;
-        this.summary = this.editBlog.blog_description;
-        this.tags = this.editBlog.blog_tags;
-        this.model = this.editBlog.classify_text;
-        this.checked = this.editBlog.blog_isShow;
+        if (this.type) {
+          this.title = this.editBlog.blog_title;
+          this.artical = this.editBlog.blog_content;
+          this.summary = this.editBlog.blog_description;
+          this.tags = this.editBlog.blog_tags;
+          this.model = this.editBlog.classify_text;
+          this.checked = this.editBlog.blog_isShow;
+        }
       },
       chooseModel () {
         this.showList = !this.showList;
@@ -165,6 +168,13 @@
       addLabel (item) {
         this.options.push(item);
       },
+      routerGo () {
+        if (!this.checked) {
+          this.$router.push({path: '/admin/draft'});
+        } else {
+          this.$router.push({path: '/admin/blog'});
+        }
+      },
       _saveBlog () {
         const blog = {
           title: this.title,
@@ -177,6 +187,9 @@
         saveBlog(blog).then(res => {
           if (res.status === 0) {
             this.showAttention(res.info, true);
+            setTimeout(() => {
+              this.routerGo();
+            }, 4000);
           }
         });
       },
@@ -198,9 +211,7 @@
       },
       _getClassify () {
         getClassify().then(res => {
-          console.log(res);
           let i = 0;
-          console.log(res.data.length);
           for (i; i < res.data.length; i++) {
             this.options.push({id: res.data[i].classify_id, text: res.data[i].classify_text});
           };

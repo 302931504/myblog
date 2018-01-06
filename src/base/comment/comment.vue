@@ -2,7 +2,7 @@
   <div class="commentWrapper">
     <div class="content">
       <p>发表评论：</p>
-      <textarea name="" v-model="content"></textarea>
+      <textarea name="" v-model="content" @click.stop="clickTextarea" ref="textareaBox"></textarea>
     </div>
     <div class="personInfo">
       <p>你的昵称<span class="must">*</span>：</p>
@@ -36,6 +36,9 @@
           bbs_content: this.content
         };
         this.$emit('addBBS', item);
+      },
+      clickTextarea () {
+        this.$refs.textareaBox.style.height = '100px';
       }
     }
   };
@@ -65,6 +68,7 @@
         min-height: 40px;
         max-height: 100px;
         padding: 10px;
+        transition: all .4s;
       }
     }
     .rememberInfo{

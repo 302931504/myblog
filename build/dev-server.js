@@ -101,26 +101,13 @@ apiRouter.post('/saveBlog', (req, res) => {
     var sql = `SELECT classify_id FROM classify WHERE classify_text = ?`;
     var sqlParam = [text];
     connection.query(sql,sqlParam,function (err, result) {
-      let classify_id;
       if (err) {
         console.log('[INSERT ERROR] - ',err.message);
         return;
-      } else if (!result[0]) {
-          console.log('null');
-          var sql2 = 'INSERT INTO classify(classify_text) VALUES(?)';
-          var sql2Param = [text];
-          connection.query(sql2,sql2Param,function (err, result) {
-            if(err){
-              console.log('[INSERT ERROR] - ',err.message);
-              return;
-            }
-            res.json({status: 0, info: '新分类创建成功'});  
-          })
-        } else {
-          classify_id = result[0].classify_id;
-        }
+      }
       var addSql = `INSERT INTO blog(blog_title,classify_id,blog_tags,blog_description,blog_content,blog_isShow) 
                     VALUES (?,?,?,?,?,?)`;
+      var classify_id = result[0].classify_id;
       var addSqlParams = [req.body.title,classify_id,req.body.tags,req.body.description,req.body.content,req.body.isShow];
       connection.query(addSql,addSqlParams,function (err, result) {
         if(err){
@@ -462,7 +449,7 @@ apiRouter.post('/addWalkingBlog', (req, res) => {
 
 //获取行博
 apiRouter.get('/getWalkingBlog', (req, res) => {
-  var sql = `SELECT * FROM walking_blog`;
+  var sql = `SELECT * FROM walking_blog ORDER BY walking_blog_time DESC`;
   connection.query(sql, function(err, result) {
     if(err) {
       console.log('[INSERT ERROR] - ',err.message);

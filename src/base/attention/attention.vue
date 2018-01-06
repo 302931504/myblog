@@ -76,7 +76,7 @@
     }
   }
   .glide-enter-active, .glide-leave-active{
-    transition: all .5s;
+    transition: all .4s;
   }
   .glide-enter, .glide-leave-to{
     transform: translate3d(0, -100%, 0);

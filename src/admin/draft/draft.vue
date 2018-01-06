@@ -17,7 +17,7 @@
   import Attention from '../../base/attention/attention';
   import Caution from '../../admin/caution/caution';
   import {initPageMixin, blogMixin, showAttentionMixin, cautionMixin} from '../../common/js/mixin';
-  import {getDraftByPage, getOneBlog, publishBlog, deletBlog} from '../../api/draft'; 
+  import {getDraftByPage, publishBlog, deletBlog} from '../../api/draft'; 
   import {getClassifyBlog, getKeyBlog} from '../../api/blog';
   import {mapGetters} from 'vuex';
 
@@ -48,19 +48,6 @@
       this._getClassify();
     },
     methods: {
-      editBlog (id) {
-        getOneBlog(id).then(res => {
-          if (res.status === 0) {
-            this.setEditBlog(res.data[0]);
-            const nav = {
-              text: res.data[0].blog_title,
-              name: 'editBlog'
-            };
-            this.pushNav(nav);
-            this.$router.push({path: '/admin/mainBackStage/editBlog'});
-          }
-        }); 
-      },
       publish (id) {
         this.showFlag = true;
         this.text = '确认发布？';

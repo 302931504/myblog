@@ -87,17 +87,19 @@ export const blogMixin = {
       getOneBlog(id).then(res => {
         if (res.status === 0) {
           this.setEditBlog(res.data[0]);
+          this.setType(1);
           const nav = {
             text: res.data[0].blog_title,
             name: 'editBlog'
           };
           this.pushNav(nav);
-          this.$router.push({path: '/admin/mainBackStage/editBlog'});
+          this.$router.push({path: '/admin/editBlog'});
         }
       }); 
     },
     ...mapMutations({
-      setEditBlog: 'SET_EDITBLOG'
+      setEditBlog: 'SET_EDITBLOG',
+      setType: 'SET_TYPE'
     }),
     ...mapActions([
       'pushNav'
