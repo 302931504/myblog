@@ -1,36 +1,72 @@
 <template>
   <transition name="slide">
     <div class="walkingBlogWrapper">
+      <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
       <div class="blogContent">
         <div class="time">
           <div class="day">{{getDay(editBlog.time)}}</div>
           <p class="month">{{getMonth(editBlog.time)}}</p>
         </div>
-        <div class="main">
-          <div class="content">
-            {{editBlog.content}}
+        <div class="mainC">
+          <div class="main">
+            <div class="content">
+              {{editBlog.content}}
+            </div>
+            <div class="tags">
+              <span v-for="tag in editBlog.tags">● {{tag}}</span>
+            </div>
           </div>
-          <div class="tags">
-            <span v-for="tag in editBlog.tags">● {{tag}}</span>
+          <div class="main">
+            <p class="commentName">评论({{comments.length}})</p>
+            <textarea name="" class="comment" @click.stop="clickcomment" ref="commentBox" v-model="content"></textarea>
+            <div class="info" v-show="showInfo">
+              <p class="label">你的昵称*:</p>
+              <input type="text" name="" placeholder="必填" v-model="name">
+              <p class="label">Email*:</p>
+              <input type="email" name="" placeholder="必填" v-model="email">
+            </div>
+            <button type="" class="publish" @click.stop="_comment">发表</button>
+            <message-board :isBBS="false" :bbsList="comments" @answer="answer" @deletebbs="_deleteBBS"></message-board>
           </div>
         </div>
       </div>
-      <comment></comment>
     </div>
   </transition>
 </template>
 
 <script>
-  import Comment from '../comment/comment';
-  import {mapGetters} from 'vuex';
+  import MessageBoard from '../message-board/message-board';
+  import Attention from '../../base/attention/attention';
+  import {mapGetters, mapMutations} from 'vuex';
+  import {comment, getBBSList, addChildBBS, deleteBBS} from '../../api/bbs';
+  import {showAttentionMixin} from '../../common/js/mixin';
 
   export default {
+    mixins: [showAttentionMixin],
+    data () {
+      return {
+        showInfo: false,
+        content: '',
+        name: '',
+        email: '',
+        comments: [],
+        answerType: 0,
+        answerId: -1
+      };
+    },
     computed: {
       ...mapGetters([
         'editBlog'
       ])
     },
+    created () {
+      this._getBBSList();
+    },
     methods: {
+      clickcomment () {
+        this.$refs.commentBox.style.height = '110px';
+        this.showInfo = true;
+      },
       getDay (time) {
         let myDate = new Date(time);
         return myDate.getDate();
@@ -38,10 +74,88 @@
       getMonth (time) {
         let myDate = new Date(time);
         return myDate.getMonth() + 1;
-      }
+      },
+      answer (item) {
+        this.content = '回复 ' + item.name + ':';
+        this.answerId = item.id;
+      },
+      _comment () {
+        if (!this.answerType) {
+          const item = {
+            reply_id: this.editBlog.id,
+            user_email: this.email,
+            user_name: this.name,
+            bbs_content: this.content,
+            type: 1
+          };
+          comment(item).then(res => {
+            if (res.status === 0) {
+              this.showAttention(res.info, true);
+              setTimeout(() => {
+                this.routerGo();
+              }, 3000);
+            }
+          });
+        } else {
+          const item = {
+            parent_id: this.answerId,
+            user_email: this.email,
+            user_name: this.name,
+            bbs_content: this.content
+          };
+          addChildBBS(item).then(res => {
+            if (!res.status) {
+              this.showAttention(res.info, true);
+              setTimeout(() => {
+                this.routerGo();
+              }, 3000);
+            }
+          });
+        }
+      },
+      _getBBSList () {
+        const item = {
+          reply_id: this.editBlog.id,
+          page: 1,
+          type: 1
+        };
+        getBBSList(item).then(res => {
+          let arr = res.data;
+          if (res.status === 0) {
+            for (let i = 0; i < arr.length; i++) {
+              this.comments.push({id: arr[i].bbs_id,
+                    reply_id: arr[i].reply_id,
+                    email: arr[i].user_email,
+                    name: arr[i].user_name,
+                    content: arr[i].bbs_content,
+                    time: arr[i].bbs_time,
+                    type: arr[i].type
+                  });
+            }
+          }
+        });
+      },
+      _deleteBBS (id) {
+        deleteBBS(id).then(res => {
+          if (!res.status) {
+            this.showAttention(res.info, true);
+            setTimeout(() => {
+              this.routerGo();
+            }, 3000);
+          }
+        }); 
+      },
+      routerGo () {
+        this.setBackPath(this.$route.path);
+        this.$router.push('/admin/back');
+      },
+      ...mapMutations({
+        setBackPath: 'SET_BACKPATH'
+      })
     },
     components: {
-      Comment
+      MessageBoard,
+      Attention
     }
   };
 </script>
@@ -55,6 +169,7 @@
     height: 100%;
     padding: 10px;
     background: #fff;
+    box-sizing: border-box;
     .blogContent{
       display: flex;
       .time{
@@ -88,11 +203,15 @@
           }
         }
       }
+      .mainC{
+        width: 100%;
+      }
       .main{
         width: 100%;
         margin-left: 20px;
         background: url('./line.png') bottom repeat-x;
         padding:20px 0 48px 0;
+        zoom: 1;
         .content{
           font-size: 15px;
           color: #737373;
@@ -112,6 +231,55 @@
             white-space: nowrap;
             background: #828d95;
           }
+        }
+        .commentName{
+          margin-top: 20px;
+          font-size: 14px;
+          color: #939393;
+        }
+        .comment{
+          width: 100%;
+          min-height: 70px;
+          resize: none;
+          border: 1px solid #ccc;
+          font-size: 14px;
+          padding: 7px 9px;
+          margin-top: 10px;
+          box-sizing: border-box;
+          outline: none;
+          transition: all .4s ease-out;
+        }
+        .publish{
+          float: right;
+          margin-top: 5px;
+          font-size: 12px;
+          padding: 4px 30px;
+          color: #fff;
+          background-color: #777;
+          border: 0;
+          font-family: inherit;
+          cursor: pointer;
+        }
+        .info{
+          transition: all .4s;
+          .label{
+            font-size: 14px;
+            line-height: 30PX;
+            color: #828d95;
+          }
+          input{
+            width: 250px;
+            outline: none;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            padding: 7px 9px;
+          }
+        }
+        &:after{
+          content: "\0020";
+          display: block;
+          height: 0;
+          clear: both;
         }
       }
     }

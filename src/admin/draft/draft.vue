@@ -2,10 +2,11 @@
   <div class="draftWrapper">
     <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
     <search-box :options="options" @searchKeyBlog="searchBlog" placeholder="请输入关键字" @clickOption="clickClassify"></search-box>
-    <blog-list v-show="blogs.length > 0" :blogs="blogs" :type="type" @edit="editBlog" @publish="publish" @delete="deleteBlog"></blog-list>
+    <blog-list v-show="blogs.length > 0" :blogs="blogs" :type="type" @edit="editBlog" @publish="publish" @delete="deleteBlog" @select="witchArticle"></blog-list>
     <page-btn v-show="draftCount >= 10 && showBtn" :pageCount="pages" :currentPage="currentPage" @next="next" @clickPage="clickPage" @pre="pre"></page-btn>
     <no-content v-show="blogs.length === 0"></no-content>
     <caution :showFlag="showFlag" :text="text" @cancel="cancel" @sure="sure"></caution>
+    <router-view></router-view>
   </div>
 </template>
  
@@ -17,9 +18,9 @@
   import Attention from '../../base/attention/attention';
   import Caution from '../../admin/caution/caution';
   import {initPageMixin, blogMixin, showAttentionMixin, cautionMixin} from '../../common/js/mixin';
-  import {getDraftByPage, publishBlog, deletBlog} from '../../api/draft'; 
+  import {getDraftByPage, publishBlog, deletBlog, getOneBlog} from '../../api/draft'; 
   import {getClassifyBlog, getKeyBlog} from '../../api/blog';
-  import {mapGetters} from 'vuex';
+  import {mapGetters, mapMutations} from 'vuex';
 
   export default {
     mixins: [initPageMixin, blogMixin, showAttentionMixin, cautionMixin],
@@ -48,6 +49,14 @@
       this._getClassify();
     },
     methods: {
+      witchArticle (id) {
+        getOneBlog(id).then(res => {
+          if (!res.status) {
+            this.setEditblog(res.data[0]);
+            this.$router.push({path: `/admin/draft/${id}`});
+          }
+        });
+      },
       publish (id) {
         this.showFlag = true;
         this.text = '确认发布？';
@@ -109,10 +118,16 @@
             this.showBtn = false;
           }
         });
-      }
+      },
+      ...mapMutations({
+        setEditblog: 'SET_EDITBLOG'
+      })
     }
   };
 </script>
 
 <style scoped lang="less" rel="stylesheet/less">
+  .draftWrapper{
+    position: relative;
+  }
 </style>

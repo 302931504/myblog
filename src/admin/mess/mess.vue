@@ -5,7 +5,7 @@
     <div class="content">
       <message-board :bbsList="bbs" @answer="answer" @deletebbs="_deleteBBS" @deleteChild="_deleteChildBBS"></message-board>
       <page-btn v-show="bbsCount > 10 && showBtn" :pageCount="pages" :currentPage="currentPage" @next="next" @clickPage="clickPage" @pre="pre"></page-btn>
-      <comment @addBBS="_addBBS"></comment>
+      <comment @addBBS="addBBS"></comment>
       <div class="answerWrapper" v-show="showAnswer">
         <comment @addBBS="_addChildBBS"></comment>
       </div>
@@ -21,7 +21,7 @@
   import PageBtn from '../../base/page-btn/page-btn';
   import Attention from '../../base/attention/attention';
   import Caution from '../../admin/caution/caution';
-  import {getBBSList, getBBSChildList, addBBS, addChildBBS, deleteBBS, deleteChildBBS} from '../../api/bbs';
+  import {getBBSList, getBBSChildList, comment, addChildBBS, deleteBBS, deleteChildBBS} from '../../api/bbs';
   import {initPageMixin, showAttentionMixin, cautionMixin} from '../../common/js/mixin';
   import {mapGetters, mapMutations} from 'vuex';
 
@@ -49,7 +49,12 @@
         this.answerId = item.id;
       },
       _getBBSList () {
-        getBBSList(this.currentPage).then(res => {
+        const item = {
+          reply_id: 0,
+          page: this.currentPage,
+          type: 0
+        };
+        getBBSList(item).then(res => {
           let arr = res.data;
           if (res.status === 0) {
             for (let i = 0; i < arr.length; i++) {
@@ -84,9 +89,10 @@
           }
         });
       }, 
-      _addBBS (item) {
+      addBBS (item) {
         item.type = 0;
-        addBBS(item).then(res => {
+        item.reply_id = 0;
+        comment(item).then(res => {
           if (res.status === 0) {
             this.showAttention(res.info, true);
             this.routerGo();

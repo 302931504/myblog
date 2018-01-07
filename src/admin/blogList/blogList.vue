@@ -18,7 +18,7 @@
             <td>
               <input type="checkbox" class="checkBlog">
             </td>
-            <td style="text-align: left">{{item.blog_title}}</td>
+            <td style="text-align: left; cursor: pointer;" @click.stop="selectArticle(item.blog_id)">{{item.blog_title}}</td>
             <td>{{item.classify_text}}</td>
             <td>{{item.blog_tags}}</td>
             <td>{{_initTime(item.blog_updateTime)}}</td>
@@ -50,6 +50,9 @@
       type: 0
     },
     methods: {
+      selectArticle (id) {
+        this.$emit('select', id);
+      },
       editBlog (id) {
         this.$emit('edit', id);
       },

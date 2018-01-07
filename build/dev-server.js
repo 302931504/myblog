@@ -335,12 +335,12 @@ apiRouter.get('/deleteUser', (req, res) => {
 apiRouter.get('/getBBSList', (req, res) => {
   const limit = 10;
   let offset = (req.query.page - 1) * limit;
-  var sql = `SELECT * 
+  var sql = `SELECT *
              FROM bbs 
-             WHERE type = 0 
+             WHERE reply_id = ? AND type = ?
              ORDER BY bbs_time DESC
              LIMIT ?,?`;
-  var sqlParams = [offset, limit];
+  var sqlParams = [req.query.reply_id, req.query.type, offset, limit];
   connection.query(sql,sqlParams,function(err, result) {
     if(err) {
       console.log('[INSERT ERROR] - ',err.message);
@@ -534,6 +534,21 @@ apiRouter.post('/draftBlog', (req, res) => {
       return;
     }
     res.json({status: 0, info: '移稿成功'});
+  })
+})
+
+//评论boke
+apiRouter.post('/comment', (req, res) => {
+  var addSql = `INSERT 
+                INTO bbs(reply_id, user_email, user_name, bbs_content, type)
+                VALUES (?,?,?,?,?)`;
+  var addSqlParams = [req.body.reply_id, req.body.uemail, req.body.uname, req.body.content, req.body.type];
+  connection.query(addSql, addSqlParams, function(err, result) {
+    if(err) {
+      console.log('[INSERT ERROR] - ',err.message);
+      return;
+    }
+    res.json({status: 0, info: '评论成功'});
   })
 })
 

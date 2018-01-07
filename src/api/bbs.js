@@ -1,8 +1,14 @@
 import axios from 'axios';
 import qs from 'qs';
 
-export function getBBSList (page) {
-	return axios.get('/api/getBBSList?page=' + page).then((res) => {
+export function getBBSList (item) {
+	return axios.get('/api/getBBSList', {
+		params: {
+			reply_id: item.reply_id,
+			page: item.page,
+			type: item.type
+		}
+	}).then((res) => {
 		return Promise.resolve(res.data);
 	}).catch(err => err);
 };
@@ -13,13 +19,14 @@ export function getBBSChildList () {
 		}).catch(err => err);
 };
 
-export function addBBS (item) {
-	return axios.post('/api/addBBS', qs.stringify({
-		type: item.type,
-		user_email: item.user_email,
-		user_name: item.user_name,
-		bbs_content: item.bbs_content
-	})).then((res) => {
+export function comment (item) {
+	return axios.post('/api/comment', {
+		reply_id: item.reply_id,
+		uemail: item.user_email,
+		uname: item.user_name,
+		content: item.bbs_content,
+		type: item.type
+	}).then((res) => {
 		return Promise.resolve(res.data);
 	}).catch(err => err);
 };

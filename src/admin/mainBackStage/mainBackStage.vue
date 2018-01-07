@@ -35,7 +35,7 @@
     data () {
       return {
         lock: false
-      };
+      }; 
     },
     computed: {
       ...mapGetters([
@@ -62,7 +62,8 @@
       close (name) {
         this.deleteNav(name);
         this.setCurrentName(this.navList[this.navList.length - 1].name);
-        this.$router.push({path: `/admin/${this.currentName}`});
+        // this.$router.push({path: `/admin/${this.currentName}`});
+        this.$router.go(-1);
       },
       lockScreen () {
         this.lock = true;
@@ -107,6 +108,7 @@
       width: 200px;
       height: 100%;
       transition: all .6s;
+      z-index: 999;
     }
     .content{
       height: 100%;

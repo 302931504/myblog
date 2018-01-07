@@ -5,7 +5,7 @@
         <li v-for="(item, index) in bbsList" @mouseover="pmouseover(index)">
           <div class="an-info">
             <h3>{{item.name}}</h3>
-            <div class="action">
+            <div class="action" v-show="isBBS">
               <span class="quote" v-show="index === currentIndex">引用</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="floor">第{{bbsList.length - index}}楼</span>
             </div>
           </div>
@@ -15,7 +15,7 @@
             <span class="answer" @click.stop="answer(item)">回复</span>
             <span class="delete" @click.stop="deletebbs(item.id)">删除</span>
           </div>
-          <div class="child-mess" v-show="item.child.length > 0">
+          <div class="child-mess" v-show="item.child">
             <ul @mouseout="currentChildIndex = -1">
               <li style="border-bottom: none" v-for="(child, child_index) in item.child" @mouseover="cmouseover(child_index)">
                 <div class="child-an-con">
@@ -49,6 +49,10 @@
         default: function () {
           return [];
         }
+      },
+      isBBS: {
+        type: Boolean,
+        default: true
       }
     },
     methods: {

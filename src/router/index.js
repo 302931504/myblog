@@ -75,6 +75,12 @@ const WalkingBlogDetail = (resolve) => {
     });
 }; 
 
+const ArticleDetail = (resolve) => {
+    import('../base/articleDetail/articleDetail').then((module) => {
+        resolve(module);
+    });
+}; 
+
 export default new Router({
   routes: [
     {
@@ -103,7 +109,11 @@ export default new Router({
         },
         {
           path: 'draft',
-          component: Draft
+          component: Draft,
+          children: [{
+            path: ':id',
+            component: ArticleDetail
+          }]
         },
         {
           path: 'mess',
