@@ -17,6 +17,7 @@
             <span>热度({{item.hot}})</span>
             <span>评论(20)</span>
             <span @click.stop="clickwalkingBlog(item)">全文链接</span>
+            <span class="delete" @click="deleteBlog(item.id)">删除</span>
           </div>
         </div>
       </li>
@@ -45,6 +46,9 @@
       },
       clickwalkingBlog (id) {
         this.$emit('selectBlog', id);
+      },
+      deleteBlog (id) {
+        this.$emit('deleteBlog', id);
       }
     }
   };
@@ -115,9 +119,22 @@
           font-size: 0;
           color: #828d95;
           margin-top: 20px;
+          zoom: 1;
+          &:after{
+            content: "\0020";
+            display: block;
+            height: 0;
+            clear: both;
+          }
           span{
             font-size: 12px;
             margin-right: 25px;
+            cursor: pointer;
+          }
+          .delete{
+            display: block;
+            float: right;
+            color: blue;
           }
         }
       }

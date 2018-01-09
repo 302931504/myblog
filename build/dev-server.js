@@ -53,8 +53,9 @@ app.use(session({
   saveUninitialized: true
 }));
 
-//登录博客系统
 const apiRouter = express.Router()
+
+//登录博客系统
 apiRouter.post('/login', (req, res) => {
   const username = req.body.username
   const password = req.body.password
@@ -196,13 +197,36 @@ apiRouter.get('/getDraftList', (req, res) => {
 
 //删除某篇文章
 apiRouter.get('/deleteBlog', (req, res) => {
-  var sql = `DELETE FROM blog WHERE blog_id = ${req.query.id}`;
-  connection.query(sql, function (err, result) {
+  var sql = `SELECT COUNT(*) num
+             FROM bbs
+             WHERE reply_id = ${req.query.id} AND type = 2`;
+  connection.query(sql, function(err, result) {
     if(err) {
       console.log('[INSERT ERROR] - ',err.message);
       return;
     }
-    res.json({status: 0, info: '删除成功'});
+    if(result[0].num > 0) {
+      var delSql = `DELETE 
+                    FROM bbs
+                    WHERE bbs_id IN (SELECT b2.bbs_id
+                                     FROM (SELECT bbs_id, reply_id, type 
+                                           FROM bbs) b2
+                                     WHERE b2.reply_id = ${req.query.id} AND b2.type = 2);`;
+      connection.query(delSql, function(err, result) {
+        if(err) {
+          console.log('[INSERT ERROR] - ',err.message);
+          return;
+        }
+      })
+    }
+    var delSql2 = `DELETE FROM blog WHERE blog_id = ${req.query.id}`;
+    connection.query(delSql2, function (err, result) {
+      if(err) {
+        console.log('[INSERT ERROR] - ',err.message);
+        return;
+      }
+      res.json({status: 0, info: '删除成功'});
+    })
   })
 })
 
@@ -331,37 +355,6 @@ apiRouter.get('/deleteUser', (req, res) => {
   })
 })
 
-//获取父留言板列表
-apiRouter.get('/getBBSList', (req, res) => {
-  const limit = 10;
-  let offset = (req.query.page - 1) * limit;
-  var sql = `SELECT *
-             FROM bbs 
-             WHERE reply_id = ? AND type = ?
-             ORDER BY bbs_time DESC
-             LIMIT ?,?`;
-  var sqlParams = [req.query.reply_id, req.query.type, offset, limit];
-  connection.query(sql,sqlParams,function(err, result) {
-    if(err) {
-      console.log('[INSERT ERROR] - ',err.message);
-      return;
-    }
-    res.json({status: 0, info: '获取成功', data: result});
-  })
-})
-
-//获取子留言板列表
-apiRouter.get('/getBBSChildList', (req, res) => {
-  var sql = 'SELECT * FROM bbs_child';
-  connection.query(sql,function(err, result) {
-    if(err) {
-      console.log('[INSERT ERROR] - ',err.message);
-      return;
-    }
-    res.json({status: 0, info: '获取成功', data: result});
-  })  
-})
-
 //新增留言
 apiRouter.post('/addBBS', (req, res) => {
   var addSql = 'INSERT INTO bbs(type, user_email, user_name, bbs_content) VALUES(?,?,?,?)';
@@ -377,7 +370,7 @@ apiRouter.post('/addBBS', (req, res) => {
 
 //新增子留言
 apiRouter.post('/addChildBBS', (req, res) => {
-  var addSql = `INSERT INTO bbs_child(parent_id, user_email, user_name, bbs_child_content)
+  var addSql = `INSERT INTO bbs_child(parent_id, child_email, child_name, bbs_child_content)
                 VALUES (?,?,?,?)`;
   var addSqlParams = [req.body.parent_id, req.body.user_email, req.body.user_name,req.body.bbs_child_content];
   connection.query(addSql, addSqlParams, function(err, result) {
@@ -551,6 +544,75 @@ apiRouter.post('/comment', (req, res) => {
     res.json({status: 0, info: '评论成功'});
   })
 })
+
+//获取留言(评论)
+apiRouter.get('/getComment', (req, res) => {
+  var sql = `SELECT *
+             FROM bbs LEFT OUTER JOIN bbs_child ON (bbs_id = parent_id)
+             WHERE reply_id = ? AND type = ?
+             ORDER BY bbs_time DESC;`
+  var sqlParams = [req.query.reply_id, req.query.type];
+  connection.query(sql, sqlParams, function(err, result) {
+    if(err) {
+      console.log('[INSERT ERROR] - ',err.message);
+      return;
+    }
+    res.json({status: 0, info: '获取成功', data: result});
+  })           
+})
+
+//更新管理员信息
+apiRouter.post('/updateMInfo', (req, res) => {
+  var upSql = `UPDATE manager
+               SET m_account = ?,
+                   m_password = ?,
+                   m_nickname = ?,
+                   m_email = ?
+               WHERE m_account = ?`;
+  var upSqlParams = [req.body.account,req.body.password,req.body.nickname,req.body.email,req.body.account];
+  connection.query(upSql, upSqlParams, function(err, result) {
+    if(err) {
+      console.log('[INSERT ERROR] - ',err.message);
+      return;
+    }
+    res.json({status: 0, info: '更新成功', data: result});
+  })
+});
+
+//删除行博
+apiRouter.get('/deleteWBlog', (req, res) => {
+  var sql = `SELECT COUNT(*) num
+             FROM bbs
+             WHERE reply_id = ${req.query.id} AND type = 1`;
+  connection.query(sql, function(err, result) {
+    if(err) {
+      console.log('[INSERT ERROR] - ',err.message);
+      return;
+    }
+    if(result[0].num > 0) {
+      var delSql = `DELETE 
+                    FROM bbs
+                    WHERE bbs_id IN (SELECT b2.bbs_id
+                                     FROM (SELECT bbs_id, reply_id, type 
+                                           FROM bbs) b2
+                                     WHERE b2.reply_id = ${req.query.id} AND b2.type = 1);`;
+      connection.query(delSql, function(err, result) {
+        if(err) {
+          console.log('[INSERT ERROR] - ',err.message);
+          return;
+        }
+      })
+    }
+    var delSql2 = `DELETE FROM walking_blog WHERE walking_blog_id = ${req.query.id}`;
+    connection.query(delSql2, function (err, result) {
+      if(err) {
+        console.log('[INSERT ERROR] - ',err.message);
+        return;
+      }
+      res.json({status: 0, info: '删除成功'});
+    })
+  })
+});
 
 app.use('/api', apiRouter)
 

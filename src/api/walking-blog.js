@@ -15,3 +15,11 @@ export function getWalkingBlog () {
     return Promise.resolve(res.data);
   }).catch(err => err);
 };
+
+export function deleteWBlog (id) {
+	return axios.get('/api/deleteWBlog?id=' + id).then(res => {
+		return Promise.resolve(res.data);
+	}).catch(err => {
+		console.log(err);
+	});
+};

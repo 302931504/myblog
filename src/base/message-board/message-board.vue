@@ -20,7 +20,7 @@
               <li style="border-bottom: none" v-for="(child, child_index) in item.child" @mouseover="cmouseover(child_index)">
                 <div class="child-an-con">
                   <div class="child-an-title">
-                    <p><span>{{child.user_name}}:</span><span class="child-text">{{child.content}}</span>
+                    <p><span>{{child.name}}:</span><span class="child-text">{{child.content}}</span>
                     <span class="delete" v-show="child_index === currentChildIndex && index === currentIndex" @click.stop="deleteChild(child.id)">删除</span></p>
                   </div>
                   <div class="child-an-time">{{_initTime(child.time)}}</div>

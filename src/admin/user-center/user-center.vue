@@ -1,12 +1,13 @@
 <template>
   <div class="leaveMessWrapper">
+    <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
     <div class="new">
       <label>账号</label>
       <input type="text" placeholder="请输入账号" v-model="account">
     </div>
     <div class="new">
       <label>昵称</label>
-      <input type="password" placeholder="请输入昵称" v-model="nickname">
+      <input type="text" placeholder="请输入昵称" v-model="nickname">
     </div>
     <div class="new">
       <label>邮箱</label>
@@ -25,14 +26,19 @@
       <input type="password" placeholder="请确认新密码" v-model="sureNewPass">
     </div>
     <div class="actions">
-      <button type="button" class="sureBtn">确认修改</button>
+      <button type="button" class="sureBtn" @click="change">确认修改</button>
       <button type="button" class="resetBtn" @click="reset">重置</button>
     </div>
   </div>  
 </template>
 
 <script>
+  import Attention from '../../base/attention/attention';
+  import {updateInfo} from '../../api/manager';
+  import {showAttentionMixin} from '../../common/js/mixin';
+
   export default {
+    mixins: [showAttentionMixin],
     data () {
       return {
         account: '',
@@ -44,11 +50,30 @@
       };
     },
     methods: {
+      change () {
+        const item = {
+          account: this.account,
+          password: this.newPass,
+          nickname: this.nickname,
+          email: this.email
+        };
+        updateInfo(item).then(res => {
+          if (!res.status) {
+            this.showAttention(res.info, true);
+          }
+        });
+      },
       reset () {
+        this.account = '';
+        this.nickname = '';
+        this.email = '';
         this.oldPass = '';
         this.newPass = '';
         this.sureNewPass = '';
       }
+    },
+    components: {
+      Attention
     }
   };
 </script>

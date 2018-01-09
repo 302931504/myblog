@@ -38,8 +38,9 @@
   import MessageBoard from '../message-board/message-board';
   import Attention from '../../base/attention/attention';
   import {mapGetters, mapMutations} from 'vuex';
-  import {comment, getBBSList, addChildBBS, deleteBBS} from '../../api/bbs';
+  import {getComment, comment, addChildBBS, deleteBBS} from '../../api/bbs';
   import {showAttentionMixin} from '../../common/js/mixin';
+  import {initBBS} from '../../common/js/util';
 
   export default {
     mixins: [showAttentionMixin],
@@ -60,9 +61,20 @@
       ])
     },
     created () {
-      this._getBBSList();
+      this.getComments();
     },
     methods: {
+      getComments () {
+        const item = {
+          reply_id: this.editBlog.id,
+          type: 1
+        };
+        getComment(item).then(res => {
+          if (!res.status) {
+            this.comments = initBBS(res.data);
+          }
+        });
+      },
       clickcomment () {
         this.$refs.commentBox.style.height = '110px';
         this.showInfo = true;
@@ -78,6 +90,7 @@
       answer (item) {
         this.content = '回复 ' + item.name + ':';
         this.answerId = item.id;
+        this.answerType = 1;
       },
       _comment () {
         if (!this.answerType) {
@@ -112,28 +125,6 @@
             }
           });
         }
-      },
-      _getBBSList () {
-        const item = {
-          reply_id: this.editBlog.id,
-          page: 1,
-          type: 1
-        };
-        getBBSList(item).then(res => {
-          let arr = res.data;
-          if (res.status === 0) {
-            for (let i = 0; i < arr.length; i++) {
-              this.comments.push({id: arr[i].bbs_id,
-                    reply_id: arr[i].reply_id,
-                    email: arr[i].user_email,
-                    name: arr[i].user_name,
-                    content: arr[i].bbs_content,
-                    time: arr[i].bbs_time,
-                    type: arr[i].type
-                  });
-            }
-          }
-        });
       },
       _deleteBBS (id) {
         deleteBBS(id).then(res => {

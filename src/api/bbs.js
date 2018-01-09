@@ -1,24 +1,6 @@
 import axios from 'axios';
 import qs from 'qs';
 
-export function getBBSList (item) {
-	return axios.get('/api/getBBSList', {
-		params: {
-			reply_id: item.reply_id,
-			page: item.page,
-			type: item.type
-		}
-	}).then((res) => {
-		return Promise.resolve(res.data);
-	}).catch(err => err);
-};
-
-export function getBBSChildList () {
-	return axios.get('/api/getBBSChildList').then((res) => {
-			return Promise.resolve(res.data);
-		}).catch(err => err);
-};
-
 export function comment (item) {
 	return axios.post('/api/comment', {
 		reply_id: item.reply_id,
@@ -52,4 +34,17 @@ export function deleteChildBBS (id) {
 	return axios.get('/api/deleteChildBBS?id=' + id).then(res => {
 		return Promise.resolve(res.data);
 	}).catch(err => err);
+};
+
+export function getComment (item) {
+	return axios.get('/api/getComment', {
+		params: {
+			reply_id: item.reply_id,
+			type: item.type
+		}
+	}).then(res => {
+		return Promise.resolve(res.data);
+	}).catch(err => {
+		console.log(err);
+	});
 };

@@ -2,7 +2,7 @@
   <div class="commentWrapper">
     <div class="content">
       <p>发表评论：</p>
-      <textarea name="" v-model="content" @click.stop="clickTextarea" ref="textareaBox"></textarea>
+      <textarea v-model="content" @click.stop="clickTextarea" ref="textareaBox">{{placeholder}}</textarea>
     </div>
     <div class="personInfo">
       <p>你的昵称<span class="must">*</span>：</p>
@@ -25,6 +25,12 @@
         nickname: '',
         email: ''
       };
+    },
+    props: {
+      placeholder: {
+        type: String,
+        default: ''
+      }
     },
     methods: {
       publish () {

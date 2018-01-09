@@ -11,7 +11,10 @@
       </div>  
     </div>
     <div class="walkingListBox">
-      <walking-list :blogList="walkingBlogs" @selectBlog="selectBlog"></walking-list>
+      <walking-list :blogList="walkingBlogs" 
+                    @selectBlog="selectBlog" 
+                    @deleteBlog="deleteBlog">
+      </walking-list>
     </div>
     <router-view></router-view>
   </div>
@@ -19,7 +22,7 @@
 
 <script>
   import WalkingList from '../../base/walking-list/walking-list'; 
-  import {addWalkingBlog, getWalkingBlog} from '../../api/walking-blog';
+  import {addWalkingBlog, getWalkingBlog, deleteWBlog} from '../../api/walking-blog';
   import {mapMutations} from 'vuex';
   export default {
     data () {
@@ -36,6 +39,14 @@
       selectBlog (item) {
         this.setEditBlog(item);
         this.$router.push({path: `/admin/walkingBlog/${item.id}`});
+      },
+      deleteBlog (id) {
+        deleteWBlog(id).then(res => {
+          if (!res.status) {
+            this.setBackPath(this.$route.path);
+            this.$router.push('/admin/back');
+          }
+        });
       },
       _addWalkingBlog () {
         const blog = {

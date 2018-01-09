@@ -21,8 +21,9 @@
   import PageBtn from '../../base/page-btn/page-btn';
   import Attention from '../../base/attention/attention';
   import Caution from '../../admin/caution/caution';
-  import {getBBSList, getBBSChildList, comment, addChildBBS, deleteBBS, deleteChildBBS} from '../../api/bbs';
+  import {comment, addChildBBS, deleteBBS, deleteChildBBS, getComment} from '../../api/bbs';
   import {initPageMixin, showAttentionMixin, cautionMixin} from '../../common/js/mixin';
+  import {initBBS} from '../../common/js/util';
   import {mapGetters, mapMutations} from 'vuex';
 
   export default {
@@ -35,7 +36,7 @@
       };
     },
     created () {
-      this._getBBSList();
+      this.getBBSList();
       this.initPage(this.bbsCount);
     },
     computed: {
@@ -44,51 +45,19 @@
       ])
     },
     methods: {
+      getBBSList () {
+        const item = {
+          reply_id: 0,
+          type: 0
+        };
+        getComment(item).then(res => {
+          this.bbs = initBBS(res.data);
+        });
+      },
       answer (item) {
         this.showAnswer = true;
         this.answerId = item.id;
       },
-      _getBBSList () {
-        const item = {
-          reply_id: 0,
-          page: this.currentPage,
-          type: 0
-        };
-        getBBSList(item).then(res => {
-          let arr = res.data;
-          if (res.status === 0) {
-            for (let i = 0; i < arr.length; i++) {
-              this.bbs.push({id: arr[i].bbs_id,
-                    reply_id: arr[i].reply_id,
-                    email: arr[i].user_email,
-                    name: arr[i].user_name,
-                    content: arr[i].bbs_content,
-                    time: arr[i].bbs_time,
-                    type: arr[i].type,
-                    child: []});
-            }
-            this._getBBSChildList();
-          }
-        });
-      },
-      _getBBSChildList () {
-        getBBSChildList().then(res => {
-          let arr2 = res.data;
-          if (res.status === 0) {
-            for (let i = 0; i < this.bbs.length; i++) {
-              for (let j = 0; j < arr2.length; j++) {
-                if (this.bbs[i].id === arr2[j].parent_id) {
-                  this.bbs[i].child.push({id: arr2[j].bbs_child_id,
-                       user_email: arr2[j].user_email,
-                       user_name: arr2[j].user_name,
-                       content: arr2[j].bbs_child_content,
-                       time: arr2[j].bbs_child_time});
-                }
-              }
-            }
-          }
-        });
-      }, 
       addBBS (item) {
         item.type = 0;
         item.reply_id = 0;
