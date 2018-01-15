@@ -62,8 +62,8 @@
       close (name) {
         this.deleteNav(name);
         this.setCurrentName(this.navList[this.navList.length - 1].name);
-        // this.$router.push({path: `/admin/${this.currentName}`});
-        this.$router.go(-1);
+        this.$router.push({path: `/admin/${this.currentName}`});
+        // this.$router.go(-1);
       },
       lockScreen () {
         this.lock = true;

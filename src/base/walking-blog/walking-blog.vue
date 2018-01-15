@@ -17,7 +17,7 @@
             </div>
           </div>
           <div class="main">
-            <p class="commentName">评论({{comments.length}})</p>
+            <p class="commentName">评论({{commentsCount}})</p>
             <textarea name="" class="comment" @click.stop="clickcomment" ref="commentBox" v-model="content"></textarea>
             <div class="info" v-show="showInfo">
               <p class="label">你的昵称*:</p>
@@ -30,6 +30,10 @@
           </div>
         </div>
       </div>
+      <caution :text="cautionText" 
+               :showFlag="showCaution" 
+               @cancel="cancel" 
+               @sure="sure"></caution>
     </div>
   </transition>
 </template>
@@ -37,6 +41,7 @@
 <script>
   import MessageBoard from '../message-board/message-board';
   import Attention from '../../base/attention/attention';
+  import Caution from '../../admin/caution/caution';
   import {mapGetters, mapMutations} from 'vuex';
   import {getComment, comment, addChildBBS, deleteBBS} from '../../api/bbs';
   import {showAttentionMixin} from '../../common/js/mixin';
@@ -52,7 +57,10 @@
         email: '',
         comments: [],
         answerType: 0,
-        answerId: -1
+        answerId: -1,
+        commentsCount: 0,
+        cautionText: '',
+        showCaution: false
       };
     },
     computed: {
@@ -72,6 +80,7 @@
         getComment(item).then(res => {
           if (!res.status) {
             this.comments = initBBS(res.data);
+            this.commentsCount = this.comments ? this.comments.length : 0;
           }
         });
       },
@@ -92,7 +101,28 @@
         this.answerId = item.id;
         this.answerType = 1;
       },
+      cancel () {
+        this.showCaution = false;
+      },
+      sure () {
+        this.showCaution = false;
+        deleteBBS(this.answerId).then(res => {
+          if (!res.status) {
+            this.showAttention(res.info, true);
+            setTimeout(() => {
+              this.routerGo();
+            }, 3000);
+          }
+        });
+      },
       _comment () {
+        if (this.content === '') {
+          this.showAttention('请输入内容', false);
+          return;
+        } else if (this.email === '' || this.name === '') {
+          this.showAttention('请输入*信息', false);
+          return;
+        }
         if (!this.answerType) {
           const item = {
             reply_id: this.editBlog.id,
@@ -127,14 +157,9 @@
         }
       },
       _deleteBBS (id) {
-        deleteBBS(id).then(res => {
-          if (!res.status) {
-            this.showAttention(res.info, true);
-            setTimeout(() => {
-              this.routerGo();
-            }, 3000);
-          }
-        }); 
+        this.cautionText = '是否删除该评论';
+        this.showCaution = true;
+        this.answerId = id;
       },
       routerGo () {
         this.setBackPath(this.$route.path);
@@ -146,7 +171,8 @@
     },
     components: {
       MessageBoard,
-      Attention
+      Attention,
+      Caution
     }
   };
 </script>
