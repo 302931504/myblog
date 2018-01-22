@@ -5,8 +5,8 @@
       {{editBlog.blog_title}}
     </h1>
     <div class="time">
-      <span><i class="icon-camera"></i> &nbsp;2018-01-07 05:22</span>
-      <span><i class="icon-camera"></i> &nbsp;2018-01-07 05:22</span>
+      <span><i class="icon-camera"></i> &nbsp;{{_initTime(editBlog.blog_pubTime)}}</span>
+      <span><i class="icon-camera"></i> &nbsp;{{_initTime(editBlog.blog_updateTime)}}</span>
       <span class="classify">{{editBlog.classify_text}}</span>
     </div>
     <div class="content">
@@ -17,7 +17,7 @@
     </ul>
     <div class="like">
       <span class="icon-point-up"></span>
-      <p class="num">点赞(10)</p>
+      <p class="num">点赞({{editBlog.blog_likeNum}})</p>
     </div>
     <div class="comment">
       <message-board :bbsList="comments" 
@@ -27,7 +27,7 @@
       <comment class="comment" @addBBS="addBBS" 
                :placeholder="content"></comment>
     </div>
-  </div> 
+  </div>  
 </template>
 
 <script>
@@ -37,7 +37,7 @@
   import {mapGetters, mapMutations} from 'vuex';
   import {comment, getComment, addChildBBS, deleteChildBBS, deleteBBS} from '../../api/bbs';
   import {showAttentionMixin} from '../../common/js/mixin';
-  import {initBBS} from '../../common/js/util';
+  import {initBBS, initTime} from '../../common/js/util';
 
   export default {
     mixins: [showAttentionMixin],
@@ -113,6 +113,9 @@
       routerGo () {
         this.setBackPath(this.$route.path);
         this.$router.push('/admin/back');
+      },
+      _initTime (time) {
+        return initTime(time);
       },
       ...mapMutations({
         setBackPath: 'SET_BACKPATH'

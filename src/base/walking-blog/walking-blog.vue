@@ -26,7 +26,7 @@
               <input type="email" name="" placeholder="必填" v-model="email">
             </div>
             <button type="" class="publish" @click.stop="_comment">发表</button>
-            <message-board :isBBS="false" :bbsList="comments" @answer="answer" @deletebbs="_deleteBBS"></message-board>
+            <message-board class="messb" :isBBS="false" :bbsList="comments" @answer="answer" @deletebbs="_deleteBBS"></message-board>
           </div>
         </div>
       </div>
@@ -233,6 +233,9 @@
           font-size: 15px;
           color: #737373;
           line-height: 24px;
+        }
+        .messb{
+          margin-top: 80px;
         }
         .tags{
           font-size: 0;

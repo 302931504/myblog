@@ -123,7 +123,7 @@ apiRouter.post('/saveBlog', (req, res) => {
 
 //获取文章
 apiRouter.get('/getOneBlog', (req, res) => {
-  var sql = `SELECT blog_id, blog_title, classify_text, blog_content, blog_tags, blog_description, blog_isShow
+  var sql = `SELECT *
              FROM blog b, classify c
              WHERE b.classify_id = c.classify_id AND blog_id = ${req.query.id}`;
   connection.query(sql, function (err, result) {
@@ -282,25 +282,6 @@ apiRouter.get('/addClassify', (req, res) => {
   })
 })
 
-//获取线上文章列表
-/*apiRouter.get('/getOnlineBlog', (req, res) => {
-  const limit = 10;
-  let offset = (req.query.page - 1) * limit;
-  var sql = `SELECT blog_id, blog_title, classify_text, blog_tags, blog_createTime, blog_updateTime
-             FROM blog b, classify c 
-             WHERE b.classify_id = c.classify_id AND blog_isShow = 1
-             ORDER BY blog_updateTime DESC
-             LIMIT ?,?`;
-  var sqlParams = [offset, limit];
-  connection.query(sql, sqlParams, function (err, result) {
-    if(err) {
-      console.log('[INSERT ERROR] - ',err.message);
-      return;
-    }
-    res.json({status: 0, data: result, info: '获取成功'});
-  })
-});*/
-
 //获取用户列表
 apiRouter.get('/getUserList', (req, res) => {
   const limit = 10;
@@ -315,6 +296,7 @@ apiRouter.get('/getUserList', (req, res) => {
     res.json({status: 0, info: '获取成功', data: result});
   })
 })
+
 //新增订阅
 apiRouter.post('/addFollow', (req, res) => {
   var sql = 'SELECT COUNT(*) AS num FROM users WHERE user_email = ?';
@@ -466,7 +448,7 @@ apiRouter.get('/getNum', (req, res) => {
 
 //获取关键文章
 apiRouter.get('/getKeyBlog', (req, res) => {
-  var sql = `SELECT blog_id, blog_title, classify_text, blog_tags, blog_createTime, blog_updateTime
+  var sql = `SELECT blog_id, blog_title, classify_text, blog_tags, blog_createTime, blog_updateTime, blog_pubTime
              FROM blog b, classify c
              WHERE b.classify_id = c.classify_id AND blog_isShow = ${req.query.isShow}
              AND blog_id IN (SELECT DISTINCT blog_id
@@ -485,7 +467,7 @@ apiRouter.get('/getKeyBlog', (req, res) => {
 
 //获取相关分类下的文章
 apiRouter.get('/getClassifyBlog', (req, res) => {
-  var sql = `SELECT blog_id, blog_title, classify_text, blog_tags, blog_createTime, blog_updateTime
+  var sql = `SELECT blog_id, blog_title, classify_text, blog_tags, blog_createTime, blog_updateTime, blog_pubTime
              FROM blog b, classify c
              WHERE b.classify_id = c.classify_id AND blog_isShow = ${req.query.isShow} 
                 AND classify_text = ?
@@ -564,19 +546,38 @@ apiRouter.get('/getComment', (req, res) => {
 
 //更新管理员信息
 apiRouter.post('/updateMInfo', (req, res) => {
-  var upSql = `UPDATE manager
-               SET m_account = ?,
-                   m_password = ?,
-                   m_nickname = ?,
-                   m_email = ?
-               WHERE m_account = ?`;
-  var upSqlParams = [req.body.account,req.body.password,req.body.nickname,req.body.email,req.body.account];
-  connection.query(upSql, upSqlParams, function(err, result) {
+  var sql = `SELECT COUNT(*) num, m_password FROM manager WHERE m_account = ?`;
+  var sqlParam = [req.body.oldAccount];
+  connection.query(sql, sqlParam, function(err, result) {
     if(err) {
       console.log('[INSERT ERROR] - ',err.message);
       return;
     }
-    res.json({status: 0, info: '更新成功', data: result});
+    if(result[0].num <= 0) {
+      res.json({status: -1, info: '账号不存在'});
+      return;
+    }
+    if(result[0].num > 0) {
+      if(req.body.oldPass !== result[0].m_password) {
+        res.json({status: -1, info: '密码错误'});
+        return;
+      } else {
+        var upSql = `UPDATE manager
+                     SET m_account = ?,
+                         m_password = ?,
+                         m_nickname = ?,
+                         m_email = ?
+                     WHERE m_account = ?`;
+        var upSqlParams = [req.body.account,req.body.password,req.body.nickname,req.body.email,req.body.account];
+        connection.query(upSql, upSqlParams, function(err, result) {
+          if(err) {
+            console.log('[INSERT ERROR] - ',err.message);
+            return;
+          }
+          res.json({status: 0, info: '更新成功', data: result});
+        })
+      }
+    }
   })
 });
 

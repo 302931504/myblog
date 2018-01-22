@@ -5,7 +5,7 @@
     <div class="content">
       <message-board :bbsList="bbs" @answer="answer" @deletebbs="_deleteBBS" @deleteChild="_deleteChildBBS"></message-board>
       <page-btn v-show="bbsCount > 10 && showBtn" :pageCount="pages" :currentPage="currentPage" @next="next" @clickPage="clickPage" @pre="pre"></page-btn>
-      <comment @addBBS="addBBS"></comment>
+      <comment class="comment" @addBBS="addBBS"></comment>
       <div class="answerWrapper" v-show="showAnswer">
         <comment @addBBS="_addChildBBS"></comment>
       </div>
@@ -134,6 +134,7 @@
   .messWrapper{
     color: #333;
     .content{
+      padding: 40px;
       margin-top: 10px;
       .answerWrapper{
         position: fixed;
@@ -141,6 +142,9 @@
         left: 30%;
         background: #fff;
         box-shadow: 8px 8px 6px #888888;
+      }
+      .comment{
+        margin-top: 80px;
       }
     }
   }

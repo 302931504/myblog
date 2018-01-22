@@ -51,7 +51,17 @@
     },
     methods: {
       change () {
+        if (!this.account || !this.newPass || !this.nickname || !this.email || !this.oldPass) {
+          this.showAttention('请填入相关原始信息', false);
+          return;
+        }
+        if (!this.sureNewPass) {
+          this.showAttention('请确认新密码', false);
+          return;
+        }
         const item = {
+          oldAccount: this.account,
+          oldPass: this.oldPass,
           account: this.account,
           password: this.newPass,
           nickname: this.nickname,
@@ -60,6 +70,9 @@
         updateInfo(item).then(res => {
           if (!res.status) {
             this.showAttention(res.info, true);
+          } 
+          if (res.status === -1) {
+            this.showAttention(res.info, false);
           }
         });
       },
