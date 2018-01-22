@@ -176,16 +176,16 @@ apiRouter.get('/getClassify',(req,res) => {
   })
 })
 
-//获取草稿箱文章列表
-apiRouter.get('/getDraftList', (req, res) => {
+//获取文章列表
+apiRouter.get('/getBlogList', (req, res) => {
   const limit = 10;
   let offset = (req.query.page - 1) * limit;
-  var sql = `SELECT blog_id, blog_title, classify_text, blog_tags, blog_createTime, blog_updateTime 
+  var sql = `SELECT blog_id, blog_title, classify_text, blog_tags, blog_createTime, blog_updateTime, blog_pubTime 
              FROM blog b, classify c 
-             WHERE b.classify_id = c.classify_id AND blog_isShow = 0
+             WHERE b.classify_id = c.classify_id AND blog_isShow = ?
              ORDER BY blog_updateTime DESC
              LIMIT ?,?`;
-  var sqlParams = [offset, limit];
+  var sqlParams = [req.query.isShow, offset, limit];
   connection.query(sql, sqlParams, function (err, result) {
     if(err) {
       console.log('[INSERT ERROR] - ',err.message);
@@ -283,7 +283,7 @@ apiRouter.get('/addClassify', (req, res) => {
 })
 
 //获取线上文章列表
-apiRouter.get('/getOnlineBlog', (req, res) => {
+/*apiRouter.get('/getOnlineBlog', (req, res) => {
   const limit = 10;
   let offset = (req.query.page - 1) * limit;
   var sql = `SELECT blog_id, blog_title, classify_text, blog_tags, blog_createTime, blog_updateTime
@@ -299,7 +299,7 @@ apiRouter.get('/getOnlineBlog', (req, res) => {
     }
     res.json({status: 0, data: result, info: '获取成功'});
   })
-});
+});*/
 
 //获取用户列表
 apiRouter.get('/getUserList', (req, res) => {
@@ -503,7 +503,8 @@ apiRouter.get('/getClassifyBlog', (req, res) => {
 //发布文章
 apiRouter.post('/publishBlog', (req, res) => {
   var upSql = `UPDATE blog
-               SET blog_isShow = 1
+               SET blog_isShow = 1,
+                   blog_pubTime = NOW()
                WHERE blog_id = ?`;
   var upSqlParam = [req.body.id];
   connection.query(upSql, upSqlParam, function(err, result) {

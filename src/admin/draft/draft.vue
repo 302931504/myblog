@@ -6,7 +6,7 @@
     <page-btn v-show="draftCount >= 10 && showBtn" :pageCount="pages" :currentPage="currentPage" @next="next" @clickPage="clickPage" @pre="pre"></page-btn>
     <no-content v-show="blogs.length === 0"></no-content>
     <caution :showFlag="showFlag" :text="text" @cancel="cancel" @sure="sure"></caution>
-    <router-view></router-view>
+    <router-view></router-view> 
   </div>
 </template>
  
@@ -18,8 +18,8 @@
   import Attention from '../../base/attention/attention';
   import Caution from '../../admin/caution/caution';
   import {initPageMixin, blogMixin, showAttentionMixin, cautionMixin} from '../../common/js/mixin';
-  import {getDraftByPage, publishBlog, deletBlog, getOneBlog} from '../../api/draft'; 
-  import {getClassifyBlog, getKeyBlog} from '../../api/blog';
+  import {publishBlog, deletBlog, getOneBlog} from '../../api/draft'; 
+  import {getBlogByPage, getClassifyBlog, getKeyBlog} from '../../api/blog';
   import {mapGetters, mapMutations} from 'vuex';
 
   export default {
@@ -88,7 +88,11 @@
         }
       },
       getByPage () {
-        getDraftByPage(this.currentPage).then((res) => {
+        const item = {
+          page: this.currentPage,
+          isShow: 0
+        };
+        getBlogByPage(item).then((res) => {
           console.log(res);
           if (res.status === 0) {
             this.blogs = res.data;

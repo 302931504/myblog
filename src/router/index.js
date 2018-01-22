@@ -97,7 +97,11 @@ export default new Router({
         },
         {
           path: 'blog',
-          component: Blog
+          component: Blog,
+          children: [{
+            path: ':id',
+            component: ArticleDetail
+          }]
         },
         {
           path: 'follower',

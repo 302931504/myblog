@@ -9,7 +9,8 @@
             <th>分类</th>
             <th>标签</th>
             <th>更新时间</th>
-            <th>发布时间</th>
+            <th v-show="type">发布时间</th>
+            <th v-show="!type">创建时间</th>
             <th>操作</th>
           </tr> 
         </thead>
@@ -22,7 +23,8 @@
             <td>{{item.classify_text}}</td>
             <td>{{item.blog_tags}}</td>
             <td>{{_initTime(item.blog_updateTime)}}</td>
-            <td>{{_initTime(item.blog_createTime)}}</td>
+            <td v-show="!type">{{_initTime(item.blog_createTime)}}</td>
+            <td v-show="type">{{_initTime(item.blog_pubTime)}}</td>
             <td>
               <button type="button" class="edit" @click="editBlog(item.blog_id)">编辑</button>
               <button v-show="!type" type="button" class="delete" @click="deletBlog(item.blog_id)">删除</button>

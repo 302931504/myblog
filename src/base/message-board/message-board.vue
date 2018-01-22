@@ -80,7 +80,8 @@
 
 <style lang="less" rel="stylesheet/less">
   .bbsContent{
-    padding: 40px;
+    width: 100%;
+    // padding: 40px;
     background: #fff;
     .parent-mess li{
       border-top: 1px solid #ccc; 

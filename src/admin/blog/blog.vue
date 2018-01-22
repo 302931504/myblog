@@ -2,10 +2,11 @@
   <div class="blogWrapper">
     <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
     <search-box :options="options" @searchKeyBlog="searchBlog" placeholder="请输入关键字" @clickOption="clickClassify"></search-box>
-    <blog-list v-show="blogs.length > 0" :blogs="blogs" :type="type"  @edit="editBlog" @moveDraft="moveDraft"></blog-list>
+    <blog-list v-show="blogs.length > 0" :blogs="blogs" :type="type"  @edit="editBlog" @moveDraft="moveDraft" @select="witchArticle"></blog-list>
     <page-btn v-show="onlineArticleCount >= 10 && showBtn" :pageCount="pages" :currentPage="currentPage" @next="next" @clickPage="clickPage" @pre="pre"></page-btn>
     <no-content v-show="blogs.length === 0"></no-content>
     <caution :showFlag="showFlag" :text="text" @cancel="cancel" @sure="sure"></caution>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -16,9 +17,10 @@
   import NoContent from '../../admin/no-content/no-content';
   import Attention from '../../base/attention/attention';
   import Caution from '../../admin/caution/caution';
-  import {getOnlineBlogByPage, getKeyBlog, getClassifyBlog, draftBlog} from '../../api/blog';
+  import {getBlogByPage, getKeyBlog, getClassifyBlog, draftBlog} from '../../api/blog';
+  import {getOneBlog} from '../../api/draft'; 
   import {initPageMixin, blogMixin, showAttentionMixin, cautionMixin} from '../../common/js/mixin';
-  import {mapGetters} from 'vuex';
+  import {mapGetters, mapMutations} from 'vuex';
 
   export default {
     mixins: [initPageMixin, blogMixin, showAttentionMixin, cautionMixin],
@@ -39,8 +41,20 @@
       this._getClassify();
     },
     methods: {
+      witchArticle (id) {
+        getOneBlog(id).then(res => {
+          if (!res.status) {
+            this.setEditblog(res.data[0]);
+            this.$router.push({path: `/admin/blog/${id}`});
+          }
+        });
+      },
       getByPage () {
-        getOnlineBlogByPage(this.currentPage).then((res) => {
+        const item = {
+          page: this.currentPage,
+          isShow: 1
+        };
+        getBlogByPage(item).then((res) => {
           this.blogs = res.data;
         }).catch(err => err);
       },
@@ -80,7 +94,10 @@
             this.showBtn = false;
           }
         });
-      }
+      },
+      ...mapMutations({
+        setEditblog: 'SET_EDITBLOG'
+      })
     },
     components: {
       SearchBox,
@@ -96,5 +113,6 @@
 <style scoped lang="less" rel="stylesheet/less">
   .blogWrapper{
     color: #000;
+    position: relative;
   }
 </style>

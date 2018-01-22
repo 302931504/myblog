@@ -89,17 +89,20 @@ export const blogMixin = {
           this.setEditBlog(res.data[0]);
           this.setType(1);
           const nav = {
-            text: res.data[0].blog_title,
-            name: 'editBlog'
+            // text: res.data[0].blog_title,
+            text: '编辑文章',
+            name: 'editBlog_t'
           };
           this.pushNav(nav);
+          this.setCurrentName(nav.name);
           this.$router.push({path: '/admin/editBlog'});
         }
       }); 
     },
     ...mapMutations({
       setEditBlog: 'SET_EDITBLOG',
-      setType: 'SET_TYPE'
+      setType: 'SET_TYPE',
+      setCurrentName: 'SET_CURRENTNAME'
     }),
     ...mapActions([
       'pushNav'

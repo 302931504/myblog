@@ -1,8 +1,13 @@
 import axios from 'axios';
 import qs from 'qs';
 
-export function getOnlineBlogByPage (page) {
-  return axios.get('/api/getOnlineBlog?page=' + page).then((res) => {
+export function getBlogByPage (item) {
+  return axios.get('/api/getBlogList', {
+  	params: {
+  		page: item.page,
+  		isShow: item.isShow
+  	}
+  }).then((res) => {
     return Promise.resolve(res.data);
   }).catch(err => err);
 };

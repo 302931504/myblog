@@ -52,7 +52,7 @@
 
 <style scoped lang="less" rel="stylesheet/less">
   .commentWrapper{
-    padding: 40px;
+    // padding: 40px;
     p{
       margin: 12px 0;
     }

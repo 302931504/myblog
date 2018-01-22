@@ -10,7 +10,7 @@
       <span class="classify">{{editBlog.classify_text}}</span>
     </div>
     <div class="content">
-      <mavon-editor style="width: 800px; box-shadow: none" v-model="editBlog.blog_content" :toolbarsFlag="false" :subfield="false" default_open="preview"></mavon-editor>
+      <mavon-editor style="width: 800px" v-model="editBlog.blog_content" :toolbarsFlag="false" :subfield="false" default_open="preview"></mavon-editor>
     </div>
     <ul class="tags">
       <li v-for="tag in editBlog.blog_tags.split('/')">{{tag}}</li>
@@ -24,7 +24,7 @@
                      @answer="anser" 
                      @deletebbs="deletebbs"
                      @deleteChild="deleteChild"></message-board>
-      <comment @addBBS="addBBS" 
+      <comment class="comment" @addBBS="addBBS" 
                :placeholder="content"></comment>
     </div>
   </div> 
@@ -176,6 +176,12 @@
       margin: 50px 0;
       .num{
         margin-top: 10px;
+      }
+    }
+    .comment{
+      width: 800px;
+      .comment{
+        margin-top: 80px;
       }
     }
   }
