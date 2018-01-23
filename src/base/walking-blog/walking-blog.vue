@@ -9,8 +9,7 @@
         </div>
         <div class="mainC">
           <div class="main">
-            <div class="content">
-              {{editBlog.content}}
+            <div class="content" v-html="editBlog.content">
             </div>
             <div class="tags">
               <span v-for="tag in editBlog.tags">● {{tag}}</span>

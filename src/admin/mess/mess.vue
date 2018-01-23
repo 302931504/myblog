@@ -1,11 +1,13 @@
 <template>
-  <div class="messWrapper">
+  <div class="messWrapper" ref="cont">
     <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
     <search-box :options="[]" :readonly="true"></search-box>
     <div class="content">
       <message-board :bbsList="bbs" @answer="answer" @deletebbs="_deleteBBS" @deleteChild="_deleteChildBBS"></message-board>
       <page-btn v-show="bbsCount > 10 && showBtn" :pageCount="pages" :currentPage="currentPage" @next="next" @clickPage="clickPage" @pre="pre"></page-btn>
-      <comment class="comment" @addBBS="addBBS"></comment>
+      <div ref="comWrap">
+        <comment class="comment" @addBBS="addBBS"></comment>
+      </div>
       <div class="answerWrapper" v-show="showAnswer">
         <comment @addBBS="_addChildBBS"></comment>
       </div>

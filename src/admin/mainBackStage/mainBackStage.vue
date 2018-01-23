@@ -8,7 +8,7 @@
     </div>
     <div class="content" ref="content" style="marginLeft: 200px">
       <content-bar :navList="navList" @clickNav="clickNav" :currentName="currentName" @closeNav="close"></content-bar>
-        <div class="routerViewWrapper">
+        <div class="routerViewWrapper" ref="viewScroll">
           <div class="routerView">
             <transition name="upglide">
               <router-view/>
@@ -28,6 +28,7 @@
   import Author from '../author/author';
   import LockScreen from '../../base/lock-screen/lock-screen';
   import {mapGetters, mapActions, mapMutations} from 'vuex';
+  import bus from '../../common/js/bus';
 
   const NAVBAR_WIDTH = 200;
 
@@ -42,6 +43,11 @@
         'navList',
         'currentName'
         ])
+    },
+    created () {
+      bus.$on('quote', (item) => {
+        this.$refs.viewScroll.scrollTop = this.$refs.viewScroll.scrollHeight;
+      });
     },
     methods: {
       toggleNavBar () {

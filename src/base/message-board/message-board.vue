@@ -6,7 +6,11 @@
           <div class="an-info">
             <h3>{{item.name}}</h3>
             <div class="action" v-show="isBBS">
-              <span class="quote" v-show="index === currentIndex">引用</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="floor">第{{bbsList.length - index}}楼</span>
+              <span class="quote" 
+                    v-show="index === currentIndex" 
+                    @click.stop="quoteMess(item)">引用
+              </span>&nbsp;&nbsp;&nbsp;&nbsp;
+              <span class="floor">第{{bbsList.length - index}}楼</span>
             </div>
           </div>
           <div class="an-content" v-html="item.content"></div>
@@ -36,6 +40,8 @@
 
 <script>
   import {initTime} from '../../common/js/util';
+  import bus from '../../common/js/bus';
+
   export default {
     data () {
       return {
@@ -73,6 +79,9 @@
       },
       deleteChild (id) {
         this.$emit('deleteChild', id);
+      },
+      quoteMess (item) {
+        bus.$emit('quote', item);
       }
     }
   };
@@ -106,7 +115,7 @@
         blockquote{
           display: block;
           margin-bottom: 5px;
-          padding: 10px 14px;
+          padding: 20px 14px;
           font-size: 12px;
           border-left: 3px solid #eee;
           background-color: #f8f8f8;
@@ -118,6 +127,7 @@
             word-break: break-all;
             word-wrap: break-word;
             white-space: pre-line;
+            margin-bottom: 18px;
           }
         }
       }

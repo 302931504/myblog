@@ -45,14 +45,15 @@
     methods: {
       clickOption (text) {
         if (text === '添加用户') {
-          this.showFlag2 = true;
+          this.showFlag2 = true; 
         }
       },
       closeEdit () {
         this.showFlag2 = false;
       },
       addUser (item) {
-        this.userList.push(item);
+        this.showFlag2 = false;
+        this.routerGo();
       },
       _deleteUser (id) {
         this.showFlag = true;

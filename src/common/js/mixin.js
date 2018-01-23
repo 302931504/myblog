@@ -122,6 +122,13 @@ export const cautionMixin = {
   methods: {
     cancel () {
       this.showFlag = false;
-    }
+    },
+    routerGo () {
+      this.setBackPath(this.$route.path);
+      this.$router.push('/admin/back');
+    },
+    ...mapMutations({
+      setBackPath: 'SET_BACKPATH'
+    })
   }
 };

@@ -97,3 +97,7 @@ export function initBBS (arr) {
 
 	return newArr; 
 };
+
+export function trim (s) {
+	return s.replace(/(^\s*)|(\s*$)/g, '');
+};

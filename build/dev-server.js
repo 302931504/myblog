@@ -286,7 +286,7 @@ apiRouter.get('/addClassify', (req, res) => {
 apiRouter.get('/getUserList', (req, res) => {
   const limit = 10;
   let offset = (req.query.page - 1) * limit;
-  var sql = 'SELECT * FROM users LIMIT ?,?';
+  var sql = 'SELECT * FROM users ORDER BY add_time DESC LIMIT ?,?';
   var sqlParams = [offset, limit];
   connection.query(sql,sqlParams,function(err, result) {
     if(err) {

@@ -48,12 +48,7 @@
           addUsre(user).then((res) => {
             if (res.status === 0) {
               this.errText = res.info;
-              const item = {
-                id: res.data,
-                name: this.name,
-                email: this.email
-              };
-              this.$emit('addUsre', item);
+              this.$emit('addUser');
             }
           }).catch(err => err); 
         } else {

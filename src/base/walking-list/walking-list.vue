@@ -7,8 +7,7 @@
           <p class="month">{{getMonth(item.time)}}</p>
         </div>
         <div class="main">
-          <div class="content">
-            {{item.content}}
+          <div class="content" v-html="item.content">
           </div>
           <div class="tags">
             <span v-for="tag in item.tags">● {{tag}}</span>

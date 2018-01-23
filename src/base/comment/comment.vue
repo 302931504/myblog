@@ -18,6 +18,9 @@
 </template>
 
 <script>
+  import bus from '../../common/js/bus';
+  import {trim} from '../../common/js/util';
+
   export default {
     data () {
       return {
@@ -31,6 +34,16 @@
         type: String,
         default: ''
       }
+    },
+    created () {
+      bus.$on('quote', item => {
+        let tags = item.content.split('</blockquote>');
+        if (tags.length > 1) {
+          this.content = `<blockquote><pre>引用 ${item.name} 的发言：</pre>${trim(tags[1])}</blockquote>`;
+        } else {
+          this.content = `<blockquote><pre>引用 ${item.name} 的发言：</pre>${tags[0]}</blockquote>`;  
+        }
+      });
     },
     methods: {
       publish () {
