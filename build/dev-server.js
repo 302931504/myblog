@@ -55,6 +55,8 @@ app.use(session({
 
 const apiRouter = express.Router()
 
+const mail = require('../server/mail/mailHandlers.js')
+
 //登录博客系统
 apiRouter.post('/login', (req, res) => {
   const username = req.body.username
@@ -317,6 +319,7 @@ apiRouter.post('/addFollow', (req, res) => {
           console.log('[INSERT ERROR] - ',err.message);
           return;
         }
+        mail.new_follow();
         res.json({status: 0, info: '新增成功', data: result.insertId});
       })
     }
