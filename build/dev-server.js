@@ -18,6 +18,8 @@ const session = require('express-session');
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/blog',{useMongoClient:true});
 
+var _ = require('lodash')
+
 var mysql = require('mysql');
 var connection = mysql.createConnection({
   host: 'localhost',
@@ -319,7 +321,10 @@ apiRouter.post('/addFollow', (req, res) => {
           console.log('[INSERT ERROR] - ',err.message);
           return;
         }
-        mail.new_follow();
+        let param = {
+          currentTime: Date.now()
+        }
+        mail.new_follow(param);
         res.json({status: 0, info: '新增成功', data: result.insertId});
       })
     }
@@ -337,19 +342,6 @@ apiRouter.get('/deleteUser', (req, res) => {
       return;
     }
     res.json({status: 0, info: '删除成功'});
-  })
-})
-
-//新增留言
-apiRouter.post('/addBBS', (req, res) => {
-  var addSql = 'INSERT INTO bbs(type, user_email, user_name, bbs_content) VALUES(?,?,?,?)';
-  var addSqlParams = [req.body.type, req.body.user_email, req.body.user_name, req.body.bbs_content];
-  connection.query(addSql, addSqlParams, function(err, result) {
-    if(err) {
-      console.log('[INSERT ERROR] - ',err.message);
-      return;
-    }
-    res.json({status: 0, info: '发表成功'});
   })
 })
 
@@ -526,6 +518,55 @@ apiRouter.post('/comment', (req, res) => {
     if(err) {
       console.log('[INSERT ERROR] - ',err.message);
       return;
+    }
+    if(req.body.type === 0) { //博客留有发送邮件
+      const param = {
+        currentTime: Date.now(),
+        user_name: req.body.uname,
+        leave_time: Date.now(),
+        bbs_content: req.body.content.replace(/<blockquote>[\s\S]*<\/blockquote>/, '')
+      };
+      mail.bbs_myself(param);
+    }
+    if(req.body.type === 1) { //评论行博发送邮件
+      var wSql = `SELECT walking_blog_content 
+                  FROM walking_blog 
+                  WHERE walking_blog_id = ${req.body.reply_id}`;
+      connection.query(wSql, function(err, result) {
+        if(err) {
+          console.log('[INSERT ERROR] - ',err.message);
+          return;
+        }
+        const param = {
+          currentTime: Date.now(),
+          user_name: req.body.uname,
+          leave_time: Date.now(),
+          content: req.body.content.replace(/<blockquote>[\s\S]*<\/blockquote>/, ''),
+          walk_blog_content: result[0].walking_blog_content,
+          id: req.body.reply_id
+        }
+        mail.walk_comment_myself(param);
+      })
+    }
+    if(req.body.type === 2) { //评论文章发送邮件
+      var aSql = `SELECT blog_title 
+                  FROM blog
+                  WHERE blog_id = ${req.body.reply_id}`;
+      connection.query(aSql, function(err, result) {
+        if(err) {
+          console.log('[INSERT ERROR] - ',err.message);
+          return;
+        }
+        const param = {
+          blog_title: result[0].blog_title,
+          currentTime: Date.now(),
+          user_name: req.body.uname,
+          leave_time: Date.now(),
+          content: req.body.content.replace(/<blockquote>[\s\S]*<\/blockquote>/, ''),
+          id: req.body.reply_id
+        };
+        mail.blog_comment_myself(param);
+      })
     }
     res.json({status: 0, info: '评论成功'});
   })
