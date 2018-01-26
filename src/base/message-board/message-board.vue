@@ -82,6 +82,7 @@
       },
       quoteMess (item) {
         bus.$emit('quote', item);
+        this.$emit('quoteto', item);
       }
     }
   };

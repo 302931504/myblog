@@ -17,3 +17,5 @@ export const walkingBlogCount = state => state.walkingBlogCount;
 export const backPath = state => state.backPath;
 
 export const type = state => state.type;
+
+export const isquote = state => state.isquote;

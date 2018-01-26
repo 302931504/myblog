@@ -21,3 +21,5 @@ export const SET_WALKINGBLOGCOUNT = 'SET_WALKINGBLOGCOUNT';
 export const SET_BACKPATH = 'SET_BACKPATH';
 
 export const SET_TYPE = 'SET_TYPE';
+
+export const SET_ISQUOTE = 'SET_ISQUOTE';

@@ -36,6 +36,9 @@ const mutation = {
   },
   [types.SET_TYPE] (state, type) {
     state.type = type;
+  },
+  [types.SET_ISQUOTE] (state, type) {
+    state.isquote = type;
   } 
 };
 

@@ -48,3 +48,20 @@ export function getComment (item) {
 		console.log(err);
 	});
 };
+
+export function quote (item) {
+	return axios.post('/api/quote', {
+		reply_id: item.reply_id,
+		uemail: item.user_email,
+		uname: item.user_name,
+		content: item.bbs_content,
+		type: item.type,
+		to_email: item.to_email,
+		to_content: item.to_content,
+		old_user: item.old_user
+	}).then(res => {
+		return Promise.resolve(res.data);
+	}).catch(err => {
+		console.log(err);
+	});
+};

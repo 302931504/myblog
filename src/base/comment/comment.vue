@@ -49,7 +49,7 @@
       publish () {
         const item = {
           type: -1,
-          parent_id: -1,
+          parent_id: -1, 
           user_email: this.email,
           user_name: this.nickname,
           bbs_content: this.content

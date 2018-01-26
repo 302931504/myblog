@@ -10,7 +10,8 @@ const state = {
   onlineArticleCount: 0,
   usersCount: 0,
   walkingBlogCount: 0,
-  backPath: ''
+  backPath: '',
+  isquote: false
 };
 
 export default state;

@@ -116,9 +116,39 @@ apiRouter.post('/saveBlog', (req, res) => {
       var addSqlParams = [req.body.title,classify_id,req.body.tags,req.body.description,req.body.content,req.body.isShow];
       connection.query(addSql,addSqlParams,function (err, result) {
         if(err){
-          console.log('[INSERT ERROR] - ',err.message);
+          console.log('[ADD ERROR] - ',err.message);
           return;
-        }  
+        }
+        if (req.body.isShow) {
+          const param = {
+            to: '',
+            user_name: '',
+            summery: req.body.description,
+            classify: req.body.classify_text,
+            tags: req.body.tags,
+            id: result.insertId,
+            title: req.body.title,
+            currentTime: Date.now(),
+            pub_time: Date.now()
+          };
+          var mailSql = `SELECT user_email, user_name
+                          FROM users`;
+          connection.query(mailSql, function(err, result) {
+            if(err){
+              console.log('[SELECT ERROR] - ',err.message);
+              return;
+            }
+            var i = 0;
+            var interval = 400; //每封邮件发送的间隔时间
+            _.map(result, function(user) {
+              setTimeout(() => {
+                param.to = user.user_email;
+                param.user_name = user.user_name;
+                mail.new_article(param);
+              }, interval * i++);
+            })
+          })
+        }
         res.json({status: 0, info: '保存成功'});  
       }) 
     });   
@@ -184,12 +214,22 @@ apiRouter.get('/getClassify',(req,res) => {
 apiRouter.get('/getBlogList', (req, res) => {
   const limit = 10;
   let offset = (req.query.page - 1) * limit;
-  var sql = `SELECT blog_id, blog_title, classify_text, blog_tags, blog_createTime, blog_updateTime, blog_pubTime 
-             FROM blog b, classify c 
-             WHERE b.classify_id = c.classify_id AND blog_isShow = ?
-             ORDER BY blog_updateTime DESC
-             LIMIT ?,?`;
-  var sqlParams = [req.query.isShow, offset, limit];
+  var sql = ``;
+  if (req.query.isShow == 0) {
+    sql = `SELECT blog_id, blog_title, classify_text, blog_tags, blog_createTime, blog_updateTime, blog_pubTime 
+           FROM blog b, classify c 
+           WHERE b.classify_id = c.classify_id AND blog_isShow = 0
+           ORDER BY blog_updateTime DESC
+           LIMIT ?,?`;
+  } 
+  if (req.query.isShow == 1)  {
+    sql = `SELECT blog_id, blog_title, classify_text, blog_tags, blog_createTime, blog_updateTime, blog_pubTime 
+           FROM blog b, classify c 
+           WHERE b.classify_id = c.classify_id AND blog_isShow = 1
+           ORDER BY blog_pubTime DESC
+           LIMIT ?,?`;
+  }
+  var sqlParams = [offset, limit];
   connection.query(sql, sqlParams, function (err, result) {
     if(err) {
       console.log('[INSERT ERROR] - ',err.message);
@@ -355,6 +395,24 @@ apiRouter.post('/addChildBBS', (req, res) => {
       console.log('[INSERT ERROR] - ',err.message);
       return;
     }
+    var mailSql = `SELECT user_email, user_name, bbs_content
+                   FROM bbs
+                   WHERE bbs_id = ${req.body.parent_id}`;
+    connection.query(mailSql, function(err, result) {
+      if(err) {
+        console.log('[INSERT ERROR] - ',err.message);
+        return;
+      }
+      const param = {
+        to: result[0].user_email,
+        answer_content: result[0].bbs_content,
+        currentTime: Date.now(),
+        user_name: req.body.user_name,
+        leave_time: Date.now(),
+        content: req.body.bbs_child_content,
+      };
+      mail.answer_comment(param); //收到评论回复发送邮件
+    })
     res.json({status: 0, info: '回复成功'});
   })
 })
@@ -489,6 +547,44 @@ apiRouter.post('/publishBlog', (req, res) => {
       console.log('[INSERT ERROR] - ',err.message);
       return;
     }
+    var mailSql = `SELECT blog_title, classify_text, blog_tags, blog_description
+                   FROM blog b, classify c
+                   WHERE b.classify_id = c.classify_id AND blog_id = ${req.body.id}`;
+    connection.query(mailSql, function(err, result) {
+      if(err) {
+        console.log('[INSERT ERROR] - ',err.message);
+        return;
+      }
+      const param = {
+        to: '',
+        user_name: '',
+        summery: result[0].blog_description,
+        classify: result[0].classify_text,
+        tags: result[0].blog_tags,
+        id: req.body.id,
+        title: result[0].blog_title,
+        currentTime: Date.now(),
+        pub_time: Date.now()
+      };
+      var mailSql2 = `SELECT user_email, user_name
+                      FROM users`;
+      connection.query(mailSql2, function(err, result) {
+        if(err) {
+          console.log('[INSERT ERROR] - ',err.message);
+          return;
+        }
+        var i = 0;
+        var interval = 400; //每封邮件发送的间隔时间
+        _.map(result, function(user) {
+          //异步执行，防止短时间链接过多
+          setTimeout(() => {
+            param.to = user.user_email;
+            param.user_name = user.user_name;
+            mail.new_article(param);
+          }, interval * i++);
+        })
+      })
+    })               
     res.json({status: 0, info: '发布成功'});
   })
 })
@@ -519,7 +615,7 @@ apiRouter.post('/comment', (req, res) => {
       console.log('[INSERT ERROR] - ',err.message);
       return;
     }
-    if(req.body.type === 0) { //博客留有发送邮件
+    if(req.body.type == 0) { //博客留言发送邮件
       const param = {
         currentTime: Date.now(),
         user_name: req.body.uname,
@@ -528,7 +624,7 @@ apiRouter.post('/comment', (req, res) => {
       };
       mail.bbs_myself(param);
     }
-    if(req.body.type === 1) { //评论行博发送邮件
+    if(req.body.type == 1) { //评论行博发送邮件
       var wSql = `SELECT walking_blog_content 
                   FROM walking_blog 
                   WHERE walking_blog_id = ${req.body.reply_id}`;
@@ -659,6 +755,30 @@ apiRouter.get('/deleteWBlog', (req, res) => {
     })
   })
 });
+
+//引用留言(评论)
+apiRouter.post('/quote', (req, res) => {
+  var addSql = `INSERT
+                INTO bbs(reply_id, user_email, user_name, bbs_content, type)
+                VALUES (?,?,?,?,?)`;
+  var addSqlParams = [req.body.reply_id, req.body.uemail, req.body.uname, req.body.content, req.body.type]; 
+  connection.query(addSql, addSqlParams, function(err, result) {
+    if(err) {
+      console.log('[INSERT ERROR] - ',err.message);
+      return;
+    }
+    const param = {
+      to: req.body.to_email,
+      leave_content: req.body.to_content,
+      currentTime: Date.now(),
+      old_user: req.body.old_user,
+      user_name: req.body.uname,
+      content: req.body.content.replace(/<blockquote>[\s\S]*<\/blockquote>/, ''),
+    };
+    mail.have_quote(param);
+    res.json({status: 0, info: '回复成功'});
+  })             
+})
 
 app.use('/api', apiRouter)
 

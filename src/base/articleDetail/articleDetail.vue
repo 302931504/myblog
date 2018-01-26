@@ -23,7 +23,8 @@
       <message-board :bbsList="comments" 
                      @answer="anser" 
                      @deletebbs="deletebbs"
-                     @deleteChild="deleteChild"></message-board>
+                     @deleteChild="deleteChild"
+                     @quoteto="quoteto"></message-board>
       <comment class="comment" @addBBS="addBBS" 
                :placeholder="content"></comment>
     </div>
@@ -35,7 +36,7 @@
   import Comment from '../../base/comment/comment';
   import Attention from '../../base/attention/attention';
   import {mapGetters, mapMutations} from 'vuex';
-  import {comment, getComment, addChildBBS, deleteChildBBS, deleteBBS} from '../../api/bbs';
+  import {comment, getComment, addChildBBS, deleteChildBBS, deleteBBS, quote} from '../../api/bbs';
   import {showAttentionMixin} from '../../common/js/mixin';
   import {initBBS, initTime} from '../../common/js/util';
 
@@ -46,7 +47,9 @@
         comments: [],
         content: '',
         answerId: -1,
-        answerType: 0
+        answerType: 0,
+        isQuote: false,
+        quoteObj: {}
       };
     },
     computed: {
@@ -74,9 +77,13 @@
         this.answerId = item.id;
         this.answerType = 1;
       },
+      quoteto (item) {
+        this.isQuote = true;
+        this.quoteObj = item;
+      },
       addBBS (item) {
         item.type = 2;
-        if (!this.answerType) {
+        if (!this.answerType && !this.isQuote) {
           item.reply_id = this.editBlog.blog_id;
           comment(item).then(res => {
             if (res.status === 0) {
@@ -84,13 +91,21 @@
               this.routerGo();
             }
           });
-        } else {
+        } else if (this.answerType && !this.isQuote) {
           item.parent_id = this.answerId;
           addChildBBS(item).then(res => {
             if (res.status === 0) {
               this.showAttention(res.info, true);
               this.routerGo();
             }
+          });
+        } else if (this.isQuote) {
+          item.reply_id = this.editBlog.blog_id;
+          item.to_email = this.quoteObj.email;
+          item.to_content = this.quoteObj.content;
+          item.old_user = this.quoteObj.name;
+          quote(item).then(res => {
+            console.log(res);
           });
         }
       },
