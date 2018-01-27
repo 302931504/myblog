@@ -21,7 +21,7 @@
     </div>
     <div class="comment">
       <message-board :bbsList="comments" 
-                     @answer="anser" 
+                     @answer="answer" 
                      @deletebbs="deletebbs"
                      @deleteChild="deleteChild"
                      @quoteto="quoteto"></message-board>
@@ -37,19 +37,14 @@
   import Attention from '../../base/attention/attention';
   import {mapGetters, mapMutations} from 'vuex';
   import {comment, getComment, addChildBBS, deleteChildBBS, deleteBBS, quote} from '../../api/bbs';
-  import {showAttentionMixin} from '../../common/js/mixin';
+  import {showAttentionMixin, quoteMixin} from '../../common/js/mixin';
   import {initBBS, initTime} from '../../common/js/util';
 
   export default {
-    mixins: [showAttentionMixin],
+    mixins: [showAttentionMixin, quoteMixin],
     data () {
       return {
-        comments: [],
-        content: '',
-        answerId: -1,
-        answerType: 0,
-        isQuote: false,
-        quoteObj: {}
+        comments: []
       };
     },
     computed: {
@@ -71,15 +66,6 @@
             this.comments = initBBS(res.data);
           }
         });
-      },
-      anser (item) {
-        this.content = '回复 ' + item.name + ':';
-        this.answerId = item.id;
-        this.answerType = 1;
-      },
-      quoteto (item) {
-        this.isQuote = true;
-        this.quoteObj = item;
       },
       addBBS (item) {
         item.type = 2;

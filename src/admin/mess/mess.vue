@@ -3,18 +3,20 @@
     <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
     <search-box :options="[]" :readonly="true"></search-box>
     <div class="content">
-      <message-board :bbsList="bbs" @answer="answer" @deletebbs="_deleteBBS" @deleteChild="_deleteChildBBS"></message-board>
+      <message-board :bbsList="bbs" 
+                     @answer="answer" 
+                     @deletebbs="_deleteBBS" 
+                     @deleteChild="_deleteChildBBS"
+                     @quoteto="quoteto">
+      </message-board>
       <page-btn v-show="bbsCount > 10 && showBtn" :pageCount="pages" :currentPage="currentPage" @next="next" @clickPage="clickPage" @pre="pre"></page-btn>
       <div ref="comWrap">
-        <comment class="comment" @addBBS="addBBS"></comment>
-      </div>
-      <div class="answerWrapper" v-show="showAnswer">
-        <comment @addBBS="_addChildBBS"></comment>
+        <comment class="comment" @addBBS="addBBS" :placeholder="content"></comment>
       </div>
     </div>
     <caution :showFlag="showFlag" :text="text" @cancel="cancel" @sure="sure"></caution>
   </div>
-</template>
+</template> 
 
 <script>
   import SearchBox from '../searchBox/searchBox';
@@ -23,17 +25,16 @@
   import PageBtn from '../../base/page-btn/page-btn';
   import Attention from '../../base/attention/attention';
   import Caution from '../../admin/caution/caution';
-  import {comment, addChildBBS, deleteBBS, deleteChildBBS, getComment} from '../../api/bbs';
-  import {initPageMixin, showAttentionMixin, cautionMixin} from '../../common/js/mixin';
+  import {comment, addChildBBS, deleteBBS, deleteChildBBS, getComment, quote} from '../../api/bbs';
+  import {initPageMixin, showAttentionMixin, cautionMixin, quoteMixin} from '../../common/js/mixin';
   import {initBBS} from '../../common/js/util';
   import {mapGetters, mapMutations} from 'vuex';
 
   export default {
-    mixins: [initPageMixin, showAttentionMixin, cautionMixin],
+    mixins: [initPageMixin, showAttentionMixin, cautionMixin, quoteMixin],
     data () {
       return {
         bbs: [],
-        showAnswer: false,
         answerId: -1
       };
     },
@@ -56,29 +57,34 @@
           this.bbs = initBBS(res.data);
         });
       },
-      answer (item) {
-        this.showAnswer = true;
-        this.answerId = item.id;
-      },
       addBBS (item) {
         item.type = 0;
         item.reply_id = 0;
-        comment(item).then(res => {
-          if (res.status === 0) {
-            this.showAttention(res.info, true);
-            this.routerGo();
-          }
-        });
-      },
-      _addChildBBS (item) {
-        item.parent_id = this.answerId;
-        addChildBBS(item).then(res => {
-          if (res.status === 0) {
-            this.showAnswer = false;
-            this.showAttention(res.info, true);
-            this.routerGo();
-          }
-        });
+        if (!this.answerType && !this.isQuote) {
+          comment(item).then(res => {
+            if (res.status === 0) {
+              this.showAttention(res.info, true);
+              this.routerGo();
+            }
+          });
+        }
+        if (this.answerType && !this.isQuote) {
+          item.parent_id = this.answerId;
+          addChildBBS(item).then(res => {
+            if (res.status === 0) {
+              this.showAttention(res.info, true);
+              this.routerGo();
+            }
+          });
+        }
+        if (this.isQuote) {
+          item.to_email = this.quoteObj.email;
+          item.to_content = this.quoteObj.content;
+          item.old_user = this.quoteObj.name;
+          quote(item).then(res => {
+            console.log(res);
+          });
+        }
       },
       _deleteBBS (id) {
         this.showFlag = true;

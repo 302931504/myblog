@@ -132,3 +132,26 @@ export const cautionMixin = {
     })
   }
 };
+
+export const quoteMixin = {
+  data () {
+    return {
+      answerType: 0,
+      answerId: -1,
+      isQuote: false,
+      quoteObj: {},
+      content: ''
+    };
+  },
+  methods: {
+    quoteto (item) {
+      this.isQuote = true;
+      this.quoteObj = item;
+    },
+    answer (item) {
+      this.content = '回复 ' + item.name + ':';
+      this.answerId = item.id;
+      this.answerType = 1;
+    }
+  }
+};
