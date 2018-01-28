@@ -10,7 +10,7 @@
                     v-show="index === currentIndex" 
                     @click.stop="quoteMess(item)">引用
               </span>&nbsp;&nbsp;&nbsp;&nbsp;
-              <span class="floor">第{{bbsList.length - index}}楼</span>
+              <span class="floor">第{{floor - index}}楼</span>
             </div>
           </div>
           <div class="an-content" v-html="item.content"></div>
@@ -59,6 +59,10 @@
       isBBS: {
         type: Boolean,
         default: true
+      },
+      floor: {
+        type: Number,
+        default: 0
       }
     },
     methods: {

@@ -3,13 +3,14 @@
     <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
     <search-box :options="[]" :readonly="true"></search-box>
     <div class="content">
-      <message-board :bbsList="bbs" 
+      <message-board :bbsList="filterBBS"
+                     :floor="bbs.length" 
                      @answer="answer" 
                      @deletebbs="_deleteBBS" 
                      @deleteChild="_deleteChildBBS"
                      @quoteto="quoteto">
       </message-board>
-      <page-btn v-show="bbsCount > 10 && showBtn" :pageCount="pages" :currentPage="currentPage" @next="next" @clickPage="clickPage" @pre="pre"></page-btn>
+      <page-btn v-show="bbs.length > 10 && showBtn" :pageCount="pages" :currentPage="currentPage" @next="next" @clickPage="clickPage" @pre="pre"></page-btn>
       <div ref="comWrap">
         <comment class="comment" @addBBS="addBBS" :placeholder="content"></comment>
       </div>
@@ -28,26 +29,33 @@
   import {comment, addChildBBS, deleteBBS, deleteChildBBS, getComment, quote} from '../../api/bbs';
   import {initPageMixin, showAttentionMixin, cautionMixin, quoteMixin} from '../../common/js/mixin';
   import {initBBS} from '../../common/js/util';
-  import {mapGetters, mapMutations} from 'vuex';
+  import {limit} from '../../common/js/param';
+  import {mapMutations} from 'vuex';
 
   export default {
     mixins: [initPageMixin, showAttentionMixin, cautionMixin, quoteMixin],
     data () {
       return {
         bbs: [],
-        answerId: -1
+        answerId: -1,
+        bbsLength: 10
       };
     },
     created () {
       this.getBBSList();
-      this.initPage(this.bbsCount);
+      setTimeout(() => {
+        this.initPage(this.bbs.length);
+      }, 100);   
     },
     computed: {
-      ...mapGetters([
-        'bbsCount'
-      ])
+      filterBBS () {
+        return this.bbs.slice(this.bbsLength - limit, this.bbsLength);
+      }
     },
     methods: {
+      getByPage () {
+        this.bbsLength = this.currentPage * limit;
+      },
       getBBSList () {
         const item = {
           reply_id: 0,
@@ -55,6 +63,7 @@
         };
         getComment(item).then(res => {
           this.bbs = initBBS(res.data);
+          console.log();
         });
       },
       addBBS (item) {

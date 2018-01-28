@@ -1,42 +1,69 @@
 <template>
   <div class="walkBlogWrapper">
-    <div class="writeBlogBox">
-      <div class="content">
-        <textarea name="" placeholder="说点儿什么吧..." v-model="content"></textarea>
-        <div class="imgWrapper"><span class="icon-camera"></span></div>
+    <div class="list" v-show="showList">
+      <div class="writeBlogBox">
+        <div class="content">
+          <textarea name="" placeholder="说点儿什么吧..." v-model="content"></textarea>
+          <div class="imgWrapper"><span class="icon-camera"></span></div>
+        </div>
+        <div class="tags">
+          <input type="text" name="" placeholder="输入标签，以‘/’分割" v-model="tags">
+          <button type="button" @click.stop="_addWalkingBlog">发布</button>
+        </div>  
       </div>
-      <div class="tags">
-        <input type="text" name="" placeholder="输入标签，以‘/’分割" v-model="tags">
-        <button type="button" @click.stop="_addWalkingBlog">发布</button>
-      </div>  
+      <div class="walkingListBox">
+        <walking-list :blogList="filterWalkblogs" 
+                      @selectBlog="selectBlog" 
+                      @deleteBlog="deleteBlog">
+        </walking-list>
+      </div>
+      <page-btn v-show="walkingBlogs.length > 10 && showBtn" :pageCount="pages" :currentPage="currentPage" @next="next" @clickPage="clickPage" @pre="pre"></page-btn>
     </div>
-    <div class="walkingListBox">
-      <walking-list :blogList="walkingBlogs" 
-                    @selectBlog="selectBlog" 
-                    @deleteBlog="deleteBlog">
-      </walking-list>
+    <div class="viewWrapper">
+      <router-view></router-view>
     </div>
-    <router-view></router-view>
   </div>
 </template>
 
 <script>
   import WalkingList from '../../base/walking-list/walking-list'; 
+  import PageBtn from '../../base/page-btn/page-btn';
+  import {initPageMixin} from '../../common/js/mixin';
   import {addWalkingBlog, getWalkingBlog, deleteWBlog} from '../../api/walking-blog';
   import {mapMutations} from 'vuex';
+  import {limit} from '../../common/js/param';
+
   export default {
+    mixins: [initPageMixin],
     data () {
       return {
         content: '',
         tags: '',
-        walkingBlogs: []
+        walkingBlogs: [],
+        walkblogLength: 10,
+        showList: true
       };
     },
     created () {
       this._getWalkingBlog();
+      setTimeout(() => {
+        this.initPage(this.walkingBlogs.length);
+      }, 100);
+    },
+    computed: {
+      filterWalkblogs () {
+        return this.walkingBlogs.slice(this.walkblogLength - limit, this.walkblogLength);
+      },
+      currentPath () {
+        return this.$route.path;
+      }
     },
     methods: {
+      getByPage () {
+        this.walkblogLength = this.currentPage * limit;
+      },
       selectBlog (item) {
+        this.showList = false;
         this.setEditBlog(item);
         this.$router.push({path: `/admin/walkingBlog/${item.id}`});
       },
@@ -61,13 +88,14 @@
         });
       },
       _getWalkingBlog () {
-        getWalkingBlog().then(res => {
+        getWalkingBlog().then(res => { 
           if (res.status === 0) {
             let arr = res.data;
             for (let i = 0; i < arr.length; i++) {
               this.walkingBlogs.push({id: arr[i].walking_blog_id, 
                                       content: arr[i].walking_blog_content,
-                                      hot: arr[i].walking_blog_likeNum, 
+                                      hot: arr[i].walking_blog_likeNum,
+                                      comment_count: arr[i].comment_count, 
                                       time: arr[i].walking_blog_time,
                                       tags: arr[i].walking_blog_tags.split('/')});
             }
@@ -79,8 +107,16 @@
         setBackPath: 'SET_BACKPATH'
       })
     },
+    watch: {
+      currentPath (newPath) {
+        if (newPath === '/admin/walkingBlog') {
+          this.showList = true;
+        }
+      }
+    },
     components: {
-      WalkingList
+      WalkingList,
+      PageBtn
     }
   };
 </script>
@@ -140,6 +176,12 @@
     }
     .walkingListBox{
       margin-top: 30px;
+    }
+    .viewWrapper{
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
     }
   }
 </style>

@@ -6,7 +6,7 @@ var transporter = nodemailer.createTransport({
   port:465, 
   auth: {  
     user: 'yigehaoren_Gdoer@163.com',  
-    pass: 'pwd' //授权码,通过QQ获取  
+    pass: 'gdoer2018' //授权码,通过QQ获取  
   }  
 });
 

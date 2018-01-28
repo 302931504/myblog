@@ -14,7 +14,7 @@
           </div>
           <div class="about">
             <span>热度({{item.hot}})</span>
-            <span>评论(20)</span>
+            <span>评论({{item.comment_count}})</span>
             <span @click.stop="clickwalkingBlog(item)">全文链接</span>
             <span class="delete" @click="deleteBlog(item.id)">删除</span>
           </div>
