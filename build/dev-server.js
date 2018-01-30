@@ -483,8 +483,8 @@ apiRouter.get('/getWalkingBlog', (req, res) => {
                                   FROM bbs 
                                   WHERE type = 1 
                                   GROUP BY reply_id) b 
-                                 ON w.walking_blog_id = b.reply_id;
-            ORDER BY DESC`;
+                                 ON w.walking_blog_id = b.reply_id
+            ORDER BY w.walking_blog_time DESC`;
   connection.query(sql, function(err, result) {
     if(err) {
       console.log('[INSERT ERROR] - ',err.message);
@@ -785,6 +785,33 @@ apiRouter.post('/quote', (req, res) => {
     mail.have_quote(param);
     res.json({status: 0, info: '回复成功'});
   })             
+})
+
+//获取文章数目
+apiRouter.get('/getCount', (req, res) => {
+  var sql = `SELECT COUNT(*) AS count 
+             FROM blog
+             WHERE blog_isShow = ${req.query.isShow}`;
+  connection.query(sql, function(err, result) {
+    if (err) {
+      console.log('[SELECT ERROR] - ',err.message);
+      return;
+    }
+    res.json({status: 0, info: '获取成功', data: result[0].count});
+  })
+})
+
+//获取用户数目
+apiRouter.get('/userCount', (req, res) => {
+  var sql = `SELECT COUNT(*) AS count
+             FROM users`;
+  connection.query(sql, function(err, result) {
+    if (err) {
+      console.log('[SELECT ERROR] - ',err.message);
+      return;
+    }
+    res.json({status: 0, info: '获取成功', data: result[0].count})
+  })
 })
 
 app.use('/api', apiRouter)

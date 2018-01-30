@@ -37,3 +37,15 @@ export function draftBlog (id) {
 		return Promise.resolve(res.data);
 	}).catch(err => err);
 };
+
+export function getCount (isShow) {
+	return axios.get('/api/getCount', {
+		params: {
+			isShow: isShow
+		}
+	}).then((res) => {
+		return Promise.resolve(res.data);
+	}).catch(err => {
+		console.log(err);
+	});
+}

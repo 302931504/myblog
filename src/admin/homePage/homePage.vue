@@ -49,18 +49,18 @@
 </template>
 
 <script>
-  import {mapGetters, mapMutations, mapActions} from 'vuex';
+  import {mapMutations, mapActions} from 'vuex';
   import {getAllCount} from '../../api/blog';
 
   export default {
-    computed: {
-      ...mapGetters([
-        'draftCount',
-        'bbsCount',
-        'onlineArticleCount',
-        'usersCount',
-        'walkingBlogCount'
-      ])
+    data () {
+      return {
+        bbsCount: 0,
+        usersCount: 0,
+        walkingBlogCount: 0,
+        draftCount: 0,
+        onlineArticleCount: 0
+      };
     },
     created () {
       this.getCount();
@@ -74,11 +74,12 @@
       getCount () {
         getAllCount().then(res => {
           if (res.status === 0) {
-            this.setDraftCount(res.data[0].draftnum);
-            this.setBBSCount(res.data[0].messnum);
-            this.setOnlineCount(res.data[0].blognum);
-            this.setUserCount(res.data[0].usernum);
-            this.setWalkingBlogCount(res.data[0].walkblognum);
+            let data = res.data[0];
+            this.bbsCount = data.messnum;
+            this.usersCount = data.usernum;
+            this.walkingBlogCount = data.walkblognum;
+            this.draftCount = data.draftnum;
+            this.onlineArticleCount = data.blognum;
           }
         });
       },
@@ -86,12 +87,7 @@
         'pushNav'
       ]),
       ...mapMutations({
-        setCurrentName: 'SET_CURRENTNAME',
-        setDraftCount: 'SET_DFAFTCOUNT',
-        setBBSCount: 'SET_BBSCOUNT',
-        setOnlineCount: 'SET_ONLINEARTICLECOUNT',
-        setUserCount: 'SET_USERCOUNT',
-        setWalkingBlogCount: 'SET_WALKINGBLOGCOUNT'
+        setCurrentName: 'SET_CURRENTNAME'
       })
     }
   };

@@ -18,9 +18,8 @@
   import FollowEdit from '../../base/followEdit/followEdit';
   import Caution from '../../admin/caution/caution';
   import Attention from '../../base/attention/attention';
-  import {getUserList, deleteUser} from '../../api/users';
+  import {getUserList, deleteUser, getCount} from '../../api/users';
   import {cautionMixin, showAttentionMixin, initPageMixin} from '../../common/js/mixin';
-  import {mapGetters} from 'vuex';
 
   export default {
     mixins: [cautionMixin, showAttentionMixin, initPageMixin],
@@ -30,19 +29,25 @@
           {text: '添加用户', name: 'addUser'}
         ],
         showFlag2: false,
-        userList: []
+        userList: [],
+        usersCount: 0
       };
     },
     created () {
       this.getByPage();
-      this.initPage(this.usersCount);
+      this.getUserCount();
     },
     computed: {
-      ...mapGetters([
-        'usersCount'
-      ])
     },
     methods: {
+      getUserCount () {
+        getCount().then(res => {
+          if (res.status === 0) {
+            this.usersCount = res.data;
+            this.initPage(this.usersCount);
+          }
+        });
+      },
       clickOption (text) {
         if (text === '添加用户') {
           this.showFlag2 = true; 
@@ -63,10 +68,7 @@
       sure () {
         deleteUser(this.id).then(res => {
           if (res.status === 0) {
-            let index = this.userList.findIndex(item => {
-              return item.user_id === this.id;
-            });
-            this.userList.splice(index, 1);
+            this.routerGo();
             this.showAttention(res.info, true);
             this.showFlag = false;
           }

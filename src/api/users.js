@@ -21,3 +21,11 @@ export function getUserList (page) {
 		return Promise.resolve(res.data);
 	}).catch(err => err);
 };
+
+export function getCount () {
+	return axios.get('/api/userCount').then(res => {
+		return Promise.resolve(res.data);
+	}).catch(err => {
+		console.log(err);
+	});
+};

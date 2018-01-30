@@ -19,21 +19,19 @@
   import Caution from '../../admin/caution/caution';
   import {initPageMixin, blogMixin, showAttentionMixin, cautionMixin} from '../../common/js/mixin';
   import {publishBlog, deletBlog, getOneBlog} from '../../api/draft'; 
-  import {getBlogByPage, getClassifyBlog, getKeyBlog} from '../../api/blog';
-  import {mapGetters, mapMutations} from 'vuex';
+  import {getBlogByPage, getClassifyBlog, getKeyBlog, getCount} from '../../api/blog';
+  import {mapMutations} from 'vuex';
 
   export default {
     mixins: [initPageMixin, blogMixin, showAttentionMixin, cautionMixin],
     data () {
       return {
         blogs: [],
+        draftCount: 0,
         type: 0
       };
     },
     computed: {
-      ...mapGetters([
-        'draftCount'
-      ])
     },
     components: {
       SearchBox,
@@ -45,10 +43,18 @@
     },
     created () {
       this.getByPage();
-      this.initPage(this.draftCount);
       this._getClassify();
+      this.getDraftCount();
     },
     methods: {
+      getDraftCount () {
+        getCount(0).then(res => {
+          if (res.status === 0) {
+            this.draftCount = res.data;
+            this.initPage(this.draftCount);
+          }
+        });
+      },
       witchArticle (id) {
         getOneBlog(id).then(res => {
           if (!res.status) {
@@ -73,6 +79,7 @@
         if (this.status === 1) {
           deletBlog(this.id).then(res => {
             if (res.status === 0) {
+              this.routerGo();
               this.showAttention(res.info, true);
               this.showFlag = false;
             }
@@ -81,6 +88,7 @@
         if (this.status === 0) {
           publishBlog(this.id).then(res => {
             if (res.status === 0) {
+              this.routerGo();
               this.showAttention(res.info, true);
               this.showFlag = false;
             }
@@ -93,7 +101,6 @@
           isShow: 0
         };
         getBlogByPage(item).then((res) => {
-          console.log(res);
           if (res.status === 0) {
             this.blogs = res.data;
           }

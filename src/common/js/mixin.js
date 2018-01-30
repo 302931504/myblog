@@ -99,6 +99,12 @@ export const blogMixin = {
         }
       }); 
     },
+    freshPage (id) {
+      let index = this.blogs.findIndex((item) => {
+        return item.blog_id === id;
+      });
+      this.blogs.splice(index, 1);
+    },
     ...mapMutations({
       setEditBlog: 'SET_EDITBLOG',
       setType: 'SET_TYPE',

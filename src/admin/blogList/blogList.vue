@@ -1,43 +1,44 @@
-<template>
-  <transition name="upglide">
-    <div class="blogListWrapper">
-      <div class="listwrapper">
-        <table class="bloglist">
-          <thead>
-            <tr>
-              <th></th>
-              <th style="text-align: left">文章标题</th>
-              <th>分类</th>
-              <th>标签</th>
-              <th>更新时间</th>
-              <th v-show="type">发布时间</th>
-              <th v-show="!type">创建时间</th>
-              <th>操作</th>
-            </tr> 
-          </thead>
-          <tbody>
-            <tr v-for="item in blogs">
-              <td>
-                <input type="checkbox" class="checkBlog">
-              </td>
-              <td style="text-align: left; cursor: pointer;" @click.stop="selectArticle(item.blog_id)">{{item.blog_title}}</td>
-              <td>{{item.classify_text}}</td>
-              <td>{{item.blog_tags}}</td>
-              <td>{{_initTime(item.blog_updateTime)}}</td>
-              <td v-show="!type">{{_initTime(item.blog_createTime)}}</td>
-              <td v-show="type">{{_initTime(item.blog_pubTime)}}</td>
-              <td>
-                <button type="button" class="edit" @click="editBlog(item.blog_id)">编辑</button>
-                <button v-show="!type" type="button" class="delete" @click="deletBlog(item.blog_id)">删除</button>
-                <button v-show="!type" type="button" class="publish" @click="publish(item.blog_id)">发布</button>
-                <button v-show="type" type="button" class="delete" @click="moveDraft(item.blog_id)">移稿</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+<template>  
+  <div class="blogListWrapper">
+    <div class="listwrapper">
+      <table class="bloglist">
+        <thead>
+          <tr>
+            <th></th>
+            <th style="text-align: left">文章标题</th>
+            <th>分类</th>
+            <th>标签</th>
+            <th>更新时间</th>
+            <th v-show="type">发布时间</th>
+            <th v-show="!type">创建时间</th>
+            <th>操作</th>
+          </tr> 
+        </thead>
+        <tbody>
+          <tr v-for="item in blogs" 
+              :before-enter="beforeEnter"
+              :enter="enter"
+              :leave="leave">
+            <td>
+              <input type="checkbox" class="checkBlog">
+            </td>
+            <td style="text-align: left; cursor: pointer;" @click.stop="selectArticle(item.blog_id)">{{item.blog_title}}</td>
+            <td>{{item.classify_text}}</td>
+            <td>{{item.blog_tags}}</td>
+            <td>{{_initTime(item.blog_updateTime)}}</td>
+            <td v-show="!type">{{_initTime(item.blog_createTime)}}</td>
+            <td v-show="type">{{_initTime(item.blog_pubTime)}}</td>
+            <td>
+              <button type="button" class="edit" @click="editBlog(item.blog_id)">编辑</button>
+              <button v-show="!type" type="button" class="delete" @click="deletBlog(item.blog_id)">删除</button>
+              <button v-show="!type" type="button" class="publish" @click="publish(item.blog_id)">发布</button>
+              <button v-show="type" type="button" class="delete" @click="moveDraft(item.blog_id)">移稿</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-  </transition>
+  </div>
 </template>
 
 <script>
@@ -54,6 +55,18 @@
       type: 0
     },
     methods: {
+      beforeEnter (el) {
+        el.style.opacity = 0;
+        el.style.height = 0;
+      },
+      enter (el) {
+        el.style.opacity = 1;
+        el.style.height = 'auto';
+      },
+      leave (el) {
+        el.style.opacity = 0;
+        el.style.height = 0;
+      },
       selectArticle (id) {
         this.$emit('select', id);
       },
@@ -124,15 +137,13 @@
             background-color: #006030;
           }
         }
+        tr{
+          transition: all 1s;
+        }
       } 
     }
   }
-  .upglide-enter-active, .upglide-leave-active{
-    opacity: 1;
-    transition: all .4s linear;
-  }
-  .upglide-enter, .upglide-leave-to{
-    opacity: 0;
-    transform: translate3d(0, -100%, 0);  
+  .upglide-move{
+    transition: transform 1s;
   }
 </style>

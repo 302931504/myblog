@@ -16,21 +16,6 @@ const mutation = {
   [types.SET_EDITBLOG] (state, blog) {
     state.editBlog = blog;
   },
-  [types.SET_DFAFTCOUNT] (state, count) {
-    state.draftCount = count;
-  },
-  [types.SET_BBSCOUNT] (state, count) {
-    state.bbsCount = count;
-  },
-  [types.SET_ONLINEARTICLECOUNT] (state, count) {
-    state.onlineArticleCount = count;
-  },
-  [types.SET_USERCOUNT] (state, count) {
-    state.usersCount = count;
-  },
-  [types.SET_WALKINGBLOGCOUNT] (state, count) {
-    state.walkingBlogCount = count;
-  },
   [types.SET_BACKPATH] (state, path) {
     state.backPath = path;
   },
