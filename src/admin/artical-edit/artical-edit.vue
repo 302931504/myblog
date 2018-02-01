@@ -69,8 +69,12 @@
           <label>文章内容</label>
         </div>
         <div class="input editorInput">
-          <mavon-editor v-model="artical" style="width: 100%; min-height: 400px" @save="saveArtical"></mavon-editor>
+          <textarea class="markdown_input" v-model="artical" @input="update"></textarea>
+          <div class="markdown_compiled" v-html="compiledMarkdown"></div>
         </div>
+      </div>
+      <div class="doneBtn">
+        <button type="button" class="pub" @click.stop="saveArtical">发布</button>
       </div>
     </div>
     <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
@@ -79,13 +83,21 @@
 </template>
 
 <script>
-  // import qs from 'qs';
   import Attention from '../../base/attention/attention';
   import LabelList from '../../admin/labelList/labelList';
   import OptionList from '../../base/option-list/option-list';
   import {showAttentionMixin} from '../../common/js/mixin';
   import {saveBlog, getClassify, updateBlog} from '../../api/editor';
   import {mapGetters, mapMutations} from 'vuex';
+  import _ from 'lodash';
+  import marked from 'marked';
+  import hightlight from 'highlight.js';
+  import '../../common/css/atom-one-light.css';
+  marked.setOptions({
+    hightlight: function (code) {
+      return hightlight.hightlightAuto(code).value;
+    }
+  });
 
   export default {
     mixins: [showAttentionMixin],
@@ -103,6 +115,10 @@
       };
     },
     computed: {
+      // 编译Markdown
+      compiledMarkdown () {
+        return marked(this.artical, {sanitize: true});
+      },
       ...mapGetters([
         'editBlog',
         'type'
@@ -113,6 +129,10 @@
       this._getClassify(); 
     },
     methods: {
+      // 延时赋值给content
+      update: _.debounce(function (e) {
+        this.artical = e.target.value;
+      }, 300),
       saveArtical () {
         if (this.title === '') {
           this.showAttention('请输入文章标题', false);
@@ -319,6 +339,35 @@
           outline: none;
         }
       }
+      .editorInput{
+        margin: 0;
+        width: 100%;
+        height: 500px;
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        color: #333;
+        border: 1px solid #ccc;
+        .markdown_input, .markdown_compiled{
+          display: inline-block;
+          width: 49%;
+          height: 100%;
+          vertical-align: top;
+          box-sizing: border-box;
+          padding: 20px;
+        }
+        .markdown_input{
+          border: none;
+          border-right: 1px solid #ccc;
+          resize: none;
+          outline: none;
+          background-color: #f6f6f6;
+          font-size: 14px;
+          font-family: 'Monaco', courier, monospace;
+        }
+        .markdown_compiled{
+          overflow: auto;
+          word-wrap:break-word;
+        }
+      }
       .showType{
         width: 60%;
         .radios{
@@ -329,6 +378,19 @@
           }
         }
       }
+      .doneBtn{
+        width: 100%;
+        text-align: center;
+        button{
+          width: 100px;
+          height: 35px;
+          border: none;
+          color: #fff;
+          font-size: 16px;
+          background-color: #006030;
+          border-radius: 2px;
+        }
+      }
     }
     .labelList{
       position: fixed;
@@ -336,5 +398,6 @@
       left: 30%;
       z-index: 9998;
     }
+
   }
 </style>

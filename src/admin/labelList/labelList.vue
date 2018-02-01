@@ -2,11 +2,11 @@
     <transition name="showslide">
       <div class="content" v-show="showFlag">
         <p class="editBtn" @click.stop="editLabelList">编辑</p>
-        <span class="icon-cross" @click.stop="closeLabelList"></span>
+        <span class="icon-close" @click.stop="closeLabelList"></span>
         <div class="list">
           <ul>
             <li v-for="item in labelList">{{item.text}}
-            <span @click.stop="deleteLabel(item.id)" class="icon-closeAll" v-show="showCross"></span></li>
+            <span @click.stop="deleteLabel(item.id)" class="icon-closeall" v-show="showCross"></span></li>
           </ul>
         </div>
         <div class="addNew">
@@ -97,7 +97,7 @@
       text-decoration: underline;
       cursor: pointer;
     }
-    .icon-cross{
+    .icon-close{
       position: absolute;
       top: 4px;
       right: 4px;

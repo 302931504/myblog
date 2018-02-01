@@ -4,11 +4,11 @@
       <li v-for="item in navList" 
           @click="clickNav(item)"
           :class="item.name === currentName ? 'active' : ''">
-        <span :class="'icon-' + item.name"></span> {{item.text}} <span v-if="item.name !== 'home'" class="icon-cross" @click.stop="close(item.name)"></span>
+        <span :class="'icon-' + item.name"></span> {{item.text}} <span v-if="item.name !== 'home'" class="icon-close" @click.stop="close(item.name)"></span>
       </li>
     </ul>
     <div class="action" @mouseover="optionOver" @mouseout="optionOut">
-      <p><i class="icon-point-up"></i> 页面操作 <i ref="circle" class="icon-circle"></i></p>
+      <p><i class="icon-hand"></i> 页面操作 <i ref="circle" class="icon-circle"></i></p>
       <div class="optionList" v-show="showList === true">
         <option-list :options="options" :show="showList"  @clickoption="clickoption"></option-list>
       </div>
@@ -26,8 +26,8 @@
     data () {
       return {
         options: [
-          {text: '关闭其他', name: 'closeOther', router: false},
-          {text: '关闭全部', name: 'closeAll', router: false}
+          {text: '关闭其他', name: 'closeother', router: false},
+          {text: '关闭全部', name: 'closeall', router: false}
         ]
       };
     },
@@ -84,7 +84,7 @@
         padding: 0 10px;
         min-width: 65px;
         transition: all .2s;
-        .icon-cross{
+        .icon-close{
           padding: 4px;
           display: inline-block;
           font-size: 14px;

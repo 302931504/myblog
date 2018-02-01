@@ -1,7 +1,7 @@
 <template>
   <transition name="showslide">
     <div class="content" v-show="showFlag">
-      <span class="icon-cross" @click.stop="close"></span>
+      <span class="icon-close" @click.stop="close"></span>
       <h1>欢迎订阅</h1>
       <div class="info">
         <input type="text" name="" placeholder="昵称" v-model="name"><br/>
@@ -66,7 +66,7 @@
     padding: 44px;
     box-shadow: 8px 8px 5px #888888;
     background: #fff;
-    .icon-cross{
+    .icon-close{
       position: absolute;
       top: 6px;
       right: 6px;

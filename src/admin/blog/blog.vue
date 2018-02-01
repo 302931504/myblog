@@ -51,7 +51,7 @@
         getOneBlog(id).then(res => {
           if (!res.status) {
             this.setEditblog(res.data[0]);
-            this.$router.push({path: `/admin/blog/${id}`});
+            this.$router.push({path: `/admin/article/${id}`});
           }
         });
       },

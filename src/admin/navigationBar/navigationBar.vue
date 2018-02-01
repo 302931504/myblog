@@ -20,9 +20,9 @@
         return {
           navList: [
             {text: '后台首页', name: 'home'},
-            {text: '文章列表', name: 'blog'},
-            {text: '留言管理', name: 'mess'},
-            {text: '用户追踪', name: 'follower'}
+            {text: '文章列表', name: 'article'},
+            {text: '留言管理', name: 'message'},
+            {text: '用户追踪', name: 'subscribe'}
           ]
         };
       },

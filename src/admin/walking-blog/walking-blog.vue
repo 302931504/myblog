@@ -65,7 +65,7 @@
       selectBlog (item) {
         this.showList = false;
         this.setEditBlog(item);
-        this.$router.push({path: `/admin/walkingBlog/${item.id}`});
+        this.$router.push({path: `/admin/mylife/${item.id}`});
       },
       deleteBlog (id) {
         deleteWBlog(id).then(res => {

@@ -1,29 +1,29 @@
 <template>
   <div class="homeWrapper">
       <ul class="options">
-        <router-link @click.native="click('留言管理', 'mess')" tag="li" class="option" to="/admin/mess">
-          <div class="icon mess-icon"><span class="fonts-icon icon-mess"></span></div>
+        <router-link @click.native="click('留言管理', 'message')" tag="li" class="option" to="/admin/message">
+          <div class="icon mess-icon"><span class="fonts-icon icon-message"></span></div>
           <div class="info">
             <p class="number">{{bbsCount}}</p>
             <p>留言管理</p>
           </div>
         </router-link>
-        <router-link @click.native="click('新增文章', 'editBlog')" tag="li" class="option" to="/admin/editBlog">
-          <div class="icon newFollow-icon"><span class="fonts-icon icon-editBlog"></span></div>
+        <router-link @click.native="click('新增文章', 'edite')" tag="li" class="option" to="/admin/edite">
+          <div class="icon newFollow-icon"><span class="fonts-icon icon-edite"></span></div>
           <div class="info">
             <p class="number">NEW</p>
             <p>新增文章</p>
           </div>
         </router-link>
-        <router-link @click.native="click('用户追踪', 'follower')" tag="li" class="option" to="/admin/follower">
-          <div class="icon follow-icon"><span class="fonts-icon icon-follower"></span></div>
+        <router-link @click.native="click('用户追踪', 'subscribe')" tag="li" class="option" to="/admin/subscribe">
+          <div class="icon follow-icon"><span class="fonts-icon icon-subscribe"></span></div>
           <div class="info">
             <p class="number">{{usersCount}}</p>
             <p>用户追踪</p>
           </div>
         </router-link>
-        <router-link @click.native="click('行博', 'walkingBlog')" tag="li" class="option" to="/admin/walkingBlog">
-          <div class="icon img-icon"><span class="fonts-icon icon-images"></span></div>
+        <router-link @click.native="click('行博', 'mylife')" tag="li" class="option" to="/admin/mylife">
+          <div class="icon img-icon"><span class="fonts-icon icon-mylife"></span></div>
           <div class="info">
             <p class="number">{{walkingBlogCount}}</p>
             <p>行博</p>
@@ -36,8 +36,8 @@
             <p>草稿箱</p>
           </div>
         </router-link>
-        <router-link @click.native="click('文章列表', 'blog')" tag="li" class="option" to="/admin/blog">
-          <div class="icon blog-icon"><span class="fonts-icon icon-blog"></span></div>
+        <router-link @click.native="click('文章列表', 'article')" tag="li" class="option" to="/admin/article">
+          <div class="icon blog-icon"><span class="fonts-icon icon-article"></span></div>
           <div class="info">
             <p class="number">{{onlineArticleCount}}</p>
             <p>线上文章</p>

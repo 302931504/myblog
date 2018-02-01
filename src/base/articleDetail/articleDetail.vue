@@ -5,22 +5,33 @@
       {{editBlog.blog_title}}
     </h1>
     <div class="time">
-      <span><i class="icon-camera"></i> &nbsp;{{_initTime(editBlog.blog_pubTime)}}</span>
-      <span><i class="icon-camera"></i> &nbsp;{{_initTime(editBlog.blog_updateTime)}}</span>
+      <span><i class="icon-clock"></i> &nbsp;{{_initTime(editBlog.blog_pubTime)}}</span>
+      <span><i class="icon-update"></i> &nbsp;{{_initTime(editBlog.blog_updateTime)}}</span>
       <span class="classify">{{editBlog.classify_text}}</span>
     </div>
     <div class="content">
-      <mavon-editor style="width: 800px" v-model="editBlog.blog_content" :toolbarsFlag="false" :subfield="false" default_open="preview"></mavon-editor>
+      <div class="article_detail_content" v-html="compiledMarkdown"></div>
     </div>
     <ul class="tags">
       <li v-for="tag in editBlog.blog_tags.split('/')">{{tag}}</li>
     </ul>
-    <div class="like">
-      <span class="icon-point-up"></span>
-      <p class="num">点赞({{editBlog.blog_likeNum}})</p>
+    <div class="likeANDshare">
+      <div class="like">
+        <div class="likeIcon">
+          <span class="icon-like"></span>
+        </div>
+        <p class="num">点赞({{editBlog.blog_likeNum}})</p>
+      </div>
+      <div class="share">
+        <div class="shareIcon">
+          <span class="icon-share"></span>
+        </div>
+        <p class="num">分享</p>
+      </div>
     </div>
     <div class="comment">
-      <message-board :bbsList="comments" 
+      <message-board :bbsList="comments"
+                     :floor="commentsLen" 
                      @answer="answer" 
                      @deletebbs="deletebbs"
                      @deleteChild="deleteChild"
@@ -39,6 +50,14 @@
   import {comment, getComment, addChildBBS, deleteChildBBS, deleteBBS, quote} from '../../api/bbs';
   import {showAttentionMixin, quoteMixin} from '../../common/js/mixin';
   import {initBBS, initTime} from '../../common/js/util';
+  import marked from 'marked';
+  import highlight from 'highlight.js';
+  import '../../common/css/atom-one-light.css';
+  marked.setOptions({
+    highlight: function (code) {
+      return highlight.highlightAuto(code).value;
+    }
+  });
 
   export default {
     mixins: [showAttentionMixin, quoteMixin],
@@ -48,6 +67,12 @@
       };
     },
     computed: {
+      compiledMarkdown () {
+        return marked(this.editBlog.blog_content || '', {sanitize: true});
+      },
+      commentsLen () {
+        return this.comments ? this.comments.length : 0;
+      },
       ...mapGetters([
         'editBlog'
       ])
@@ -149,6 +174,11 @@
     .content{
       margin-top: 57px;
       margin-bottom: 60px;
+      width: 800px;
+      .article_detail_content {
+        text-align: left;
+        font-size: 18px;
+      }
     }
     .time{
       margin-top: 13px;
@@ -174,13 +204,49 @@
         color: #555;
       }
     }
-    .like{
+    .likeANDshare{
+      display: flex;
+      justify-content: center;
       width: 800px;
-      text-align: center;
       margin: 50px 0;
+      .like{
+        width: 400px;
+        text-align: center;
+        .likeIcon{
+          width: 60px;
+          height: 60px;
+          text-align: center;
+          border-radius: 50%;
+          border: 2px solid #85b7e2;
+          background-color: #85b7e2;
+          margin: 0 auto;
+          .icon-like{
+            font-size: 30px;
+            line-height: 56px;
+            color: #fff;
+          }
+        }
+      }
+      .share{
+        width: 400px;
+        text-align: center;
+        .shareIcon{
+          width: 60px;
+          height: 60px;
+          text-align: center;
+          border-radius: 50%;
+          border: 2px solid #d0d0d0;
+          margin: 0 auto;
+          .icon-share{
+            font-size: 30px;
+            line-height: 56px;
+            color: #d0d0d0;
+          }
+        }
+      }
       .num{
         margin-top: 10px;
-      }
+      }    
     }
     .comment{
       width: 800px;

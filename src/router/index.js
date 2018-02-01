@@ -96,7 +96,7 @@ export default new Router({
           component: HomePage
         },
         {
-          path: 'blog',
+          path: 'article',
           component: Blog,
           children: [{
             path: ':id',
@@ -104,11 +104,11 @@ export default new Router({
           }]
         },
         {
-          path: 'follower',
+          path: 'subscribe',
           component: FollowUser
         },
         {
-          path: 'editBlog',
+          path: 'edite',
           component: ArticalEdit
         },
         {
@@ -120,7 +120,7 @@ export default new Router({
           }]
         },
         {
-          path: 'mess',
+          path: 'message',
           component: Mess
         },
         {
@@ -128,7 +128,7 @@ export default new Router({
           component: UserCenter
         },
         {
-          path: 'walkingBlog',
+          path: 'mylife',
           component: WalkingBlog,
           children: [{
             path: ':id',

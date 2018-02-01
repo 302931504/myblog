@@ -95,7 +95,7 @@ export const blogMixin = {
           };
           this.pushNav(nav);
           this.setCurrentName(nav.name);
-          this.$router.push({path: '/admin/editBlog'});
+          this.$router.push({path: '/admin/edite'});
         }
       }); 
     },

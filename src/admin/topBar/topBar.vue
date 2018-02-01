@@ -13,7 +13,7 @@
     <div class="right">
       <ul>
         <li class="notice">
-          <div><i class="icon-bullhorn"></i> 系统公告</div>
+          <div><i class="icon-notice"></i> 系统公告</div>
           <div class="remindBox">
             <remind content="系统公告在这里" :isShow="showRemind"></remind>
           </div>
