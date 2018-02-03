@@ -195,6 +195,7 @@
       width: 800px;
       border-bottom: 1px solid #eee;
       padding-bottom: 60px;
+      padding-left: 0;
       li{
         display: inline-block;
         margin-right: 12px;

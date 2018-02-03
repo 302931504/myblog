@@ -69,10 +69,14 @@
       margin-top: 20px;
       width: 200px;
       overflow: hidden;
+      ul{
+        padding-left: 0;
+      }
       li{
         font-size: 14px;
         line-height: 45px;
         padding-left: 20px;
+        list-style: none;
         &:hover{
           background-color: #7B7B7B;
           border-left: 6px solid #009688;

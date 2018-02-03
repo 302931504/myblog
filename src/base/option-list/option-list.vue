@@ -42,10 +42,14 @@
     background-color: #fff;
     z-index: 200;
     border-radius: 2px;
+    ul{
+      padding-left: 0;
+    }
     li{
       height: 36px;
       line-height: 36px;
       padding: 0 10px;
+      list-style: none;
       &:hover{
         color: #fff;
         background: #5FB878;

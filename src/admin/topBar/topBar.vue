@@ -142,6 +142,7 @@
         li{
           padding: 0 20px;
           transition: all .3s;
+          list-style: none;
           &:hover{
             border-bottom: 5px solid #000; 
           }

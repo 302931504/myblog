@@ -79,11 +79,13 @@
     line-height: 40px;
     border-bottom: 1px solid #e2e2e2;
     ul{
+      padding-left: 0;
       li{
         display: inline-block;
         padding: 0 10px;
         min-width: 65px;
         transition: all .2s;
+        list-style: none;
         .icon-close{
           padding: 4px;
           display: inline-block;

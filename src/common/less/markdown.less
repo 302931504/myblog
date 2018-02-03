@@ -1,76 +1,22 @@
-/**
- * Eric Meyer's Reset CSS v2.0 (http://meyerweb.com/eric/tools/css/reset/)
- * http://cssreset.com
- */
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video, input{
-  margin: 0;
-  padding: 0;
-  border: 0;
-  font-size: 100%;
-  font-weight: normal;
-  vertical-align: baseline;
-  font-family: Lato, "Microsoft Jhenghei", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote {
+    margin: 0;
+    padding: 0;
 }
-/* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure,
-footer, header, menu, nav, section{
-  display: block;
+body {
+    font-family: "Helvetica Neue", Helvetica, "Hiragino Sans GB", Arial, sans-serif;
+    font-size: 13px;
+    line-height: 18px;
+    color: #737373;
+    background-color: white;
+    margin: 10px 13px 10px 13px;
 }
-html{
-  height: 100%;
-}
-body{
-  line-height: 1;
-  // overflow: hidden;
-  min-width: 1000px;
-  height: 100%;
-  font-family: Lato, "Microsoft Jhenghei", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-}
-
-input, button, textarea{
-  box-sizing: border-box;
-}
-
-blockquote, q{
-  quotes: none;
-}
-
-blockquote:before, blockquote:after,
-q:before, q:after{
-  content: none;
-}
-
-table{
-  border-collapse: collapse;
-  border-spacing: 0;
-}
-/* custom */
-
-a{
-  color: #7e8c8d;
-  -webkit-backface-visibility: hidden;
-  text-decoration: none;
-}
-
-body{
-  -webkit-text-size-adjust: none;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-}
-
-/* markdown css */
-
 table {
     margin: 10px 0 15px 0;
     border-collapse: collapse;
@@ -134,7 +80,7 @@ blockquote {
     margin-bottom: 18px;
     font-family:georgia,serif;
     font-style: italic;
-} 
+}
 blockquote:before {
     content:"\201C";
     font-size:40px;
@@ -182,9 +128,20 @@ sup {
     vertical-align: super;
     line-height: 0;
 }
-ul{
-  padding-left: 40px;
-}
 * {
     -webkit-print-color-adjust: exact;
+}
+@media screen and (min-width: 914px) {
+    body {
+        width: 854px;
+        margin:10px auto;
+    }
+}
+@media print {
+    body,code,pre code,h1,h2,h3,h4,h5,h6 {
+        color: black;
+    }
+    table, pre {
+        page-break-inside: avoid;
+    }
 }

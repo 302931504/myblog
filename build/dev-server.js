@@ -119,7 +119,7 @@ apiRouter.post('/saveBlog', (req, res) => {
           console.log('[ADD ERROR] - ',err.message);
           return;
         }
-        if (req.body.isShow) {
+        if (req.body.isShow == 1) {
           const param = {
             to: '',
             user_name: '',

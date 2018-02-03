@@ -106,6 +106,7 @@
       ul{
         display: flex;
         flex-wrap: wrap;
+        padding-left: 0;
         li{
           position: relative;
           margin: 6px 10px 0 0;
@@ -114,6 +115,7 @@
           text-align: center;
           color: #000;
           background: #eee;
+          list-style: none;
           .icon-closeAll{
             position: absolute;
             top: -2px;
