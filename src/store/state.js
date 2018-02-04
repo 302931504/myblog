@@ -6,7 +6,8 @@ const state = {
   editBlog: {},
   type: 0,
   backPath: '',
-  isquote: false
+  isquote: false,
+  manager: {}
 };
 
 export default state;

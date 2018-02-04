@@ -18,6 +18,7 @@
   import Attention from '../../base/attention/attention';
   import {showAttentionMixin} from '../../common/js/mixin';
   import {login} from '../../api/login';
+  import {mapMutations} from 'vuex';
 
   export default {
     mixins: [showAttentionMixin],
@@ -40,14 +41,17 @@
           };
           login(user).then((res) => {
             if (res.status === 0) {
-              console.log(res.info);
+              this.setManager(res.user);
               this.$router.push({path: '/admin/home'});
             } else {
               this.showAttention(res.info, false);
             }
           }).catch(err => err);
         }
-      }
+      },
+      ...mapMutations({
+        setManager: 'SET_MANAGER'
+      })
     },
     components: {
       Attention

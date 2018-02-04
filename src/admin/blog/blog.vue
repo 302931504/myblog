@@ -4,7 +4,7 @@
     <search-box :options="options" @searchKeyBlog="searchBlog" placeholder="请输入关键字" @clickOption="clickClassify"></search-box>
     <blog-list v-show="blogs.length > 0" :blogs="blogs" :type="type"  @edit="editBlog" @moveDraft="moveDraft" @select="witchArticle"></blog-list>
     <page-btn v-show="blogCount > 10 && showBtn" :pageCount="pages" :currentPage="currentPage" @next="next" @clickPage="clickPage" @pre="pre"></page-btn>
-    <no-content v-show="blogs.length === 0"></no-content>
+    <no-content v-show="blogs.length === 0" :info="noneInfo"></no-content>
     <caution :showFlag="showFlag" :text="text" @cancel="cancel" @sure="sure"></caution>
     <router-view></router-view>
   </div>
@@ -28,7 +28,8 @@
       return {
         blogs: [],
         blogCount: 0,
-        type: 1 
+        type: 1,
+        noneInfo: '' 
       };
     },
     computed: {
@@ -61,7 +62,11 @@
           isShow: 1
         };
         getBlogByPage(item).then((res) => {
-          this.blogs = res.data;
+          if (res.status === 0) {
+            this.blogs = res.data;
+          } else {
+            this.noneInfo = res.info;
+          }
         }).catch(err => err);
       },
       searchBlog (keyWord) {
@@ -73,6 +78,8 @@
           if (res.status === 0) {
             this.blogs = res.data;
             this.showBtn = false;
+          } else {
+            this.noneInfo = res.info;
           }
         });
       },
@@ -87,6 +94,8 @@
             this.routerGo();
             this.showAttention(res.info, true);
             this.showFlag = false;
+          } else {
+            this.showAttention(res.info, false);
           }
         });
       },

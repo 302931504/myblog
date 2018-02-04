@@ -9,3 +9,5 @@ export const backPath = state => state.backPath;
 export const type = state => state.type;
 
 export const isquote = state => state.isquote;
+
+export const manager = state => state.manager;

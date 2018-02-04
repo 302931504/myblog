@@ -4,7 +4,7 @@
     <search-box :options="options" @searchKeyBlog="searchBlog" placeholder="请输入关键字" @clickOption="clickClassify"></search-box>
     <blog-list v-show="blogs.length > 0" :blogs="blogs" :type="type" @edit="editBlog" @publish="publish" @delete="deleteBlog" @select="witchArticle"></blog-list>
     <page-btn v-show="draftCount >= 10 && showBtn" :pageCount="pages" :currentPage="currentPage" @next="next" @clickPage="clickPage" @pre="pre"></page-btn>
-    <no-content v-show="blogs.length === 0"></no-content>
+    <no-content v-show="blogs.length === 0" :info="noneInfo"></no-content>
     <caution :showFlag="showFlag" :text="text" @cancel="cancel" @sure="sure"></caution>
     <router-view></router-view> 
   </div>
@@ -28,7 +28,8 @@
       return {
         blogs: [],
         draftCount: 0,
-        type: 0
+        type: 0,
+        noneInfo: ''
       };
     },
     computed: {
@@ -60,6 +61,8 @@
           if (!res.status) {
             this.setEditblog(res.data[0]);
             this.$router.push({path: `/admin/draft/${id}`});
+          } else {
+            this.noneInfo = res.info;
           }
         });
       },
@@ -82,6 +85,8 @@
               this.routerGo();
               this.showAttention(res.info, true);
               this.showFlag = false;
+            } else {
+              this.showAttention(res.info, false);
             }
           });
         }
@@ -91,6 +96,8 @@
               this.routerGo();
               this.showAttention(res.info, true);
               this.showFlag = false;
+            } else {
+              this.showAttention(res.info, false);
             }
           });
         }
@@ -103,6 +110,8 @@
         getBlogByPage(item).then((res) => {
           if (res.status === 0) {
             this.blogs = res.data;
+          } else {
+            this.noneInfo = res.info;
           }
         }).catch(err => err); 
       },
@@ -115,6 +124,8 @@
           if (res.status === 0) {
             this.blogs = res.data;
             this.showBtn = false;
+          } else {
+            this.noneInfo = res.info;
           }
         });
       },
@@ -127,6 +138,8 @@
           if (res.status === 0) {
             this.blogs = res.data;
             this.showBtn = false;
+          } else {
+            this.noneInfo = res.info;
           }
         });
       },

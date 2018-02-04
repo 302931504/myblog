@@ -210,6 +210,8 @@
             setTimeout(() => {
               this.routerGo();
             }, 4000);
+          } else {
+            this.showAttention(res.info, false);
           }
         });
       },
@@ -226,6 +228,8 @@
         updateBlog(blog).then(res => {
           if (res.status === 0) {
             this.showAttention(res.info, true);
+          } else {
+            this.showAttention(res.info, false);
           }
         });
       },

@@ -1,5 +1,6 @@
 <template>
   <div class="walkBlogWrapper">
+    <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
     <div class="list" v-show="showList">
       <div class="writeBlogBox">
         <div class="content">
@@ -27,14 +28,15 @@
 
 <script>
   import WalkingList from '../../base/walking-list/walking-list'; 
+  import Attention from '../../base/attention/attention';
   import PageBtn from '../../base/page-btn/page-btn';
-  import {initPageMixin} from '../../common/js/mixin';
+  import {initPageMixin, showAttentionMixin} from '../../common/js/mixin';
   import {addWalkingBlog, getWalkingBlog, deleteWBlog} from '../../api/walking-blog';
   import {mapMutations} from 'vuex';
   import {limit} from '../../common/js/param';
 
   export default {
-    mixins: [initPageMixin],
+    mixins: [initPageMixin, showAttentionMixin],
     data () {
       return {
         content: '',
@@ -72,6 +74,8 @@
           if (!res.status) {
             this.setBackPath(this.$route.path);
             this.$router.push('/admin/back');
+          } else {
+            this.showAttention(res.info, false);
           }
         });
       },
@@ -84,6 +88,8 @@
           if (res.status === 0) {
             this.setBackPath(this.$route.path);
             this.$router.push('/admin/back');
+          } else {
+            this.showAttention(res.info, false);
           }
         });
       },
@@ -116,7 +122,8 @@
     },
     components: {
       WalkingList,
-      PageBtn
+      PageBtn,
+      Attention
     }
   };
 </script>

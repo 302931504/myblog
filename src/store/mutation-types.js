@@ -13,3 +13,5 @@ export const SET_BACKPATH = 'SET_BACKPATH';
 export const SET_TYPE = 'SET_TYPE';
 
 export const SET_ISQUOTE = 'SET_ISQUOTE';
+
+export const SET_MANAGER = 'SET_MANAGER';

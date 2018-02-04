@@ -69,6 +69,7 @@
         } if (item.name === 'logout') {
           logout().then(res => {
             if (res.status === 0) {
+              this.setManager(res.user);
               this.$router.push({path: `/login`});
             } else {
               this.showAttention(res.info, false);
@@ -83,7 +84,8 @@
         'pushNav'
       ]),
       ...mapMutations({
-        setCurrentName: 'SET_CURRENTNAME'
+        setCurrentName: 'SET_CURRENTNAME',
+        setManager: 'SET_MANAGER'
       })
     },
     components: {

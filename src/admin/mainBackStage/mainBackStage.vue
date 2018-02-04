@@ -41,10 +41,14 @@
     computed: {
       ...mapGetters([
         'navList',
-        'currentName'
+        'currentName',
+        'manager'
         ])
     },
     created () {
+      if (!this.manager.username) {
+        this.$router.push({path: '/login'});
+      }
       bus.$on('quote', (item) => {
         this.$refs.viewScroll.scrollTop = this.$refs.viewScroll.scrollHeight;
       });

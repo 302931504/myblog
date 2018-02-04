@@ -24,6 +24,9 @@ const mutation = {
   },
   [types.SET_ISQUOTE] (state, type) {
     state.isquote = type;
+  },
+  [types.SET_MANAGER] (state, manager) {
+    state.manager = manager;
   } 
 };
 
