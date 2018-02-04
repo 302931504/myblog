@@ -15,3 +15,5 @@ export const SET_TYPE = 'SET_TYPE';
 export const SET_ISQUOTE = 'SET_ISQUOTE';
 
 export const SET_MANAGER = 'SET_MANAGER';
+
+export const SET_SHOWLIST = 'SET_SHOWLIST';

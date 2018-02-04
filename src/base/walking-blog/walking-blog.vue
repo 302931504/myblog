@@ -18,7 +18,7 @@
           <div class="main">
             <p class="commentName">评论({{commentsCount}})</p>
             <textarea name="" class="comment" @click.stop="clickcomment" ref="commentBox" v-model="content"></textarea>
-            <div class="info" v-show="showInfo">
+            <div class="info" v-show="showInfo && !manager">
               <p class="label">你的昵称*:</p>
               <input type="text" name="" placeholder="必填" v-model="name">
               <p class="label">Email*:</p>
@@ -64,10 +64,12 @@
     },
     computed: {
       ...mapGetters([
-        'editBlog'
+        'editBlog',
+        'manager'
       ])
     },
     created () {
+      this.setShowlist(false);
       this.getComments();
     },
     methods: {
@@ -118,15 +120,15 @@
         if (this.content === '') {
           this.showAttention('请输入内容', false);
           return;
-        } else if (this.email === '' || this.name === '') {
+        } else if (!this.manager && (this.email === '' || this.name === '')) {
           this.showAttention('请输入*信息', false);
           return;
         }
         if (!this.answerType) {
           const item = {
             reply_id: this.editBlog.id,
-            user_email: this.email,
-            user_name: this.name,
+            user_email: this.manager ? this.manager.email : this.email,
+            user_name: this.manager ? this.manager.nickname : this.name,
             bbs_content: this.content,
             type: 1
           };
@@ -165,7 +167,8 @@
         this.$router.push('/admin/back');
       },
       ...mapMutations({
-        setBackPath: 'SET_BACKPATH'
+        setBackPath: 'SET_BACKPATH',
+        setShowlist: 'SET_SHOWLIST'
       })
     },
     components: {

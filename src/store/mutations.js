@@ -27,7 +27,10 @@ const mutation = {
   },
   [types.SET_MANAGER] (state, manager) {
     state.manager = manager;
-  } 
+  },
+  [types.SET_SHOWLIST] (state, type) {
+    state.showList = type;
+  }
 };
 
 export default mutation;

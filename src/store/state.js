@@ -7,7 +7,8 @@ const state = {
   type: 0,
   backPath: '',
   isquote: false,
-  manager: {}
+  manager: {},
+  showList: true
 };
 
 export default state;

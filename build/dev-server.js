@@ -79,7 +79,13 @@ apiRouter.post('/login', (req, res) => {
           username: username,
           password: password
         };
-        res.json({status: 0, info: '登录成功', user: req.session.user});
+        let user = {
+          username: username,
+          password: password,
+          nickname: result[0].m_nickname,
+          email: result[0].m_email
+        };
+        res.json({status: 0, info: '登录成功', user: user});
       } else {
         res.json({status: -1, info: '密码错误'});
       }

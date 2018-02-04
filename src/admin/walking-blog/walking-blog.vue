@@ -32,7 +32,7 @@
   import PageBtn from '../../base/page-btn/page-btn';
   import {initPageMixin, showAttentionMixin} from '../../common/js/mixin';
   import {addWalkingBlog, getWalkingBlog, deleteWBlog} from '../../api/walking-blog';
-  import {mapMutations} from 'vuex';
+  import {mapMutations, mapGetters} from 'vuex';
   import {limit} from '../../common/js/param';
 
   export default {
@@ -42,11 +42,11 @@
         content: '',
         tags: '',
         walkingBlogs: [],
-        walkblogLength: 10,
-        showList: true
+        walkblogLength: 10
       };
     },
     created () {
+      this.setShowlist(true);
       this._getWalkingBlog();
       setTimeout(() => {
         this.initPage(this.walkingBlogs.length);
@@ -58,14 +58,16 @@
       },
       currentPath () {
         return this.$route.path;
-      }
+      },
+      ...mapGetters([
+        'showList'
+      ])
     },
     methods: {
       getByPage () {
         this.walkblogLength = this.currentPage * limit;
       },
       selectBlog (item) {
-        this.showList = false;
         this.setEditBlog(item);
         this.$router.push({path: `/admin/mylife/${item.id}`});
       },
@@ -110,13 +112,14 @@
       },
       ...mapMutations({
         setEditBlog: 'SET_EDITBLOG',
-        setBackPath: 'SET_BACKPATH'
+        setBackPath: 'SET_BACKPATH',
+        setShowlist: 'SET_SHOWLIST'
       })
     },
     watch: {
       currentPath (newPath) {
-        if (newPath === '/admin/walkingBlog') {
-          this.showList = true;
+        if (newPath === '/admin/mylife') {
+          this.setShowlist(true);
         }
       }
     },

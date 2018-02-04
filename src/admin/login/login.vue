@@ -1,9 +1,9 @@
 <template>
   <div class="loginWrapper">
+    <div class="loading" v-show="showLoad">
+      <img src="./loading.gif">
+    </div>
     <div class="loginBox">
-      <div class="logoWrapper">
-        <img src="./logo.png" alt="good-doer">
-      </div>
       <div class="loginInfo">
         <input type="text" name="username" v-model="username" placeholder="account"><br/>
         <input type="password" name="password" v-model="password" placeholder="password"><br/>
@@ -25,7 +25,8 @@
     data () {
       return {
         username: '',
-        password: ''
+        password: '',
+        showLoad: false
       };
     },
     methods: {
@@ -39,11 +40,14 @@
             username: this.username,
             password: this.password
           };
+          this.showLoad = true;
           login(user).then((res) => {
             if (res.status === 0) {
+              this.showLoad = false;
               this.setManager(res.user);
               this.$router.push({path: '/admin/home'});
             } else {
+              this.showLoad = false;
               this.showAttention(res.info, false);
             }
           }).catch(err => err);
@@ -66,33 +70,41 @@
     background: url('./bg.jpg') no-repeat;
     background-size: cover;
   }
-  .loginBox{
+  .loading{
     position: absolute;
-    width: 500px;
-    height: 350px;
     top: 50%;
     left: 50%;
-    margin-top: -175px;
-    margin-left: -250px;
+    width: 300px;
+    margin-top: -100px;
+    margin-left: -150px;
+    z-index: 100;
+    img{
+      width: 100%;
+    }
+  }
+  .loginBox{
+    position: absolute;
+    width: 300px;
+    height: 150px;
+    top: 50%;
+    left: 50%;
+    margin-top: -100px;
+    margin-left: -150px;
     border-radius: 4px;
-    background: #3b4348;
-    .logoWrapper{
-      width: 400px;
-      margin: 0 auto;
-      padding-top: 10px;
-      img{
-        width: 400px;
-      }
+    background: #d0d0d0;
+    text-align: center;
+    opacity: .4;
+    &:hover{
+      opacity: .8;
     }
     .loginInfo{
-      width: 350px;
       margin: 0 auto;
-      margin-top: 50px;
+      margin-top: 35px;
       input{
-        width: 340px;
-        height: 40px;
+        width: 200px;
+        height: 20px;
         color: #3b4348;
-        font-size: 20px;
+        font-size: 14px;
         padding-left: 10px;
         margin-bottom: 8px;
         background: #ADADAD;
@@ -102,8 +114,9 @@
       }
       .loginBtn{
         display: block;
-        width: 80px;
-        height: 30px;
+        font-size: 12px;
+        width: 50px;
+        height: 20px;
         margin: 0 auto;
         margin-top: 10px;
       }

@@ -1,5 +1,5 @@
 <template>
-  <div class="detailWrapper">
+  <div class="articledetailWrapper">
     <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
     <h1 class="title">
       {{editBlog.blog_title}}
@@ -9,7 +9,7 @@
       <span><i class="icon-update"></i> &nbsp;{{_initTime(editBlog.blog_updateTime)}}</span>
       <span class="classify">{{editBlog.classify_text}}</span>
     </div>
-    <div class="content">
+    <div class="markdownContent">
       <div class="article_detail_content" v-html="compiledMarkdown"></div>
     </div>
     <ul class="tags">
@@ -155,8 +155,8 @@
   };
 </script>
 
-<style scoped lang="less" rel="stylesheet/less">
-  .detailWrapper{
+<style lang="less" rel="stylesheet/less">
+  .articledetailWrapper{
     position: absolute;
     top: 0;
     left: 0;
@@ -171,13 +171,13 @@
       color: #444;
       font-weight: 200;
     }
-    .content{
+    .markdownContent{
       margin-top: 57px;
       margin-bottom: 60px;
       width: 800px;
       .article_detail_content {
         text-align: left;
-        font-size: 18px;
+        font-size: 16px;
       }
     }
     .time{
@@ -254,6 +254,142 @@
       .comment{
         margin-top: 80px;
       }
+    }
+  }
+  .markdownContent{
+    font-size: 16px;
+    line-height: 27px;
+    p{
+      margin-bottom: 25px;
+    }
+    ul{
+      list-style: disc;
+      margin: 16px 0;
+      padding-left: 40px;
+      li{
+        list-style: disc;
+      }
+    }
+    em{
+      background: #eee;
+      text-shadow: 0 1px #fff;
+      padding: 0 0.3em;
+      margin: 0 0.3em;
+      font-family: inherit;
+    }
+    strong{
+      font-weight: bold;
+    }
+    table {
+        margin: 10px 0 15px 0;
+        border-collapse: collapse;
+    }
+    th {
+        text-align: center;
+        padding: 5px 10px;  
+        border-bottom: 2px solid #ddd;
+    }
+    td {
+      padding: 8px;
+      line-height: 1.42857143;
+      vertical-align: top;
+      border-top: 1px solid #ddd;
+    }
+    a {
+        color: #0069d6;
+    }
+    a:hover {
+        color: #0050a3;
+        text-decoration: none;
+    }
+    a img {
+        border: none;
+    }
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        color: #404040;
+        line-height: 36px;
+    }
+    h1 {
+        margin-bottom: 25px;
+        padding: 0.3em 0;
+        font-size: 20px;
+        font-weight: 600;
+        line-height: 30px;
+        border-bottom: 1px solid #eee;
+    }
+    h2 {
+        font-size: 17px;
+        font-weight: 600;
+        line-height: 30px;
+        margin-bottom: 25px;
+    }
+    h3 {
+        font-size: 18px;
+    }
+    h4 {
+        font-size: 16px;
+    }
+    h5 {
+        font-size: 14px;
+    }
+    h6 {
+        font-size: 13px;
+    }
+    hr {
+        margin: 0 0 19px;
+        border: 0;
+        border-bottom: 1px solid #ccc;
+    }
+    blockquote {
+        margin: 20px 0;
+        padding: 15px;
+        border-left: 3px solid #ccc;
+        background-color: #f7f7f7;
+        font-family: inherit;
+    }
+    blockquote p {
+        font-size: 16px;
+        font-weight: 300;
+        line-height: 18px;
+        margin-bottom: 0;
+    }
+    code, pre {
+        font-family: Monaco, Andale Mono, Courier New, monospace;
+    }
+    code {
+        background-color: #fee9cc;
+        color: rgba(0, 0, 0, 0.75);
+        padding: 1px 3px;
+        font-size: 12px;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+    }
+    pre {
+        margin-bottom: 25px;
+        padding: 16px;
+        overflow: auto;
+        font-size: 85%;
+        background-color: #f7f7f7;
+        word-wrap: normal;
+        border-radius: 3px;
+        color: #333;
+        font: 13px Consolas, "Liberation Mono", Menlo, Courier, monospace;
+        font-family: inherit;
+    }
+    pre code {
+        background: transparent;
+        padding: 0
+    }
+    sup {
+        font-size: 0.83em;
+        vertical-align: super;
+        line-height: 0;
     }
   }
 </style>

@@ -11,3 +11,5 @@ export const type = state => state.type;
 export const isquote = state => state.isquote;
 
 export const manager = state => state.manager;
+
+export const showList = state => state.showList;

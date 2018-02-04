@@ -16,7 +16,7 @@
             <span>热度({{item.hot}})</span>
             <span>评论({{item.comment_count}})</span>
             <span @click.stop="clickwalkingBlog(item)">全文链接</span>
-            <span class="delete" @click="deleteBlog(item.id)">删除</span>
+            <span class="delete" v-show="manager" @click="deleteBlog(item.id)">删除</span>
           </div>
         </div>
       </li>
@@ -25,6 +25,8 @@
 </template>
 
 <script>
+  import {mapGetters} from 'vuex';
+
   export default {
     props: {
       blogList: {
@@ -33,6 +35,11 @@
           return [];
         }
       }
+    },
+    computed: {
+      ...mapGetters([
+        'manager'
+      ])
     },
     methods: {
       getDay (time) {

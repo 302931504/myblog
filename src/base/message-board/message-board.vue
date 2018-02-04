@@ -17,7 +17,7 @@
           <div class="an-time">
             <span class="time">{{_initTime(item.time)}}</span>
             <span class="answer" @click.stop="answer(item)">回复</span>
-            <span class="delete" @click.stop="deletebbs(item.id)">删除</span>
+            <span class="delete" v-show="manager" @click.stop="deletebbs(item.id)">删除</span>
           </div>
           <div class="child-mess" v-show="item.child">
             <ul @mouseout="currentChildIndex = -1">
@@ -41,6 +41,7 @@
 <script>
   import {initTime} from '../../common/js/util';
   import bus from '../../common/js/bus';
+  import {mapGetters} from 'vuex';
 
   export default {
     data () {
@@ -64,6 +65,11 @@
         type: Number,
         default: 0
       }
+    },
+    computed: {
+      ...mapGetters([
+        'manager'
+      ])
     },
     methods: {
       _initTime (time) {
