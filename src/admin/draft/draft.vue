@@ -6,7 +6,7 @@
     <page-btn v-show="draftCount >= 10 && showBtn" :pageCount="pages" :currentPage="currentPage" @next="next" @clickPage="clickPage" @pre="pre"></page-btn>
     <no-content v-show="blogs.length === 0" :info="noneInfo"></no-content>
     <caution :showFlag="showFlag" :text="text" @cancel="cancel" @sure="sure"></caution>
-    <router-view></router-view> 
+    <router-view @lastArticle="lastArticle" @nextArticle="nextArticle"></router-view> 
   </div>
 </template>
  
@@ -140,6 +140,22 @@
             this.showBtn = false;
           } else {
             this.noneInfo = res.info;
+          }
+        });
+      },
+      lastArticle (id) {
+        getOneBlog(id).then(res => {
+          if (!res.status) {
+            this.setEditblog(res.data[0]);
+            this.$router.push({path: `/admin/draft/${id}`});
+          }
+        });
+      },
+      nextArticle (id) {
+        getOneBlog(id).then(res => {
+          if (!res.status) {
+            this.setEditblog(res.data[0]);
+            this.$router.push({path: `/admin/draft/${id}`});
           }
         });
       },

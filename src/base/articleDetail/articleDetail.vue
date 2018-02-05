@@ -2,6 +2,7 @@
   <transition name="slide">
     <div class="articledetailWrapper">
       <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
+      <span class="icon-back" @click.stop="backTo"></span>
       <div class="mainContent">
         <h1 class="title">
           {{editBlog.blog_title}}
@@ -18,8 +19,8 @@
           <li v-for="tag in editBlog.blog_tags.split('/')">{{tag}}</li>
         </ul>
         <div class="adjacent">
-          <span class="last" @click.stop="lastArticle"><< {{last.blog_title}}</span>
-          <span class="next" @click.stop="nextArticle">{{next.blog_title}} >></span>
+          <span class="last" @click.stop="lastArticle" v-show="last.blog_title"><< {{last.blog_title}}</span>
+          <span class="next" @click.stop="nextArticle" v-show="next.blog_title">{{next.blog_title}} >></span>
         </div>
       </div>
       <div class="likewrapper">
@@ -95,6 +96,13 @@
       this.getAdjacentArticle();
     },
     methods: {
+      backTo () {
+        if (this.editBlog.blog_isShow) {
+          this.$router.push({path: `/admin/article`});
+        } else {
+          this.$router.push({path: `/admin/draft`});
+        }
+      },
       getAdjacentArticle () {
         const item = {
           id: this.editBlog.blog_id,
@@ -103,7 +111,7 @@
         getAdjacent(item).then(res => {
           if (res.status === 0) {
             for (var index in res.data) {
-              if (res.data[index].blog_id < this.editBlog.blog_id) {
+              if (res.data[index].blog_id > this.editBlog.blog_id) {
                 this.last = res.data[index];
               } else {
                 this.next = res.data[index];
@@ -114,9 +122,11 @@
       },
       lastArticle () {
         this.$emit('lastArticle', this.last.blog_id);
+        this.backTo();
       },
       nextArticle () {
         this.$emit('nextArticle', this.next.blog_id);
+        this.backTo();
       },
       getBBSList () {
         const item = {
@@ -184,6 +194,11 @@
         setBackPath: 'SET_BACKPATH'
       })
     },
+    watch: {
+      editBlog () {
+        this.getAdjacentArticle();
+      }
+    },
     components: {
       MessageBoard,
       Comment,
@@ -203,6 +218,12 @@
     color: #000;
     padding: 65px 45px 50px;
     box-sizing: border-box;
+    .icon-back{
+      display: inline-block;
+      position: absolute;
+      top: 10px;
+      left: 10px;
+    }
     .mainContent{
       width: 800px;
       .title{
