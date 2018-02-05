@@ -12,7 +12,7 @@ export function getBlogByPage (item) {
   }).catch(err => err);
 };
 
- export function getAllCount () {
+export function getAllCount () {
   return axios.get('/api/getNum').then((res) => {
     return Promise.resolve(res.data);
   }).catch(err => err);
@@ -44,6 +44,19 @@ export function getCount (isShow) {
 			isShow: isShow
 		}
 	}).then((res) => {
+		return Promise.resolve(res.data);
+	}).catch(err => {
+		console.log(err);
+	});
+}
+
+export function getAdjacent (item) {
+	return axios.get('/api/getAdjacentBlog', {
+		params: {
+			id: item.id,
+			show: item.show
+		}
+	}).then(res => {
 		return Promise.resolve(res.data);
 	}).catch(err => {
 		console.log(err);

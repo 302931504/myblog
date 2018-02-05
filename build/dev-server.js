@@ -876,6 +876,22 @@ apiRouter.get('/userCount', (req, res) => {
   })
 })
 
+//获取文章上一篇下一篇功能
+apiRouter.get('/getAdjacentBlog', (req, res) => {
+  var id = req.query.id;
+  var show = req.query.show;
+  var sql = `(SELECT blog_id, blog_title FROM blog WHERE blog_id < ${id} AND blog_isShow = ${show} ORDER BY blog_id DESC LIMIT 1) 
+             UNION ALL 
+             (SELECT blog_id, blog_title FROM blog WHERE blog_id > ${id} AND blog_isShow = ${show} ORDER BY blog_id ASC LIMIT 1);`
+  connection.query(sql, function(err, result) {
+    if (err) {
+      console.log('[SELECT ERROR] - ',err.message);
+      return;
+    }
+    res.json({status: 0, info: '获取成功', data: result});
+  });
+})
+
 app.use('/api', apiRouter)
 
 function checkSession (req) {
