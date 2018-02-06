@@ -1,11 +1,7 @@
-import qs from 'qs';
 import axios from 'axios';
 
-export function addWalkingBlog (blog) {
-  return axios.post('/api/addWalkingBlog', qs.stringify({
-    content: blog.content,
-    tags: blog.tags
-  })).then(res => {
+export function addWalkingBlog (formData) {
+  return axios.post('/api/addWalkingBlog', formData).then(res => {
     return Promise.resolve(res.data);
   }).catch(err => err);
 };

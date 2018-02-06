@@ -4,11 +4,12 @@
     <div class="list" v-show="showList">
       <div class="writeBlogBox">
         <div class="content">
-          <textarea name="" placeholder="说点儿什么吧..." v-model="content"></textarea>
+          <textarea name="content" placeholder="说点儿什么吧..." v-model="content"></textarea>
           <div class="imgWrapper"><span class="icon-camera"></span></div>
         </div>
+        <input type="file" ref="upload" capture="camera" name="file" id="file" accept="image/*" @change="getImg" />
         <div class="tags">
-          <input type="text" name="" placeholder="输入标签，以‘/’分割" v-model="tags">
+          <input type="text" name="tags" placeholder="输入标签，以‘/’分割" v-model="tags">
           <button type="button" @click.stop="_addWalkingBlog">发布</button>
         </div>  
       </div>
@@ -46,6 +47,7 @@
       };
     },
     created () {
+      this.formData = new FormData();
       this.setShowlist(true);
       this._getWalkingBlog();
       setTimeout(() => {
@@ -64,6 +66,9 @@
       ])
     },
     methods: {
+      getImg () {
+        this.formData.append('file', this.$refs.upload.files[0]);
+      },
       getByPage () {
         this.walkblogLength = this.currentPage * limit;
       },
@@ -82,18 +87,25 @@
         });
       },
       _addWalkingBlog () {
-        const blog = {
+        if (this.content === '' || this.tags === '') {
+          this.showAttention('请输入必填内容', false);
+          return;
+        }
+        this.formData.append('content', this.content);
+        this.formData.append('tags', this.tags);
+        console.log(this.formData.get('content'));
+        /* const blog = {
           content: this.content,
           tags: this.tags
-        };
-        addWalkingBlog(blog).then(res => {
+        }; */
+        addWalkingBlog(this.formData).then(res => {
           if (res.status === 0) {
             this.setBackPath(this.$route.path);
             this.$router.push('/admin/back');
           } else {
             this.showAttention(res.info, false);
           }
-        });
+        }); 
       },
       _getWalkingBlog () {
         getWalkingBlog().then(res => { 
@@ -105,7 +117,8 @@
                                       hot: arr[i].walking_blog_likeNum,
                                       comment_count: arr[i].comment_count, 
                                       time: arr[i].walking_blog_time,
-                                      tags: arr[i].walking_blog_tags.split('/')});
+                                      tags: arr[i].walking_blog_tags.split('/'),
+                                      img_url: arr[i].w_img_url});
             }
           }
         });

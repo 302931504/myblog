@@ -7,7 +7,9 @@
           <p class="month">{{getMonth(item.time)}}</p>
         </div>
         <div class="main">
-          <div class="content" v-html="item.content">
+          <div class="content">
+            <img :src="url" v-show="item.img_url">
+            <div class="text" v-html="item.content"></div>
           </div>
           <div class="tags">
             <span v-for="tag in item.tags">● {{tag}}</span>
@@ -28,6 +30,11 @@
   import {mapGetters} from 'vuex';
 
   export default {
+    data () {
+      return {
+        url: 'http://img5.duitang.com/uploads/item/201411/13/20141113195832_PAxSh.jpeg'
+      };
+    },
     props: {
       blogList: {
         type: Array,
@@ -105,6 +112,9 @@
           font-size: 15px;
           color: #737373;
           line-height: 24px;
+          img{
+            width: 500px;
+          }
         }
         .tags{
           font-size: 0;

@@ -9,7 +9,9 @@
         </div>
         <div class="mainC">
           <div class="main">
-            <div class="content" v-html="editBlog.content">
+            <div class="content">
+              <img :src="url" v-show="editBlog.img_url">
+              <div class="text" v-html="editBlog.content"></div>
             </div>
             <div class="tags">
               <span v-for="tag in editBlog.tags">● {{tag}}</span>
@@ -59,7 +61,8 @@
         answerId: -1,
         commentsCount: 0,
         cautionText: '',
-        showCaution: false
+        showCaution: false,
+        url: 'http://img5.duitang.com/uploads/item/201411/13/20141113195832_PAxSh.jpeg'
       };
     },
     computed: {
@@ -232,6 +235,9 @@
           font-size: 15px;
           color: #737373;
           line-height: 24px;
+          img{
+            width: 500px;
+          }
         }
         .messb{
           margin-top: 80px;
