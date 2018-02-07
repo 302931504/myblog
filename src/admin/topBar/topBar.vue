@@ -146,7 +146,7 @@
           transition: all .3s;
           list-style: none;
           &:hover{
-            border-bottom: 5px solid #000; 
+            border-bottom: 5px solid #23262E; 
           }
           &.notice{
             position: relative;

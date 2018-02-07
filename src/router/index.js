@@ -79,10 +79,60 @@ const ArticleDetail = (resolve) => {
     import('../base/articleDetail/articleDetail').then((module) => {
         resolve(module);
     });
+};
+
+const FisrtPage = (resolve) => {
+    import('../components/firstPage/firstPage').then((module) => {
+        resolve(module);
+    });
+}; 
+
+const Pigeonhole = (resolve) => {
+    import('../components/pigeonhole/pigeonhole').then((module) => {
+        resolve(module);
+    });
+}; 
+
+const About = (resolve) => {
+    import('../components/about/about').then((module) => {
+        resolve(module);
+    });
+}; 
+
+const Mylife = (resolve) => {
+    import('../components/mylife/mylife').then((module) => {
+        resolve(module);
+    });
+}; 
+
+const Board = (resolve) => {
+    import('../components/board/board').then((module) => {
+        resolve(module);
+    });
 }; 
 
 export default new Router({
   routes: [
+    {
+      path: '/',
+      component: FisrtPage
+    },
+    {
+      path: '/archives',
+      component: Pigeonhole
+    },
+    {
+      path: '/board',
+      component: Board
+    },
+    {
+      path: '/mylife',
+      component: Mylife
+    },
+    {
+      path: '/about',
+      component: About
+    },
     {
       path: '/login',
       component: Login

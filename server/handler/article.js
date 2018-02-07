@@ -2,6 +2,15 @@ const connection = require('../mysql/connection.js');
 const mail = require('../mail/mailHandlers.js');
 var checkSession = require('./util.js');
 var _ = require('lodash');
+const formidable = require('formidable');
+const fs = require('fs');
+const path = require('path');
+
+var defaultDir = './server/public';
+var blogDir = defaultDir + '/blog';
+fs.existsSync(defaultDir) || fs.mkdirSync(defaultDir);
+fs.existsSync(blogDir) || fs.mkdirSync(blogDir);
+fs.existsSync('./server/public/image') || fs.mkdirSync('./server/public/image');
 
 module.exports = {
   /*
@@ -358,5 +367,32 @@ module.exports = {
       }
       res.json({status: 0, info: '获取成功', data: result});
     });
+  },
+  /*
+  @description: 上传图片
+  @params: 图片内容
+  @return: 图片地址
+  */
+  uploadImg (req, res) {
+    if (!checkSession(req)) {
+      res.json({status: -1, info: '请先登录'});
+    } else {
+      const form = new formidable.IncomingForm();
+      form.uploadDir = './server/public/image';
+      form.parse(req, (err, fields, files) => {
+        if (err) {
+          console.log(err);
+        }
+        var oldPath = files.photo.path;
+        var newPath = blogDir + '/' + files.photo.name;
+        fs.renameSync(oldPath, newPath, (err) => {
+          if (err) {
+            console.log(err);
+          }
+        })
+        newPath = newPath.replace('\\', '/');
+        res.json({status: 0, url: newPath});
+      });
+    }
   }
 };

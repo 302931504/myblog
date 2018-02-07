@@ -46,6 +46,15 @@
           <textarea name="summary" class="summary" v-model="summary" placeholder="请输入文章摘要"></textarea>
         </div>
       </div>
+      <div class="con-item FileBox">
+        <div class="label">
+          <label for="photo">上传图片</label>
+        </div>
+        <div class="input fileInput">
+          <input type="file" ref="upload" name="photo" id="photo" accept="image/*" @change="getImg" />
+          <button type="button" @click="uploadImage" v-show="showUpload" class="uploadImg">上传</button>
+        </div>
+      </div>
       <div class="con-item showType">
         <div class="postNow">
           <div class="label">
@@ -69,7 +78,7 @@
           <label>文章内容</label>
         </div>
         <div class="input editorInput">
-          <textarea class="markdown_input" v-model="artical" @input="update"></textarea>
+          <textarea class="markdown_input" v-model="artical" @input="update" id="blog-content"></textarea>
           <div class="markdown_compiled" v-html="compiledMarkdown"></div>
         </div>
       </div>
@@ -87,7 +96,7 @@
   import LabelList from '../../admin/labelList/labelList';
   import OptionList from '../../base/option-list/option-list';
   import {showAttentionMixin} from '../../common/js/mixin';
-  import {saveBlog, getClassify, updateBlog} from '../../api/editor';
+  import {saveBlog, getClassify, updateBlog, uploadImg} from '../../api/editor';
   import {mapGetters, mapMutations} from 'vuex';
   import _ from 'lodash';
   import marked from 'marked';
@@ -111,7 +120,8 @@
         showList: false,
         options: [],
         checked: 0,
-        showFlag: false
+        showFlag: false,
+        showUpload: false
       };
     },
     computed: {
@@ -125,10 +135,26 @@
       ])
     },
     created () {
+      this.formData = new FormData();
       this.initBlog();
       this._getClassify(); 
     },
     methods: {
+      getImg () {
+        if (this.$refs.upload.files.length > 0) {
+          this.showUpload = true;
+          for (let i = 0; i < this.$refs.upload.files.length; i++) {
+            this.formData.append('photo', this.$refs.upload.files[i]);
+          }
+        }
+      },
+      uploadImage () {
+        uploadImg(this.formData).then(res => {
+          if (res.status === 0) {
+            this.artical += '![](' + res.url + ')';
+          }
+        });
+      },
       // 延时赋值给content
       update: _.debounce(function (e) {
         this.artical = e.target.value;
@@ -342,6 +368,15 @@
           resize: none;
           outline: none;
         }
+      }
+      .uploadImg{
+        width: 80px;
+        height: 26px;
+        border: none;
+        color: #fff;
+        font-size: 16px;
+        background-color: #006030;
+        border-radius: 2px;
       }
       .editorInput{
         margin: 0;

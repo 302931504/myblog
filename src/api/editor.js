@@ -45,3 +45,11 @@ export function updateBlog (item) {
     return Promise.resolve(res.data);
   }).catch(err => err);
 };
+
+export function uploadImg (formData) {
+  return axios.post('/api/uploadImg', formData).then(res => {
+    return Promise.resolve(res.data);
+  }).catch(err => {
+    console.log(err);
+  });
+};

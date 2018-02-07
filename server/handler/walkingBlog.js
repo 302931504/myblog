@@ -4,6 +4,12 @@ const formidable = require('formidable');
 const fs = require('fs');
 const path = require('path');
 
+var defaultDir = './server/public';
+var walkingblogDir = defaultDir + '/walkingblog';
+fs.existsSync(defaultDir) || fs.mkdirSync(defaultDir);
+fs.existsSync(walkingblogDir) || fs.mkdirSync(walkingblogDir);
+fs.existsSync('./server/public/image') || fs.mkdirSync('./server/public/image');
+
 module.exports = {
   /*
   @description: 新增行博
@@ -22,8 +28,8 @@ module.exports = {
           console.log(err);
         }
         var oldPath = files.file.path;
-        var newPath = path.join(path.dirname(oldPath),files.file.name);
-        fs.rename(oldPath, newPath, (err) => {
+        var newPath = walkingblogDir + '/' + files.file.name;
+        fs.renameSync(oldPath, newPath, (err) => {
           if (err) {
             console.log(err);
           }

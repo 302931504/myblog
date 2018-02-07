@@ -7,7 +7,7 @@
           <textarea name="content" placeholder="说点儿什么吧..." v-model="content"></textarea>
           <div class="imgWrapper"><span class="icon-camera"></span></div>
         </div>
-        <input type="file" ref="upload" capture="camera" name="file" id="file" accept="image/*" @change="getImg" />
+        <input type="file" ref="upload" capture="camera" name="file" class="file" accept="image/*" @change="getImg" />
         <div class="tags">
           <input type="text" name="tags" placeholder="输入标签，以‘/’分割" v-model="tags">
           <button type="button" @click.stop="_addWalkingBlog">发布</button>
@@ -172,6 +172,13 @@
           border: 1px solid rgb(169, 169, 169);
           border-left: none;
         }
+      }
+      .file{
+        width: 600px;
+        font-size: 16px;
+        outline: none;
+        border: 1px solid rgb(169, 169, 169);
+        border-top: none;
       }
       .tags{
         font-size: 0;
