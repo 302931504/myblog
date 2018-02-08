@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <top-header v-if="!manager.username && currentPath !== '/login'"></top-header>
-    <router-view/>
+    <div class="routerView">
+      <router-view/>
+    </div>
   </div>
 </template>
 
@@ -24,7 +26,7 @@
   };
 </script>
 
-<style>
+<style scoped lang="less" rel="stylesheet/less">
 #app {
   width: 100%;
   height: 100%;
@@ -32,5 +34,6 @@
   overflow: hidden;
   background: url('./common/image/bg.jpg') no-repeat;
   background-size: cover;
+  overflow-y: auto;
 }
 </style>
