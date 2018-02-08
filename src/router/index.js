@@ -109,6 +109,18 @@ const Board = (resolve) => {
     import('../components/board/board').then((module) => {
         resolve(module);
     });
+};
+
+const ArticleList = (resolve) => {
+    import('../components/articleList/articleList').then((module) => {
+        resolve(module);
+    });
+}; 
+
+const ArticleDetail2 = (resolve) => {
+    import('../base/article-detail/article-detail').then((module) => {
+        resolve(module);
+    });
 }; 
 
 export default new Router({
@@ -116,6 +128,16 @@ export default new Router({
     {
       path: '/',
       component: FisrtPage
+    },
+    {
+      path: '/article',
+      component: ArticleList,
+      children: [
+        {
+          path: ':id',
+          component: ArticleDetail2
+        }
+      ]
     },
     {
       path: '/archives',

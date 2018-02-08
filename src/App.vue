@@ -30,10 +30,9 @@
 #app {
   width: 100%;
   height: 100%;
-  color: #fff;
+  background-color: #30373d;
+  color: #606669;
   overflow: hidden;
-  background: url('./common/image/bg.jpg') no-repeat;
-  background-size: cover;
   overflow-y: auto;
 }
 </style>

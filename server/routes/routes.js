@@ -22,6 +22,7 @@ module.exports =  (apiRouter) => {
   apiRouter.post('/draftBlog', article.draftBlog);
   apiRouter.get('/getCount', article.getCount);
   apiRouter.get('/getAdjacentBlog', article.getAdjacentBlog);
+  apiRouter.get('/getOnlineBlogList', article.getOnlineBlogList);
   apiRouter.post('/uploadImg', article.uploadImg);
 
   apiRouter.get('/getClassify', classify.getClassify);

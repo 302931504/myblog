@@ -49,6 +49,7 @@
       border: 1px solid #e2e2e2;
       margin-left: -1px;
       cursor: pointer;
+      background: #fff;
       &.active{
         color: #fff;
         background: #009688;

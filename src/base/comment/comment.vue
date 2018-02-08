@@ -71,7 +71,6 @@
 
 <style scoped lang="less" rel="stylesheet/less">
   .commentWrapper{
-    background-color: #fff;
     p{
       margin: 12px 0;
     }

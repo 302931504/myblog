@@ -62,3 +62,11 @@ export function getAdjacent (item) {
 		console.log(err);
 	});
 }
+
+export function getOnlineBlog (page) {
+	return axios.get('/api/getOnlineBlogList?page=' + page).then(res => {
+		return Promise.resolve(res.data);
+	}).catch(err => {
+		console.log(err);
+	});
+}

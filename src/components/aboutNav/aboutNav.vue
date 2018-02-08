@@ -24,6 +24,11 @@
         <p>订阅</p>
       </div>
     </div>
+    <ul class="link">
+      <li>我的简介</li>
+      <li>算法分析</li>
+      <li>公众号</li>
+    </ul>
   </div>
 </template>
 
@@ -92,6 +97,14 @@
           font-size: 12px;
           margin-top: 5px;
         }
+      }
+    }
+    .link{
+      margin-top: 30px;
+      li{
+        display: inline-block;
+        margin-right: 24px;
+        font-size: 14px;
       }
     }
   }

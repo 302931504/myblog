@@ -369,6 +369,33 @@ module.exports = {
     });
   },
   /*
+  @description: 获取在线文章（包括评论数）
+  @params: 页码
+  @return: 文章信息
+  */
+  getOnlineBlogList (req, res) {
+    const limit = 5;
+    let offset = (req.query.page - 1) * limit;
+    var sql = `SELECT B.blog_id, B.blog_title, B.blog_pubTime, B.blog_updateTime, c.classify_text, blog_description, blog_tags, blog_readNum,ifnull(b.count, 0) as comment_count
+               FROM classify c, blog B LEFT JOIN
+                  (SELECT reply_id, count(*) as count 
+                   FROM bbs 
+                   WHERE type = 2 
+                   GROUP BY reply_id) b 
+                   ON B.blog_id = b.reply_id
+               WHERE B.blog_isShow = 1 AND c.classify_id = B.classify_id
+               ORDER BY B.blog_pubTime DESC
+               LIMIT ?,?;`
+    var sqlParams = [offset, limit];
+    connection.query(sql, sqlParams, function(err, result) {
+      if (err) {
+        console.log('[SELECT ERROR] - ',err.message);
+        return;
+      }
+      res.json({status: 0, info: '获取成功', data: result});
+    });
+  },
+  /*
   @description: 上传图片
   @params: 图片内容
   @return: 图片地址

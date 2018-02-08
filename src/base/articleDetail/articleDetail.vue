@@ -2,7 +2,6 @@
   <transition name="slide">
     <div class="articledetailWrapper">
       <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
-      <span class="icon-back" @click.stop="backTo"></span>
       <div class="mainContent">
         <h1 class="title">
           {{editBlog.blog_title}}
@@ -96,13 +95,6 @@
       this.getAdjacentArticle();
     },
     methods: {
-      backTo () {
-        if (this.editBlog.blog_isShow) {
-          this.$router.push({path: `/admin/article`});
-        } else {
-          this.$router.push({path: `/admin/draft`});
-        }
-      },
       getAdjacentArticle () {
         const item = {
           id: this.editBlog.blog_id,
@@ -214,17 +206,11 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #fff;
     color: #000;
     padding: 65px 45px 50px;
     box-sizing: border-box;
-    .icon-back{
-      display: inline-block;
-      position: absolute;
-      top: 10px;
-      left: 10px;
-    }
     .mainContent{
+      background: #fff;
       width: 800px;
       .title{
         font-size: 28px;

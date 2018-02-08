@@ -1,19 +1,13 @@
 <template>
   <div class="topHeader">
-    <div class="logo">
-      <img src="../../common/image/logo.png" alt="">
-    </div>
   <div class="list">
     <ul class="nav">
-      <router-link tag="li" class="option" to="/">首页</router-link>
-      <router-link tag="li" class="option" to="/mylife">行博</router-link>
-      <router-link tag="li" class="option" to="/archives">归档</router-link>
-      <router-link tag="li" class="option" to="/board">留言板</router-link>
-      <router-link tag="li" class="option" to="/about">关于</router-link>
+      <router-link tag="li" class="option" to="/"><span>首页</span></router-link>
+      <router-link tag="li" class="option" to="/mylife"><span>行博</span></router-link>
+      <router-link tag="li" class="option" to="/archives"><span>归档</span></router-link>
+      <router-link tag="li" class="option" to="/board"><span>留言板</span></router-link>
+      <router-link tag="li" class="option" to="/about"><span class="about">关于</span></router-link>
     </ul>
-    <div class="searchBar">
-      <input type="text" name="" placeholder="搜索标签、文章">
-    </div>
   </div>
   </div>
 </template>
@@ -24,33 +18,30 @@
 
 <style scoped lang="less" rel="stylesheet/less">
   .topHeader{
-    display: flex;
-    justify-content: space-between;
     width: 100%;
-    height: 60px;
+    color: #aeb0b1;
     padding: 0 20px;
     box-sizing: border-box;
-    .logo{
-      img{
-        width: 150px;
-        vertical-align: middle;
-      }
-    }
+    background: #262b2f;
     .list{
-      line-height: 60px;
-      zoom: 1;
       .nav{
-        float: left;
         padding-right: 23px;
         zoom: 1;
         li{
           float: left;
-          padding: 0 23px;
           cursor: pointer;
+          padding: 15px 0;
           transition: all 0.3s ease-out;
+          span{
+            display: block;
+            padding: 0 15px;
+            border-right: 2px solid #30373d;
+          }
+          .about{
+            border-right: none;
+          }
           &:hover{
-            background: rgba(255, 255, 255, 0.2);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            color: #27ae60;
           }
         }
         &:after{
@@ -60,27 +51,6 @@
           clear: both;
         }
       }
-      .searchBar{
-        float: right;
-        input{
-          width: 226px;
-          height: 28px;
-          font-size: 12px;
-          color: #fff;
-          border-radius: 30px;
-          border: 1px solid #fff;
-          padding-left: 10px;
-          outline: none;
-          background: transparent;
-        }
-      }
-      &:after{
-        content: "\0020";
-        display: block;
-        height: 0;
-        clear: both;
-      }
     }
-    
   }
 </style>

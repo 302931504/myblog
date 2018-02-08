@@ -1,142 +1,53 @@
 <template>
   <div class="listWrapper">
-    <article>
-      <h1>这是一篇文章</h1>
+    <article v-for="item in blogList">
+      <h1>{{item.blog_title}}</h1>
       <div class="time">
-        <span><i class="icon-clock"></i> 2018-01-01</span>
-        <span><i class="icon-update"></i> 2018-01-01</span>
-        <span>前端知识</span>
+        <span><i class="icon-clock"></i> {{item.blog_pubTime}}</span>
+        <span><i class="icon-update"></i> {{item.blog_updateTime}}</span>
+        <span>{{item.classify_text}}</span>
       </div>
-      <p>本文详细介绍浏览器缓存策略，粗略介绍应用层缓存如 LocalStorage，SessionStorage， Cookie 的一些异同和使用场景。</p>
+      <p>{{item.blog_description}}</p>
       <div class="foot">
         <div class="tags">
-          <span>基础知识</span>
-          <span>面试总结</span>
-          <span>底层机制</span>
+          <span v-for="tag in item.blog_tags.split('/')">{{tag}}</span>
         </div>
         <div class="readNum">
-          <span>阅读(50)</span>
-          <span>评论(20)</span>
-          <span class="articleDetail">全文链接 >></span>
+          <span>阅读({{item.blog_readNum}})</span>
+          <span>评论({{item.comment_count}})</span>
+          <span class="articleDetail" @click="selectArticle(item.blog_id)">全文链接 >></span>
         </div>
       </div>
     </article>
-    <article>
-      <h1>这是一篇文章</h1>
-      <div class="time">
-        <span><i class="icon-clock"></i> 2018-01-01</span>
-        <span><i class="icon-update"></i> 2018-01-01</span>
-        <span>前端知识</span>
-      </div>
-      <p>本文详细介绍浏览器缓存策略，粗略介绍应用层缓存如 LocalStorage，SessionStorage， Cookie 的一些异同和使用场景。</p>
-      <div class="foot">
-        <div class="tags">
-          <span>基础知识</span>
-          <span>面试总结</span>
-          <span>底层机制</span>
-        </div>
-        <div class="readNum">
-          <span>阅读(50)</span>
-          <span>评论(20)</span>
-          <span class="articleDetail">全文链接 >></span>
-        </div>
-      </div>
-    </article>
-    <article>
-      <h1>这是一篇文章</h1>
-      <div class="time">
-        <span><i class="icon-clock"></i> 2018-01-01</span>
-        <span><i class="icon-update"></i> 2018-01-01</span>
-        <span>前端知识</span>
-      </div>
-      <p>本文详细介绍浏览器缓存策略，粗略介绍应用层缓存如 LocalStorage，SessionStorage， Cookie 的一些异同和使用场景。</p>
-      <div class="foot">
-        <div class="tags">
-          <span>基础知识</span>
-          <span>面试总结</span>
-          <span>底层机制</span>
-        </div>
-        <div class="readNum">
-          <span>阅读(50)</span>
-          <span>评论(20)</span>
-          <span class="articleDetail">全文链接 >></span>
-        </div>
-      </div>
-    </article>
-    <article>
-      <h1>这是一篇文章</h1>
-      <div class="time">
-        <span><i class="icon-clock"></i> 2018-01-01</span>
-        <span><i class="icon-update"></i> 2018-01-01</span>
-        <span>前端知识</span>
-      </div>
-      <p>本文详细介绍浏览器缓存策略，粗略介绍应用层缓存如 LocalStorage，SessionStorage， Cookie 的一些异同和使用场景。</p>
-      <div class="foot">
-        <div class="tags">
-          <span>基础知识</span>
-          <span>面试总结</span>
-          <span>底层机制</span>
-        </div>
-        <div class="readNum">
-          <span>阅读(50)</span>
-          <span>评论(20)</span>
-          <span class="articleDetail">全文链接 >></span>
-        </div>
-      </div>
-    </article>
-    <article>
-      <h1>这是一篇文章</h1>
-      <div class="time">
-        <span><i class="icon-clock"></i> 2018-01-01</span>
-        <span><i class="icon-update"></i> 2018-01-01</span>
-        <span>前端知识</span>
-      </div>
-      <p>本文详细介绍浏览器缓存策略，粗略介绍应用层缓存如 LocalStorage，SessionStorage， Cookie 的一些异同和使用场景。</p>
-      <div class="foot">
-        <div class="tags">
-          <span>基础知识</span>
-          <span>面试总结</span>
-          <span>底层机制</span>
-        </div>
-        <div class="readNum">
-          <span>阅读(50)</span>
-          <span>评论(20)</span>
-          <span class="articleDetail">全文链接 >></span>
-        </div>
-      </div>
-    </article>
-    <article>
-      <h1>这是一篇文章</h1>
-      <div class="time">
-        <span><i class="icon-clock"></i> 2018-01-01</span>
-        <span><i class="icon-update"></i> 2018-01-01</span>
-        <span>前端知识</span>
-      </div>
-      <p>本文详细介绍浏览器缓存策略，粗略介绍应用层缓存如 LocalStorage，SessionStorage， Cookie 的一些异同和使用场景。</p>
-      <div class="foot">
-        <div class="tags">
-          <span>基础知识</span>
-          <span>面试总结</span>
-          <span>底层机制</span>
-        </div>
-        <div class="readNum">
-          <span>阅读(50)</span>
-          <span>评论(20)</span>
-          <span class="articleDetail">全文链接 >></span>
-        </div>
-      </div>
-    </article>
+    <div class="detail">
+      <router-view/>
+    </div>
   </div>
 </template>
 
 <script>
-    
+  export default {
+    props: {
+      blogList: {
+        type: Array,
+        default: function () {
+          return [];
+        }
+      }
+    },
+    methods: {
+      selectArticle (id) {
+        this.$emit('selectArticle', id);
+      }
+    }
+  };
 </script>
 
 <style scoped lang="less" rel="stylesheet/less">
   .listWrapper{
     color: #555;
     width: 853px;
+    margin: 0 auto;
     article{
       display: block;
       padding: 40px 45px;
@@ -186,6 +97,9 @@
           }
         }
       }
+    }
+    .detail{
+      margin-top: 50px;
     }
   }
 </style>
