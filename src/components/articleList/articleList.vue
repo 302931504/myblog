@@ -3,8 +3,8 @@
     <article v-for="item in blogList">
       <h1>{{item.blog_title}}</h1>
       <div class="time">
-        <span><i class="icon-clock"></i> {{item.blog_pubTime}}</span>
-        <span><i class="icon-update"></i> {{item.blog_updateTime}}</span>
+        <span><i class="icon-clock"></i> {{_initTime(item.blog_pubTime)}}</span>
+        <span><i class="icon-update"></i> {{_initTime(item.blog_updateTime)}}</span>
         <span>{{item.classify_text}}</span>
       </div>
       <p>{{item.blog_description}}</p>
@@ -26,6 +26,8 @@
 </template>
 
 <script>
+  import {initTime} from '../../common/js/util';
+
   export default {
     props: {
       blogList: {
@@ -38,6 +40,9 @@
     methods: {
       selectArticle (id) {
         this.$emit('selectArticle', id);
+      },
+      _initTime (time) {
+        return initTime(time);
       }
     }
   };

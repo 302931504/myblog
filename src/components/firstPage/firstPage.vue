@@ -16,8 +16,7 @@
 <script>
   import ArticleList from '../articleList/articleList';
   import PageBtn from '../../base/page-btn/page-btn';
-  import {getOnlineBlog, getCount} from '../../api/blog';
-  import {getOneBlog} from '../../api/draft'; 
+  import {getOnlineBlog, getCount} from '../../api/blog'; 
   import {initPageMixin} from '../../common/js/mixin';
   import {mapMutations} from 'vuex';
 
@@ -53,15 +52,9 @@
         });
       },
       selectArticle (id) {
-        getOneBlog(id).then((res) => {
-          if (res.status === 0) {
-            this.setEditblog(res.data[0]);
-            this.$router.push({path: `/article/${id}`});
-          }
-        });
+        this.$router.push({path: `/article/${id}`});
       },
       ...mapMutations({
-        setEditblog: 'SET_EDITBLOG'
       })
     },
     components: {

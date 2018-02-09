@@ -4,7 +4,7 @@
       <p>发表评论：</p>
       <textarea v-model="content" @click.stop="clickTextarea" ref="textareaBox" :placeholder="placeholder"></textarea>
     </div>
-    <div class="personInfo" v-show="!manager">
+    <div class="personInfo" v-show="manager">
       <p>你的昵称<span class="must">*</span>：</p>
       <input type="text" placeholder="必填" v-model="nickname">
       <p>你的邮箱<span class="must">*</span>：</p>
@@ -56,8 +56,8 @@
         const item = {
           type: -1,
           parent_id: -1, 
-          user_email: this.manager ? this.manager.email : this.email,
-          user_name: this.manager ? this.manager.nickname : this.nickname,
+          user_email: this.manager.email ? this.manager.email : this.email,
+          user_name: this.manager.nickname ? this.manager.nickname : this.nickname,
           bbs_content: this.content
         };
         this.$emit('addBBS', item);

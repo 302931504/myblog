@@ -131,7 +131,7 @@ export const cautionMixin = {
     },
     routerGo () {
       this.setBackPath(this.$route.path);
-      this.$router.push('/admin/back');
+      this.$router.push('/back');
     },
     ...mapMutations({
       setBackPath: 'SET_BACKPATH'
@@ -148,7 +148,7 @@ export const quoteMixin = {
       quoteObj: {},
       content: ''
     };
-  },
+  }, 
   methods: {
     quoteto (item) {
       this.isQuote = true;

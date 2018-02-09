@@ -1,6 +1,7 @@
 <template>
   <div class="messBwrapper">
     <div class="bbsContent">
+      <h1 class="board-title">留言({{floor}})</h1>
       <ul class="parent-mess" @mouseout="currentIndex = -1">
         <li v-for="(item, index) in bbsList" @mouseover="pmouseover(index)">
           <div class="an-info">
@@ -17,7 +18,7 @@
           <div class="an-time">
             <span class="time">{{_initTime(item.time)}}</span>
             <span class="answer" @click.stop="answer(item)">回复</span>
-            <span class="delete" v-show="manager" @click.stop="deletebbs(item.id)">删除</span>
+            <span class="delete" v-show="!manager" @click.stop="deletebbs(item.id)">删除</span>
           </div>
           <div class="child-mess" v-show="item.child">
             <ul @mouseout="currentChildIndex = -1">
@@ -25,7 +26,7 @@
                 <div class="child-an-con">
                   <div class="child-an-title">
                     <p><span>{{child.name}}:</span><span class="child-text">{{child.content}}</span>
-                    <span class="delete" v-show="child_index === currentChildIndex && index === currentIndex" @click.stop="deleteChild(child.id)">删除</span></p>
+                    <span class="delete" v-show="child_index === currentChildIndex && index === currentIndex && !manager" @click.stop="deleteChild(child.id)">删除</span></p>
                   </div>
                   <div class="child-an-time">{{_initTime(child.time)}}</div>
                 </div>
@@ -101,14 +102,21 @@
 <style lang="less" rel="stylesheet/less">
   .bbsContent{
     width: 100%;
-    // padding: 40px;
+    // padding: 40px 45px;
     background: #fff;
+    box-sizing: border-box;
+    .board-title{
+      font-size: 22px;
+      font-weight: 200;
+      color: #333;
+      margin-bottom: 30px;
+    }
     .parent-mess li{
-      border-top: 1px solid #ccc; 
+      border-bottom: 1px solid #ccc; 
       padding: 10px 0;
-      &:last-child{
+      /* &:last-child{
         border-bottom: 1px solid #ccc;
-      }
+      } */
       .an-info{
         display: flex;
         justify-content: space-between;

@@ -206,12 +206,12 @@ export default new Router({
             path: ':id',
             component: WalkingBlogDetail
           }]
-        },
-        {
-          path: 'back',
-          component: Back
         }
       ]
+    },
+    {
+      path: '/back',
+      component: Back
     }
   ]
 });
