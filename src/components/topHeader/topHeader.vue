@@ -31,6 +31,7 @@
           float: left;
           cursor: pointer;
           padding: 15px 0;
+          font-size: 14px;
           transition: all 0.3s ease-out;
           span{
             display: block;

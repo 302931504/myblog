@@ -40,17 +40,14 @@ export const initPageMixin = {
   data () {
     return {
       limit: 10,
-      pages: [],
+      pageCount: 0,
       currentPage: 1,
       showBtn: true
     };
-  },
+  }, 
   methods: {
     initPage (count) {
-      let pageCount = Math.ceil(count / this.limit);
-      for (let i = 0; i < pageCount; i++) {
-        this.pages.push({page: i + 1});
-      }
+      this.pageCount = Math.ceil(count / this.limit);
     },
     pre () {
       this.currentPage -= 1;
@@ -58,10 +55,6 @@ export const initPageMixin = {
     },
     next () {
       this.currentPage += 1;
-      this.getByPage();
-    },
-    clickPage (page) {
-      this.currentPage = page;
       this.getByPage();
     }
   }

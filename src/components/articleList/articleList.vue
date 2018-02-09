@@ -1,24 +1,26 @@
 <template>
   <div class="listWrapper">
-    <article v-for="item in blogList">
-      <h1>{{item.blog_title}}</h1>
-      <div class="time">
-        <span><i class="icon-clock"></i> {{_initTime(item.blog_pubTime)}}</span>
-        <span><i class="icon-update"></i> {{_initTime(item.blog_updateTime)}}</span>
-        <span>{{item.classify_text}}</span>
-      </div>
-      <p>{{item.blog_description}}</p>
-      <div class="foot">
-        <div class="tags">
-          <span v-for="tag in item.blog_tags.split('/')">{{tag}}</span>
+    <transition-group name="river">
+      <article v-for="item in blogList" :key="item.blog_id">
+        <h1>{{item.blog_title}}</h1>
+        <div class="time">
+          <span><i class="icon-clock"></i> {{_initTime(item.blog_pubTime)}}</span>
+          <span><i class="icon-update"></i> {{_initTime(item.blog_updateTime)}}</span>
+          <span>{{item.classify_text}}</span>
         </div>
-        <div class="readNum">
-          <span>阅读({{item.blog_readNum}})</span>
-          <span>评论({{item.comment_count}})</span>
-          <span class="articleDetail" @click="selectArticle(item.blog_id)">全文链接 >></span>
+        <p>{{item.blog_description}}</p>
+        <div class="foot">
+          <div class="tags">
+            <span v-for="tag in item.blog_tags.split('/')">{{tag}}</span>
+          </div>
+          <div class="readNum">
+            <span>阅读({{item.blog_readNum}})</span>
+            <span>评论({{item.comment_count}})</span>
+            <span class="articleDetail" @click="selectArticle(item.blog_id)">全文链接 >></span>
+          </div>
         </div>
-      </div>
-    </article>
+      </article>
+    </transition-group>
     <div class="detail">
       <router-view/>
     </div>
@@ -106,5 +108,13 @@
     .detail{
       margin-top: 50px;
     }
+  }
+  .river-enter-active, .river-leave-active{
+    transition: all 0.2s;
+    opacity: 1;
+  }
+  .river-enter, .river-leave-to{
+    opacity: 0;
+    transform: translate3d(0, 100%, 0); 
   }
 </style>

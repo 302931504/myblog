@@ -2,13 +2,13 @@
   <div class="firstPage">
     <div class="blogName">
       <img src="../../common/image/logo.png" alt="一个好人的个人博客">
-      <p>这是世界的好人很多，如果你找不到，就自己做一个.</p>
+      <p>这个世界的好人很多，如果你找不到，就自己做一个.</p>
     </div>
     <div class="articleList">
       <article-list :blogList="blogList" @selectArticle="selectArticle"></article-list>
     </div>
     <div class="pageBtn" v-show="blogCount > 5">
-      <page-btn :pageCount="pages" :currentPage="currentPage" @next="next" @clickPage="clickPage" @pre="pre"></page-btn>
+      <page-btn :pageCount="pageCount" :currentPage="currentPage" @next="next" @pre="pre"></page-btn>
     </div>
   </div>
 </template>
@@ -45,7 +45,6 @@
       },
       getByPage () {
         getOnlineBlog(this.currentPage).then(res => {
-          console.log(res);
           if (res.status === 0) {
             this.blogList = res.data;
           }
