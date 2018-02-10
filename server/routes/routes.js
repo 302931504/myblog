@@ -44,4 +44,5 @@ module.exports =  (apiRouter) => {
   apiRouter.post('/addWalkingBlog', walkingBlog.addWalkingBlog);
   apiRouter.get('/getWalkingBlog', walkingBlog.getWalkingBlog);
   apiRouter.get('/deleteWBlog', walkingBlog.deleteWBlog);
+  apiRouter.get('/getWalkDetail', walkingBlog.getWalkDetail);
 };

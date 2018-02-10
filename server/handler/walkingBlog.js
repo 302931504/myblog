@@ -27,14 +27,19 @@ module.exports = {
         if (err) {
           console.log(err);
         }
-        var oldPath = files.file.path;
-        var newPath = walkingblogDir + '/' + files.file.name;
-        fs.renameSync(oldPath, newPath, (err) => {
-          if (err) {
-            console.log(err);
-          }
-        })
-        newPath = newPath.replace('\\', '/');
+        var oldPath = '';
+        var newPath = '';
+        let hasFile = files.file;
+        if (hasFile) {
+          oldPath = files.file.path;
+          newPath = walkingblogDir + '/' + files.file.name;
+          fs.renameSync(oldPath, newPath, (err) => {
+            if (err) {
+              console.log(err);
+            }
+          })
+          newPath = newPath.replace('\\', '/');
+        }
         var addSql = `INSERT INTO walking_blog(walking_blog_content, walking_blog_tags, w_img_url)
                       VALUES(?,?,?)`;
         var addSqlParams = [fields.content, fields.tags, newPath];
@@ -54,6 +59,9 @@ module.exports = {
   @return: 行博列表
   */
   getWalkingBlog (req, res) {
+    var page = req.query.page;
+    var limit = req.query.limit;
+    var offset = (page - 1) * limit;
     var sql = `SELECT w.*, ifnull(b.count, 0) as comment_count
                FROM walking_blog w LEFT JOIN 
                                    (SELECT reply_id, count(*) as count 
@@ -61,7 +69,8 @@ module.exports = {
                                     WHERE type = 1 
                                     GROUP BY reply_id) b 
                                    ON w.walking_blog_id = b.reply_id
-              ORDER BY w.walking_blog_time DESC`;
+              ORDER BY w.walking_blog_time DESC
+              LIMIT ${offset}, ${limit}`;
     connection.query(sql, function(err, result) {
       if(err) {
         console.log('[INSERT ERROR] - ',err.message);
@@ -111,5 +120,22 @@ module.exports = {
         })
       })
     }
+  },
+  /*
+  @description: 获取行博详情
+  @params: 行博id
+  @return: 行博详情
+  */
+  getWalkDetail (req, res) {
+    var sql = `SELECT *
+               FROM walking_blog
+               WHERE walking_blog_id = ${req.query.id}`;
+    connection.query(sql, function (err, result) {
+      if(err) {
+        console.log('[INSERT ERROR] - ',err.message);
+        return;
+      }
+      res.json({status: 0, info: '获取成功', data: result});
+    });
   }
 }

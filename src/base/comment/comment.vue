@@ -4,7 +4,7 @@
       <p>发表评论：</p>
       <textarea v-model="content" @click.stop="clickTextarea" ref="textareaBox" :placeholder="placeholder"></textarea>
     </div>
-    <div class="personInfo" v-show="manager">
+    <div class="personInfo" v-show="!manager.username">
       <p>你的昵称<span class="must">*</span>：</p>
       <input type="text" placeholder="必填" v-model="nickname">
       <p>你的邮箱<span class="must">*</span>：</p>

@@ -149,7 +149,13 @@ export default new Router({
     },
     {
       path: '/mylife',
-      component: Mylife
+      component: Mylife,
+      children: [
+        {
+          path: ':id',
+          component: WalkingBlogDetail
+        }
+      ]
     },
     {
       path: '/about',

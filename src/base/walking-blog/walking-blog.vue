@@ -4,23 +4,28 @@
       <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
       <div class="blogContent">
         <div class="time">
-          <div class="day">{{getDay(editBlog.time)}}</div>
-          <p class="month">{{getMonth(editBlog.time)}}</p>
+          <div class="day">{{getDay(wBlog.walking_blog_time)}}</div>
+          <p class="month">{{getMonth(wBlog.walking_blog_time)}}</p>
         </div>
         <div class="mainC">
           <div class="main">
             <div class="content">
-              <img :src="url" v-show="editBlog.img_url">
-              <div class="text" v-html="editBlog.content"></div>
+              <img :src="url" v-show="wBlog.w_img_url">
+              <div class="text" v-html="wBlog.walking_blog_content"></div>
             </div>
             <div class="tags">
-              <span v-for="tag in editBlog.tags">● {{tag}}</span>
+              <span v-for="tag in wBlog.walking_blog_tags">● {{tag}}</span>
             </div>
           </div>
           <div class="main">
             <p class="commentName">评论({{commentsCount}})</p>
-            <textarea name="" class="comment" @click.stop="clickcomment" ref="commentBox" v-model="content"></textarea>
-            <div class="info" v-show="showInfo && !manager">
+            <textarea name="" 
+                      class="comment" 
+                      @click.stop="clickcomment" 
+                      ref="commentBox" 
+                      v-model="content" 
+                      :placeholder="placeholder"></textarea>
+            <div class="info" v-show="showInfo && manager">
               <p class="label">你的昵称*:</p>
               <input type="text" name="" placeholder="必填" v-model="name">
               <p class="label">Email*:</p>
@@ -31,8 +36,8 @@
           </div>
         </div>
       </div>
-      <caution :text="cautionText" 
-               :showFlag="showCaution" 
+      <caution :text="text" 
+               :showFlag="showFlag" 
                @cancel="cancel" 
                @sure="sure"></caution>
     </div>
@@ -41,44 +46,52 @@
 
 <script>
   import MessageBoard from '../message-board/message-board';
-  import Attention from '../../base/attention/attention';
+  import Attention from '../../base/attention/attention'; 
   import Caution from '../../admin/caution/caution';
-  import {mapGetters, mapMutations} from 'vuex';
+  import {mapGetters} from 'vuex';
   import {getComment, comment, addChildBBS, deleteBBS} from '../../api/bbs';
-  import {showAttentionMixin} from '../../common/js/mixin';
+  import {getWalkDetail} from '../../api/walking-blog';
+  import {showAttentionMixin, cautionMixin} from '../../common/js/mixin';
   import {initBBS} from '../../common/js/util';
 
   export default {
-    mixins: [showAttentionMixin],
+    mixins: [showAttentionMixin, cautionMixin],
     data () {
       return {
+        wBlog: {},
         showInfo: false,
         content: '',
         name: '',
         email: '',
         comments: [],
         answerType: 0,
-        answerId: -1,
         commentsCount: 0,
-        cautionText: '',
-        showCaution: false,
-        url: 'http://img5.duitang.com/uploads/item/201411/13/20141113195832_PAxSh.jpeg'
+        url: 'http://img5.duitang.com/uploads/item/201411/13/20141113195832_PAxSh.jpeg',
+        placeholder: ''
       };
     },
     computed: {
       ...mapGetters([
-        'editBlog',
         'manager'
       ])
     },
     created () {
-      this.setShowlist(false);
-      this.getComments();
+      this.getDetail();
     },
     methods: {
-      getComments () {
+      getDetail () {
+        let id = this.$route.params.id;
+        getWalkDetail(id).then(res => {
+          if (res.status === 0) {
+            this.wBlog = res.data[0];
+            this.wBlog.walking_blog_tags = this.wBlog.walking_blog_tags.split('/');
+            this.getComments(id);
+          }
+        });
+      },
+      getComments (id) {
         const item = {
-          reply_id: this.editBlog.id,
+          reply_id: id,
           type: 1
         };
         getComment(item).then(res => {
@@ -101,16 +114,16 @@
         return myDate.getMonth() + 1;
       },
       answer (item) {
-        this.content = '回复 ' + item.name + ':';
-        this.answerId = item.id;
+        this.placeholder = '回复 ' + item.name + ':';
+        this.id = item.id;
         this.answerType = 1;
       },
       cancel () {
-        this.showCaution = false;
+        this.showFlag = false;
       },
       sure () {
-        this.showCaution = false;
-        deleteBBS(this.answerId).then(res => {
+        this.showFlag = false;
+        deleteBBS(this.id).then(res => {
           if (!res.status) {
             this.showAttention(res.info, true);
             setTimeout(() => {
@@ -129,9 +142,9 @@
         }
         if (!this.answerType) {
           const item = {
-            reply_id: this.editBlog.id,
-            user_email: this.manager ? this.manager.email : this.email,
-            user_name: this.manager ? this.manager.nickname : this.name,
+            reply_id: this.$route.params.id,
+            user_email: this.manager.email ? this.manager.email : this.email,
+            user_name: this.manager.email ? this.manager.nickname : this.name,
             bbs_content: this.content,
             type: 1
           };
@@ -145,7 +158,7 @@
           });
         } else {
           const item = {
-            parent_id: this.answerId,
+            parent_id: this.id,
             user_email: this.email,
             user_name: this.name,
             bbs_content: this.content
@@ -161,18 +174,10 @@
         }
       },
       _deleteBBS (id) {
-        this.cautionText = '是否删除该评论';
-        this.showCaution = true;
-        this.answerId = id;
-      },
-      routerGo () {
-        this.setBackPath(this.$route.path);
-        this.$router.push('/admin/back');
-      },
-      ...mapMutations({
-        setBackPath: 'SET_BACKPATH',
-        setShowlist: 'SET_SHOWLIST'
-      })
+        this.text = '是否删除该评论';
+        this.showFlag = true;
+        this.id = id;
+      }
     },
     components: {
       MessageBoard,

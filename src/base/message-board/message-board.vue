@@ -18,7 +18,7 @@
           <div class="an-time">
             <span class="time">{{_initTime(item.time)}}</span>
             <span class="answer" @click.stop="answer(item)">回复</span>
-            <span class="delete" v-show="!manager" @click.stop="deletebbs(item.id)">删除</span>
+            <span class="delete" v-show="manager.username" @click.stop="deletebbs(item.id)">删除</span>
           </div>
           <div class="child-mess" v-show="item.child">
             <ul @mouseout="currentChildIndex = -1">
@@ -26,7 +26,7 @@
                 <div class="child-an-con">
                   <div class="child-an-title">
                     <p><span>{{child.name}}:</span><span class="child-text">{{child.content}}</span>
-                    <span class="delete" v-show="child_index === currentChildIndex && index === currentIndex && !manager" @click.stop="deleteChild(child.id)">删除</span></p>
+                    <span class="delete" v-show="child_index === currentChildIndex && index === currentIndex && manager.username" @click.stop="deleteChild(child.id)">删除</span></p>
                   </div>
                   <div class="child-an-time">{{_initTime(child.time)}}</div>
                 </div>

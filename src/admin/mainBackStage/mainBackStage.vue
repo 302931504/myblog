@@ -49,8 +49,14 @@
       if (!this.manager.username) {
         this.$router.push({path: '/login'});
       }
-      bus.$on('quote', (item) => {
-        this.$refs.viewScroll.scrollTop = this.$refs.viewScroll.scrollHeight;
+    },
+    mounted () {
+      this.$nextTick(() => {
+        bus.$on('quote', (item) => {
+          setTimeout(() => {
+            this.$refs.viewScroll.scrollTop = this.$refs.viewScroll.scrollHeight;
+          }, 300);
+        });
       });
     },
     methods: {

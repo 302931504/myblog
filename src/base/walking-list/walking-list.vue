@@ -1,28 +1,29 @@
 <template>
   <div class="walkListWrapper">
-    <ul>
-      <li v-for="item in blogList">
-        <div class="time">
-          <div class="day">{{getDay(item.time)}}</div>
-          <p class="month">{{getMonth(item.time)}}</p>
+    <article v-for="item in blogList" v-show="!id">
+      <div class="time">
+        <div class="day">{{getDay(item.time)}}</div>
+        <p class="month">{{getMonth(item.time)}}</p>
+      </div>
+      <div class="main">
+        <div class="content">
+          <img :src="url" v-show="item.img_url">
+          <div class="text" v-html="item.content"></div>
         </div>
-        <div class="main">
-          <div class="content">
-            <img :src="url" v-show="item.img_url">
-            <div class="text" v-html="item.content"></div>
-          </div>
-          <div class="tags">
-            <span v-for="tag in item.tags">● {{tag}}</span>
-          </div>
-          <div class="about">
-            <span>热度({{item.hot}})</span>
-            <span>评论({{item.comment_count}})</span>
-            <span @click.stop="clickwalkingBlog(item)">全文链接</span>
-            <span class="delete" v-show="manager" @click="deleteBlog(item.id)">删除</span>
-          </div>
+        <div class="tags">
+          <span v-for="tag in item.tags">● {{tag}}</span>
         </div>
-      </li>
-    </ul>
+        <div class="about">
+          <span>热度({{item.hot}})</span>
+          <span>评论({{item.comment_count}})</span>
+          <span @click.stop="clickwalkingBlog(item)">全文链接</span>
+          <span class="delete" v-show="manager.username" @click="deleteBlog(item.id)">删除</span>
+        </div>
+      </div>
+    </article>
+    <div class="detail">
+      <router-view/>
+    </div>
   </div>
 </template>
 
@@ -44,6 +45,9 @@
       }
     },
     computed: {
+      id () {
+        return this.$route.params.id;
+      },
       ...mapGetters([
         'manager'
       ])
@@ -69,7 +73,8 @@
 
 <style scoped lang="less" rel="stylesheet/less">
   .walkListWrapper{
-    li{
+    padding: 40px 45px;
+    article{
       display: flex;
       width: 640px;
       .time{
@@ -105,7 +110,7 @@
       }
       .main{
         width: 100%;
-        margin-left: 20px;
+        margin-left: 40px;
         background: url('./line.png') bottom repeat-x;
         padding:20px 0 48px 0;
         .content{

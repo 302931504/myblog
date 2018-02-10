@@ -2,7 +2,7 @@
   <div class="walkBlogWrapper">
     <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
     <div class="list" v-show="showList">
-      <div class="writeBlogBox">
+      <div class="writeBlogBox" v-show="!routeId">
         <div class="content">
           <textarea name="content" placeholder="说点儿什么吧..." v-model="content"></textarea>
           <div class="imgWrapper"><span class="icon-camera"></span></div>
@@ -14,15 +14,12 @@
         </div>  
       </div>
       <div class="walkingListBox">
-        <walking-list :blogList="filterWalkblogs" 
+        <walking-list :blogList="walkingBlogs" 
                       @selectBlog="selectBlog" 
                       @deleteBlog="deleteBlog">
         </walking-list>
       </div>
-      <page-btn v-show="walkingBlogs.length > 10 && showBtn" :pageCount="pages" :currentPage="currentPage" @next="next" @clickPage="clickPage" @pre="pre"></page-btn>
-    </div>
-    <div class="viewWrapper">
-      <router-view></router-view>
+      <page-btn :pageCount="pageCount" :currentPage="currentPage" @next="next" @pre="pre"></page-btn>
     </div>
   </div>
 </template>
@@ -31,13 +28,12 @@
   import WalkingList from '../../base/walking-list/walking-list'; 
   import Attention from '../../base/attention/attention';
   import PageBtn from '../../base/page-btn/page-btn';
-  import {initPageMixin, showAttentionMixin} from '../../common/js/mixin';
+  import {initPageMixin, showAttentionMixin, cautionMixin} from '../../common/js/mixin';
   import {addWalkingBlog, getWalkingBlog, deleteWBlog} from '../../api/walking-blog';
-  import {mapMutations, mapGetters} from 'vuex';
-  import {limit} from '../../common/js/param';
+  import {mapGetters} from 'vuex';
 
   export default {
-    mixins: [initPageMixin, showAttentionMixin],
+    mixins: [initPageMixin, showAttentionMixin, cautionMixin],
     data () {
       return {
         content: '',
@@ -48,18 +44,11 @@
     },
     created () {
       this.formData = new FormData();
-      this.setShowlist(true);
-      this._getWalkingBlog();
-      setTimeout(() => {
-        this.initPage(this.walkingBlogs.length);
-      }, 100);
+      this.getByPage();
     },
     computed: {
-      filterWalkblogs () {
-        return this.walkingBlogs.slice(this.walkblogLength - limit, this.walkblogLength);
-      },
-      currentPath () {
-        return this.$route.path;
+      routeId () {
+        return this.$route.params.id;
       },
       ...mapGetters([
         'showList'
@@ -70,17 +59,15 @@
         this.formData.append('file', this.$refs.upload.files[0]);
       },
       getByPage () {
-        this.walkblogLength = this.currentPage * limit;
+        this._getWalkingBlog();
       },
       selectBlog (item) {
-        this.setEditBlog(item);
         this.$router.push({path: `/admin/mylife/${item.id}`});
       },
       deleteBlog (id) {
         deleteWBlog(id).then(res => {
           if (!res.status) {
-            this.setBackPath(this.$route.path);
-            this.$router.push('/admin/back');
+            this.routerGo();
           } else {
             this.showAttention(res.info, false);
           }
@@ -100,15 +87,18 @@
         }; */
         addWalkingBlog(this.formData).then(res => {
           if (res.status === 0) {
-            this.setBackPath(this.$route.path);
-            this.$router.push('/admin/back');
+            this.routerGo();
           } else {
             this.showAttention(res.info, false);
           }
         }); 
       },
       _getWalkingBlog () {
-        getWalkingBlog().then(res => { 
+        const item = {
+          page: this.currentPage,
+          limit: this.limit
+        };
+        getWalkingBlog(item).then(res => { 
           if (res.status === 0) {
             let arr = res.data;
             for (let i = 0; i < arr.length; i++) {
@@ -120,21 +110,12 @@
                                       tags: arr[i].walking_blog_tags.split('/'),
                                       img_url: arr[i].w_img_url});
             }
+            this.initPage(this.walkingBlogs.length);
           }
         });
-      },
-      ...mapMutations({
-        setEditBlog: 'SET_EDITBLOG',
-        setBackPath: 'SET_BACKPATH',
-        setShowlist: 'SET_SHOWLIST'
-      })
+      }
     },
     watch: {
-      currentPath (newPath) {
-        if (newPath === '/admin/mylife') {
-          this.setShowlist(true);
-        }
-      }
     },
     components: {
       WalkingList,

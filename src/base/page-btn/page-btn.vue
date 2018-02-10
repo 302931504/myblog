@@ -1,9 +1,9 @@
 <template>
-  <ul class="pageBtn">
+  <div class="pageBtn">
     <button type="button" @click="pre" v-show="currentPage > 1" class="btn last">上一页</button>
     <p class="pageText">Page {{currentPage}} of {{pageCount}}</p>
     <button type="button" @click="next" v-show="currentPage !== pageCount" class="btn next">下一页</button>
-  </ul>
+  </div>
 </template>
 
 <script>

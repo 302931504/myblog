@@ -6,8 +6,13 @@ export function addWalkingBlog (formData) {
   }).catch(err => err);
 };
 
-export function getWalkingBlog () {
-  return axios.get('/api/getWalkingBlog').then(res => {
+export function getWalkingBlog (item) {
+  return axios.get('/api/getWalkingBlog', {
+    params: {
+      page: item.page,
+      limit: item.limit
+    }
+  }).then(res => {
     return Promise.resolve(res.data);
   }).catch(err => err);
 };
@@ -18,4 +23,12 @@ export function deleteWBlog (id) {
 	}).catch(err => {
 		console.log(err);
 	});
+};
+
+export function getWalkDetail (id) {
+  return axios.get('/api/getWalkDetail?id=' + id).then(res => {
+    return Promise.resolve(res.data);
+  }).catch(err => {
+    console.log(err);
+  }); 
 };

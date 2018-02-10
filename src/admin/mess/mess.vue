@@ -10,7 +10,9 @@
                      @deleteChild="_deleteChildBBS"
                      @quoteto="quoteto">
       </message-board>
-      <page-btn v-show="bbs.length > 10 && showBtn" :pageCount="pages" :currentPage="currentPage" @next="next" @clickPage="clickPage" @pre="pre"></page-btn>
+      <div class="pageBtn">
+        <page-btn :pageCount="pageCount" :currentPage="currentPage" @next="next" @pre="pre"></page-btn>
+      </div>
       <div ref="comWrap">
         <comment class="comment" @addBBS="addBBS" :placeholder="content"></comment>
       </div>
@@ -37,7 +39,6 @@
     data () {
       return {
         bbs: [],
-        answerId: -1,
         bbsLength: 10
       };
     },
@@ -98,12 +99,12 @@
       _deleteBBS (id) {
         this.showFlag = true;
         this.text = '确认删除？';
-        this.id = id;
+        this.answerId = id;
         this.status = 0;
       },
       sure () {
         if (this.status === 0) {
-          deleteBBS(this.id).then(res => {
+          deleteBBS(this.answerId).then(res => {
             if (res.status === 0) {
               this.showAttention(res.info, true);
               this.showFlag = false;
@@ -111,7 +112,7 @@
           });
         }
         if (this.status === 1) {
-          deleteChildBBS(this.id).then(res => {
+          deleteChildBBS(this.answerId).then(res => {
             if (res.status === 0) {
               this.showAttention(res.info, true);
               this.showFlag = false;
@@ -122,14 +123,10 @@
           this.routerGo();
         }, 4000);
       },
-      routerGo () {
-        this.setBackPath(this.$route.path);
-        this.$router.push('/admin/back');
-      },
       _deleteChildBBS (id) {
         this.showFlag = true;
         this.text = '确认删除？';
-        this.id = id;
+        this.answerId = id;
         this.status = 1;
       },
       ...mapMutations({
@@ -159,6 +156,9 @@
         left: 30%;
         background: #fff;
         box-shadow: 8px 8px 6px #888888;
+      }
+      .pageBtn{
+        margin-top: 20px;
       }
       .comment{
         margin-top: 80px;
