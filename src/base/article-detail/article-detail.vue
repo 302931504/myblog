@@ -48,6 +48,7 @@
   import {comment, getComment, addChildBBS, deleteChildBBS, deleteBBS, quote} from '../../api/bbs';
   import {initTime, initBBS} from '../../common/js/util';
   import {quoteMixin, showAttentionMixin, cautionMixin} from '../../common/js/mixin';
+  import {mapGetters} from 'vuex';
   import MessageBoard from '../message-board/message-board';
   import Attention from '../../base/attention/attention';
   import Comment from '../comment/comment';
@@ -76,7 +77,10 @@
       },
       commentsLen () {
         return this.bbsList ? this.bbsList.length : 0;
-      }
+      },
+      ...mapGetters([
+        'manager'
+      ])
     },
     created () {
       this.getBlogDetail();
@@ -122,10 +126,22 @@
       },
       clickNear (type) {
         if (type === 'last') {
-          this.$router.push({path: `/article/${this.last.blog_id}`});
+          if (this.manager.username && this.article.blog_isShow) {
+            this.$router.push({path: `/admin/article/${this.last.blog_id}`});
+          } else if (this.manager.username && !this.article.blog_isShow) {
+            this.$router.push({path: `/admin/draft/${this.last.blog_id}`});
+          } else if (!this.manager.username && this.article.blog_isShow) {
+            this.$router.push({path: `/article/${this.last.blog_id}`});
+          }
         }
         if (type === 'next') {
-          this.$router.push({path: `/article/${this.next.blog_id}`});
+          if (this.manager.username && this.article.blog_isShow) {
+            this.$router.push({path: `/admin/article/${this.next.blog_id}`});
+          } else if (this.manager.username && !this.article.blog_isShow) {
+            this.$router.push({path: `/admin/draft/${this.next.blog_id}`});
+          } else if (!this.manager.username && this.article.blog_isShow) {
+            this.$router.push({path: `/article/${this.next.blog_id}`});
+          }
         }
       },
       addBBS (item) {
@@ -195,6 +211,7 @@
 <style scoped lang="less" rel="stylesheet/less">
   .blogDetailWrapper{
     padding-bottom: 100px;
+    background: transparent;
     .detail{
       background: #fff;
       padding: 40px 45px;
@@ -202,6 +219,7 @@
         text-align: center;
         font-size: 38px;
         margin-bottom: 12px;
+        color: #555;
       }
       .time{
         text-align: center;
@@ -254,6 +272,7 @@
     .likeBtn{
       text-align: center;
       padding: 40px 0;
+      color: #555;
       .icon-like{
         display: inline-block;
         border: 2px solid #555;
@@ -279,6 +298,7 @@
   .markdownContent{
     font-size: 16px;
     line-height: 27px;
+    color: #555;
     p{
       margin-bottom: 25px;
     }
@@ -324,6 +344,9 @@
     }
     a img {
         border: none;
+    }
+    img{
+      max-width: 300px;
     }
     h1,
     h2,

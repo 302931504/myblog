@@ -5,7 +5,7 @@
     <div class="content">
       <follow-list :userList="userList" @deleteUser="_deleteUser"></follow-list>
     </div>
-    <page-btn v-show="usersCount > 10 && showBtn" :pageCount="pages" :currentPage="currentPage" @next="next" @clickPage="clickPage" @pre="pre"></page-btn>
+    <page-btn :pageCount="pageCount" :currentPage="currentPage" @next="next" @pre="pre"></page-btn>
     <follow-edit class="userEdit" v-show="showFlag2" :showFlag="showFlag2" @close="closeEdit" @addUser="addUser"></follow-edit>
     <caution :showFlag="showFlag" :text="text" @cancel="cancel" @sure="sure"></caution>
   </div>
@@ -98,6 +98,7 @@
     color: #000;
     .content{
       margin-top: 10px;
+      margin-bottom: 20px;
     }
     .userEdit{
       position: fixed;

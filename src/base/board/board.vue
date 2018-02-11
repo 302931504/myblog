@@ -1,20 +1,21 @@
 <template>
-  <div class="messWrapper" ref="cont">
+  <div class="messWrapper">
     <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
-    <search-box :options="[]" :readonly="true"></search-box>
     <div class="content">
-      <message-board :bbsList="filterBBS"
-                     :floor="bbs.length" 
-                     @answer="answer" 
-                     @deletebbs="_deleteBBS" 
-                     @deleteChild="_deleteChildBBS"
-                     @quoteto="quoteto">
-      </message-board>
-      <div class="pageBtn">
-        <page-btn :pageCount="pageCount" :currentPage="currentPage" @next="next" @pre="pre"></page-btn>
+      <div class="board">
+        <message-board :bbsList="filterBBS"
+                       :floor="bbs.length" 
+                       @answer="answer" 
+                       @deletebbs="_deleteBBS" 
+                       @deleteChild="_deleteChildBBS"
+                       @quoteto="quoteto">
+        </message-board>
       </div>
-      <div ref="comWrap">
-        <comment class="comment" @addBBS="addBBS" :placeholder="content"></comment>
+      <div class="more" v-show="filterBBS.length !== bbs.length">
+        <p @click="readMore">加载更多</p>
+      </div>
+      <div class="comWrap">
+        <comment @addBBS="addBBS" :placeholder="content"></comment>
       </div>
     </div>
     <caution :showFlag="showFlag" :text="text" @cancel="cancel" @sure="sure"></caution>
@@ -22,39 +23,36 @@
 </template> 
 
 <script>
-  import SearchBox from '../searchBox/searchBox';
   import MessageBoard from '../../base/message-board/message-board';
   import Comment from '../../base/comment/comment';
-  import PageBtn from '../../base/page-btn/page-btn';
   import Attention from '../../base/attention/attention';
   import Caution from '../../admin/caution/caution';
   import {comment, addChildBBS, deleteBBS, deleteChildBBS, getComment, quote} from '../../api/bbs';
-  import {initPageMixin, showAttentionMixin, cautionMixin, quoteMixin} from '../../common/js/mixin';
+  import {showAttentionMixin, cautionMixin, quoteMixin} from '../../common/js/mixin';
   import {initBBS} from '../../common/js/util';
   import {limit} from '../../common/js/param';
   import {mapMutations} from 'vuex';
 
   export default {
-    mixins: [initPageMixin, showAttentionMixin, cautionMixin, quoteMixin],
+    mixins: [showAttentionMixin, cautionMixin, quoteMixin],
     data () {
       return {
         bbs: [],
-        bbsLength: 10
+        bbsLength: 10,
+        currentPage: 1
       };
     },
     created () {
       this.getBBSList();
-      setTimeout(() => {
-        this.initPage(this.bbs.length);
-      }, 100);   
     },
     computed: {
       filterBBS () {
-        return this.bbs.slice(this.bbsLength - limit, this.bbsLength);
+        return this.bbs.slice(0, this.bbsLength);
       }
     },
     methods: {
-      getByPage () {
+      readMore () {
+        this.currentPage += 1;
         this.bbsLength = this.currentPage * limit;
       },
       getBBSList () {
@@ -64,7 +62,6 @@
         };
         getComment(item).then(res => {
           this.bbs = initBBS(res.data);
-          console.log();
         });
       },
       addBBS (item) {
@@ -134,8 +131,6 @@
       })
     },
     components: {
-      SearchBox,
-      PageBtn,
       MessageBoard,
       Comment,
       Attention,
@@ -147,9 +142,15 @@
 <style scoped lang="less" rel="stylesheet/less">
   .messWrapper{
     color: #333;
+    padding-bottom: 20px;
     .content{
-      padding: 40px;
-      margin-top: 10px;
+      padding: 40px 45px;
+      margin: 0 auto;
+      margin-top: 50px;
+      width: 853px;
+      background: #fff;
+      .board{
+      }
       .answerWrapper{
         position: fixed;
         top: 30%;
@@ -157,10 +158,11 @@
         background: #fff;
         box-shadow: 8px 8px 6px #888888;
       }
-      .pageBtn{
+      .more{
+        text-align: center;
         margin-top: 20px;
       }
-      .comment{
+      .comWrap{
         margin-top: 80px;
       }
     }

@@ -40,7 +40,7 @@ export const initPageMixin = {
   data () {
     return {
       limit: 10,
-      pageCount: 1,
+      pageCount: 0,
       currentPage: 1,
       showBtn: true
     };

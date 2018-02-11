@@ -111,6 +111,7 @@
   .mainBackWrapper{
     position: relative;
     height: 100%;
+    color: #fff;
     background: #fff;
     .screen{
       position: fixed;

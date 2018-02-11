@@ -45,12 +45,6 @@ const Draft = (resolve) => {
     });
 }; 
 
-const Mess = (resolve) => {
-    import('../admin/mess/mess').then((module) => {
-        resolve(module);
-    });
-}; 
-
 const UserCenter = (resolve) => {
     import('../admin/user-center/user-center').then((module) => {
         resolve(module);
@@ -74,12 +68,6 @@ const WalkingBlogDetail = (resolve) => {
         resolve(module);
     });
 }; 
-
-const ArticleDetail = (resolve) => {
-    import('../base/articleDetail/articleDetail').then((module) => {
-        resolve(module);
-    });
-};
 
 const FisrtPage = (resolve) => {
     import('../components/firstPage/firstPage').then((module) => {
@@ -106,10 +94,10 @@ const Mylife = (resolve) => {
 }; 
 
 const Board = (resolve) => {
-    import('../components/board/board').then((module) => {
+    import('../base/board/board').then((module) => {
         resolve(module);
     });
-};
+}; 
 
 const ArticleList = (resolve) => {
     import('../components/articleList/articleList').then((module) => {
@@ -117,7 +105,7 @@ const ArticleList = (resolve) => {
     });
 }; 
 
-const ArticleDetail2 = (resolve) => {
+const ArticleDetail = (resolve) => {
     import('../base/article-detail/article-detail').then((module) => {
         resolve(module);
     });
@@ -135,7 +123,7 @@ export default new Router({
       children: [
         {
           path: ':id',
-          component: ArticleDetail2
+          component: ArticleDetail
         }
       ]
     },
@@ -199,7 +187,7 @@ export default new Router({
         },
         {
           path: 'message',
-          component: Mess
+          component: Board
         },
         {
           path: 'setup',

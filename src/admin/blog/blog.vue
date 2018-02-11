@@ -1,12 +1,16 @@
 <template>
   <div class="blogWrapper">
     <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
-    <search-box :options="options" @searchKeyBlog="searchBlog" placeholder="请输入关键字" @clickOption="clickClassify"></search-box>
-    <blog-list v-show="blogs.length > 0" :blogs="blogs" :type="type"  @edit="editBlog" @moveDraft="moveDraft" @select="witchArticle"></blog-list>
-    <page-btn v-show="blogCount > 10 && showBtn" :pageCount="pages" :currentPage="currentPage" @next="next" @clickPage="clickPage" @pre="pre"></page-btn>
-    <no-content v-show="blogs.length === 0" :info="noneInfo"></no-content>
-    <caution :showFlag="showFlag" :text="text" @cancel="cancel" @sure="sure"></caution>
-    <router-view @lastArticle="lastArticle" @nextArticle="nextArticle"></router-view>
+    <div class="listWrapper" v-show="!routeId">
+      <search-box :options="options" @searchKeyBlog="searchBlog" placeholder="请输入关键字" @clickOption="clickClassify"></search-box>
+      <blog-list v-show="blogs.length > 0" :blogs="blogs" :type="type"  @edit="editBlog" @moveDraft="moveDraft" @select="witchArticle"></blog-list>
+      <div class="pageBtnWrapper">
+        <page-btn :pageCount="pageCount" :currentPage="currentPage" @next="next" @pre="pre"></page-btn>
+      </div>
+      <no-content v-show="blogs.length === 0" :info="noneInfo"></no-content>
+      <caution :showFlag="showFlag" :text="text" @cancel="cancel" @sure="sure"></caution>
+    </div>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -18,9 +22,7 @@
   import Attention from '../../base/attention/attention';
   import Caution from '../../admin/caution/caution';
   import {getBlogByPage, getKeyBlog, getClassifyBlog, draftBlog, getCount} from '../../api/blog';
-  import {getOneBlog} from '../../api/draft'; 
   import {initPageMixin, blogMixin, showAttentionMixin, cautionMixin} from '../../common/js/mixin';
-  import {mapMutations} from 'vuex';
 
   export default {
     mixins: [initPageMixin, blogMixin, showAttentionMixin, cautionMixin],
@@ -33,6 +35,9 @@
       };
     },
     computed: {
+      routeId () {
+        return this.$route.params.id;
+      }
     },
     created () {
       this.getByPage();
@@ -49,12 +54,7 @@
         });
       },
       witchArticle (id) {
-        getOneBlog(id).then(res => {
-          if (!res.status) {
-            this.setEditblog(res.data[0]);
-            this.$router.push({path: `/admin/article/${id}`});
-          }
-        });
+        this.$router.push({path: `/admin/article/${id}`});
       },
       getByPage () {
         const item = {
@@ -110,26 +110,7 @@
             this.showBtn = false;
           }
         });
-      },
-      lastArticle (id) {
-        getOneBlog(id).then(res => {
-          if (!res.status) {
-            this.setEditblog(res.data[0]);
-            this.$router.push({path: `/admin/article/${id}`});
-          }
-        });
-      },
-      nextArticle (id) {
-        getOneBlog(id).then(res => {
-          if (!res.status) {
-            this.setEditblog(res.data[0]);
-            this.$router.push({path: `/admin/article/${id}`});
-          }
-        });
-      },
-      ...mapMutations({
-        setEditblog: 'SET_EDITBLOG'
-      })
+      }
     },
     components: {
       SearchBox,
@@ -146,5 +127,8 @@
   .blogWrapper{
     color: #000;
     position: relative;
+    .pageBtnWrapper{
+      margin-top: 20px;
+    }
   }
 </style>

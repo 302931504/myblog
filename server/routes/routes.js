@@ -3,6 +3,7 @@ var backstage = require('../handler/backstage.js');
 var classify = require('../handler/classify.js');
 var comment = require('../handler/comment.js');
 var users = require('../handler/users.js');
+var archives = require('../handler/archives.js');
 var walkingBlog = require('../handler/walkingBlog.js');
 
 module.exports =  (apiRouter) => {
@@ -45,4 +46,8 @@ module.exports =  (apiRouter) => {
   apiRouter.get('/getWalkingBlog', walkingBlog.getWalkingBlog);
   apiRouter.get('/deleteWBlog', walkingBlog.deleteWBlog);
   apiRouter.get('/getWalkDetail', walkingBlog.getWalkDetail);
+
+  apiRouter.get('/getClassifyCount', archives.getClassifyCount);
+  apiRouter.get('/getBlogDate', archives.getBlogDate);
+  apiRouter.get('/getClassifyBlogDate', archives.getClassifyBlogDate);
 };
