@@ -1,5 +1,8 @@
 <template>
-  <div class="aboutNav">
+  <div class="aboutNav" ref="aboutNav">
+    <div class="showBtn" @click="toggleAbout">
+      <span class="icon-back" ref="circle"></span>
+    </div>
     <img src="./head.jpg" alt="">
     <h2>一个好人</h2>
     <p class="introduction">广东工业大学软件工程在读学生。15年开始学习前端，对架构和开发都很感兴趣。
@@ -12,15 +15,15 @@
     </button>
     <div class="summation">
       <div class="data">
-        <h3>10</h3>
+        <h3>{{blogCount}}</h3>
         <p>博客</p>
       </div>
       <div class="data">
-        <h3>20</h3>
+        <h3>{{boardCount}}</h3>
         <p>留言</p>
       </div>
       <div class="data">
-        <h3>10000</h3>
+        <h3>{{subCount}}</h3>
         <p>订阅</p>
       </div>
     </div>
@@ -33,17 +36,66 @@
 </template>
 
 <script>
-    
+  import {getAllCount} from '../../api/blog';
+
+  export default {
+    data () {
+      return {
+        blogCount: 0,
+        boardCount: 0,
+        subCount: 0
+      };
+    },
+    created () {
+      this.getCount();
+    },
+    methods: {
+      toggleAbout () {
+        if (this.$refs.aboutNav.style.left === '') {
+          this.$refs.aboutNav.style.left = -315 + 'px';
+          this.$refs.circle.style.transform = 'rotate(180deg)';
+        } else {
+          this.$refs.aboutNav.style.left = '';
+          this.$refs.circle.style.transform = 'rotate(0)';
+        }
+      },
+      getCount () {
+        getAllCount().then(res => {
+          this.blogCount = res.data[0].blognum;
+          this.boardCount = res.data[0].messnum;
+          this.subCount = res.data[0].usernum;
+        });
+      }
+    }
+  };
 </script>
 
 <style scoped lang="less" rel="stylesheet/less">
   .aboutNav{
+    position: fixed;
+    top: 44px;
+    left: 0;
     width: 315px;
-    background: #fff;
-    color: #444;
+    background: rgba(38,43,47,.8);
+    color: #eee;
     text-align: center;
-    padding: 26px 32px 70px;
+    padding: 26px 32px 40px;
     box-sizing: border-box;
+    transition: all 1s;
+    .showBtn{
+      position: absolute;
+      top: 30px;
+      left: 315px;
+      width: 30px;
+      height: 50px;
+      line-height: 50px;
+      background: rgba(38,43,47,.9);
+      border-radius: 0 8px 8px 0;
+      .icon-back{
+        display: inline-block;
+        transition: all 1s;
+      }
+    }
     img{
       width: 100px;
       height: 100px;
@@ -90,7 +142,7 @@
         padding: 0 20px;
         h3{
           font-size: 23px;
-          color: #373737;
+          color: #fff;
         }
         p{
           color: #ddd;

@@ -10,12 +10,16 @@
     <div class="pageBtn" v-show="blogCount > 5">
       <page-btn :pageCount="pageCount" :currentPage="currentPage" @next="next" @pre="pre"></page-btn>
     </div>
+    <subscribe></subscribe>
+    <bottom></bottom>
   </div>
 </template>
 
 <script>
   import ArticleList from '../articleList/articleList';
   import PageBtn from '../../base/page-btn/page-btn';
+  import Subscribe from '../../base/subscribe/subscribe';
+  import Bottom from '../bottom/bottom';
   import {getOnlineBlog, getCount} from '../../api/blog'; 
   import {initPageMixin} from '../../common/js/mixin';
   import {mapMutations} from 'vuex';
@@ -58,7 +62,9 @@
     },
     components: {
       ArticleList,
-      PageBtn
+      PageBtn,
+      Subscribe,
+      Bottom
     }
   };
 </script>
@@ -68,7 +74,6 @@
     width: 100%;
     zoom: 1;
     box-sizing: border-box;
-    padding-bottom: 20px;
     .blogName{
       text-align: center;
       padding-top: 60px;
@@ -86,6 +91,7 @@
     .pageBtn{
       width: 853px;
       margin: 0 auto;
+      margin-bottom: 20px;
     }
   }
 </style>

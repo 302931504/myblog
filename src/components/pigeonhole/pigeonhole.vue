@@ -3,7 +3,7 @@
     <div class="content">
       <div class="main">
         <div class="selectType">
-          <a class="all-article">全部文章 (12) </a>
+          <a class="all-article" @click="fetchAll">全部文章 (12) </a>
         </div>
         <div class="main-content">
           <transition-group name="river">
@@ -50,11 +50,7 @@
             this.classify = res.data;
           }
         });
-        getArticleTitle().then(res => {
-          if (res.status === 0) {
-            this.articleList = res.data;
-          }
-        });
+        this.fetchAll();
       },
       getYear (time) {
         let arr = time.split('');
@@ -71,6 +67,13 @@
           } else {
             this.articleList = [];
             this.errMess = res.info;
+          }
+        });
+      },
+      fetchAll () {
+        getArticleTitle().then(res => {
+          if (res.status === 0) {
+            this.articleList = res.data;
           }
         });
       },

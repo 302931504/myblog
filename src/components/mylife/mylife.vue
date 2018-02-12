@@ -31,8 +31,8 @@
       this._getWalkingBlog();
     },
     methods: {
-      selectBlog (item) {
-        this.$router.push({path: `/mylife/${item.id}`});
+      selectBlog (id) {
+        this.$router.push({path: `/mylife/${id}`});
       },
       _getWalkingBlog () {
         const item = {
@@ -41,7 +41,7 @@
         };
         getWalkingBlog(item).then(res => { 
           if (res.status === 0) {
-            let arr = res.data;
+            /* let arr = res.data;
             for (let i = 0; i < arr.length; i++) {
               this.walkingBlogs.push({id: arr[i].walking_blog_id, 
                                       content: arr[i].walking_blog_content,
@@ -50,7 +50,9 @@
                                       time: arr[i].walking_blog_time,
                                       tags: arr[i].walking_blog_tags.split('/'),
                                       img_url: arr[i].w_img_url});
-            }
+            } */
+            this.walkingBlogs = res.data;
+            this.initPage(this.walkingBlogs.length);
           }
         });
       }
@@ -90,6 +92,8 @@
       }
     }
     .pageBtn{
+      width: 853px;
+      margin: 0 auto;
       margin-top: 26px;
     }
   }

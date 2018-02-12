@@ -1,6 +1,6 @@
 <template>
   <transition name="showslide">
-    <div class="content" v-show="showFlag">
+    <div class="content">
       <span class="icon-close" @click.stop="close"></span>
       <h1>欢迎订阅</h1>
       <div class="info">

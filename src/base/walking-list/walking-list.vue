@@ -2,22 +2,22 @@
   <div class="walkListWrapper">
     <article v-for="item in blogList" v-show="!id">
       <div class="time">
-        <div class="day">{{getDay(item.time)}}</div>
-        <p class="month">{{getMonth(item.time)}}</p>
+        <div class="day">{{getDay(item.walking_blog_time)}}</div>
+        <p class="month">{{getMonth(item.walking_blog_time)}}</p>
       </div>
       <div class="main">
         <div class="content">
-          <img :src="url" v-show="item.img_url">
-          <div class="text" v-html="item.content"></div>
+          <img :src="url" v-show="item.w_img_url">
+          <div class="text" v-html="item.walking_blog_content"></div>
         </div>
         <div class="tags">
-          <span v-for="tag in item.tags">● {{tag}}</span>
+          <span v-for="tag in item.walking_blog_tags.split('/')">● {{tag}}</span>
         </div>
         <div class="about">
-          <span>热度({{item.hot}})</span>
+          <span>热度({{item.walking_blog_likeNum}})</span>
           <span>评论({{item.comment_count}})</span>
-          <span @click.stop="clickwalkingBlog(item)">全文链接</span>
-          <span class="delete" v-show="manager.username" @click="deleteBlog(item.id)">删除</span>
+          <span @click.stop="clickwalkingBlog(item.walking_blog_id)">全文链接</span>
+          <span class="delete" v-show="manager.username" @click="deleteBlog(item.walking_blog_id)">删除</span>
         </div>
       </div>
     </article>
