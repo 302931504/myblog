@@ -40,7 +40,9 @@ export function getComment (item) {
 	return axios.get('/api/getComment', {
 		params: {
 			reply_id: item.reply_id,
-			type: item.type
+			type: item.type,
+			limit: item.limit,
+			page: item.page
 		}
 	}).then(res => {
 		return Promise.resolve(res.data);
@@ -59,6 +61,19 @@ export function quote (item) {
 		to_email: item.to_email,
 		to_content: item.to_content,
 		old_user: item.old_user
+	}).then(res => {
+		return Promise.resolve(res.data);
+	}).catch(err => {
+		console.log(err);
+	});
+};
+
+export function getCommentCount (item) {
+	return axios.get('/api/getBBSNum', {
+		params: {
+			reply_id: item.reply_id,
+			type: item.type
+		}
 	}).then(res => {
 		return Promise.resolve(res.data);
 	}).catch(err => {

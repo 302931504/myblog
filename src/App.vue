@@ -1,18 +1,22 @@
 <template>
-  <div id="app">
-    <top-header v-if="!manager.username && currentPath !== '/login'"></top-header>
+  <div id="app" ref="viewScroll">
+    <top-header v-if="!manager.username && currentPath !== '/login'" @subMe="subScroll"></top-header>
     <div class="aboutNav">
       <about-nav ref="aboutNav"></about-nav>
     </div>
     <div class="routerView">
       <router-view/>
     </div>
+    <subscribe></subscribe>
+    <bottom></bottom>
   </div>
 </template>
 
 <script>
   import TopHeader from './components/topHeader/topHeader';
   import AboutNav from './components/aboutNav/aboutNav';
+  import Subscribe from './base/subscribe/subscribe';
+  import Bottom from './components/bottom/bottom';
   import {mapGetters} from 'vuex';
 
   export default {
@@ -32,11 +36,16 @@
     methods: {
       showAbout () {
         this.$refs.aboutNav.toggleAbout();
+      },
+      subScroll () {
+        this.$refs.viewScroll.scrollTop = this.$refs.viewScroll.scrollHeight;
       }
     },
     components: {
       TopHeader,
-      AboutNav
+      AboutNav,
+      Subscribe,
+      Bottom
     }
   };
 </script>

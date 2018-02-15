@@ -3,15 +3,15 @@
     <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
     <div class="content">
       <div class="board">
-        <message-board :bbsList="filterBBS"
-                       :floor="bbs.length" 
+        <message-board :bbsList="bbs"
+                       :floor="bbsCount" 
                        @answer="answer" 
                        @deletebbs="_deleteBBS" 
                        @deleteChild="_deleteChildBBS"
                        @quoteto="quoteto">
         </message-board>
       </div>
-      <div class="more" v-show="filterBBS.length !== bbs.length">
+      <div class="more" v-show="bbs.length < bbsCount">
         <p @click="readMore">加载更多</p>
       </div>
       <div class="comWrap">
@@ -27,10 +27,8 @@
   import Comment from '../../base/comment/comment';
   import Attention from '../../base/attention/attention';
   import Caution from '../../admin/caution/caution';
-  import {comment, addChildBBS, deleteBBS, deleteChildBBS, getComment, quote} from '../../api/bbs';
+  import {comment, addChildBBS, deleteBBS, deleteChildBBS, getComment, quote, getCommentCount} from '../../api/bbs';
   import {showAttentionMixin, cautionMixin, quoteMixin} from '../../common/js/mixin';
-  import {initBBS} from '../../common/js/util';
-  import {limit} from '../../common/js/param';
   import {mapMutations} from 'vuex';
 
   export default {
@@ -38,30 +36,42 @@
     data () {
       return {
         bbs: [],
-        bbsLength: 10,
+        bbsCount: 0,
         currentPage: 1
       };
     },
     created () {
       this.getBBSList();
+      this.getCommentNum();
     },
     computed: {
-      filterBBS () {
-        return this.bbs.slice(0, this.bbsLength);
-      }
     },
     methods: {
       readMore () {
         this.currentPage += 1;
-        this.bbsLength = this.currentPage * limit;
+        this.getBBSList();
       },
       getBBSList () {
         const item = {
           reply_id: 0,
-          type: 0
+          type: 0,
+          page: this.currentPage,
+          limit: 10
         };
         getComment(item).then(res => {
-          this.bbs = initBBS(res.data);
+          // console.log(res);
+          this.bbs = res.data;
+        });
+      },
+      getCommentNum () {
+        const item = {
+          reply_id: 0,
+          type: 0
+        };
+        getCommentCount(item).then(res => {
+          if (res.status === 0) {
+            this.bbsCount = res.data[0].num;
+          }
         });
       },
       addBBS (item) {

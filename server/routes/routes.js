@@ -36,6 +36,7 @@ module.exports =  (apiRouter) => {
   apiRouter.post('/comment', comment.comment);
   apiRouter.get('/getComment', comment.getComment);
   apiRouter.post('/quote', comment.quote);
+  apiRouter.get('/getBBSNum', comment.getBBSNum);
 
   apiRouter.get('/getUserList', users.getUserList);
   apiRouter.post('/addFollow', users.addFollow);

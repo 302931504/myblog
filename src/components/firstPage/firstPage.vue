@@ -10,8 +10,8 @@
     <div class="pageBtn" v-show="blogCount > 5">
       <page-btn :pageCount="pageCount" :currentPage="currentPage" @next="next" @pre="pre"></page-btn>
     </div>
-    <subscribe></subscribe>
-    <bottom></bottom>
+    <!-- <subscribe></subscribe>
+    <bottom></bottom> -->
   </div>
 </template>
 

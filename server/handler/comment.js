@@ -177,18 +177,70 @@ module.exports = {
   @return: 留言列表
   */
   getComment (req, res) {
+    var limit = req.query.limit;
     var sql = `SELECT *
-               FROM bbs LEFT OUTER JOIN bbs_child ON (bbs_id = parent_id)
+               FROM bbs 
                WHERE reply_id = ? AND type = ?
-               ORDER BY bbs_time DESC;`
+               ORDER BY bbs_time DESC
+               LIMIT 0,${limit}`;
     var sqlParams = [req.query.reply_id, req.query.type];
     connection.query(sql, sqlParams, function(err, result) {
       if(err) {
         console.log('[INSERT ERROR] - ',err.message);
         return;
       }
-      res.json({status: 0, info: '获取成功', data: result});
-    })      
+      if (!result.length) {
+        res.json({status: -1, info: '暂无评论'});
+        return;
+      }
+      let comments = [];
+      for (let i = 0; i < result.length; i++) {
+        comments.push({
+          id: result[i].bbs_id,
+          reply_id: result[i].reply_id,
+          name: result[i].user_name,
+          email: result[i].user_email,
+          content: result[i].bbs_content,
+          time: result[i].bbs_time,
+          type: result[i].type,
+          child: []
+        });
+      }
+      let commentsId = [];
+      for (let i = 0; i < comments.length; i++) {
+        commentsId[i] = comments[i].id;
+      }
+      var sql2 = `SELECT *
+                  FROM bbs_child
+                  WHERE parent_id IN (?)
+                  ORDER BY bbs_child_time DESC`;
+      sqlParam = [commentsId];
+      connection.query(sql2, sqlParam, (err, result) => {
+        if(err) {
+          console.log('[INSERT ERROR] - ',err.message);
+          return;
+        }
+        if (!result.length) {
+          res.json({status: 0, info: '获取成功', data: comments});
+          return;
+        }
+        for (let i = 0; i < comments.length; i++) {
+          for (let j = 0; j < result.length; j++) {
+            if (comments[i].id == result[j].parent_id) {
+              comments[i].child.push({
+                id: result[j].bbs_child_id,
+                parent_id: result[j].parent_id,
+                email: result[j].child_email,
+                name: result[j].child_name,
+                content: result[j].bbs_child_content,
+                time: result[j].bbs_child_time
+              });
+            }
+          }
+        }
+        res.json({status: 0, info: '获取成功', data: comments});
+      });
+    });      
   },
   /*
   @description: 引用留言(评论)
@@ -220,5 +272,24 @@ module.exports = {
       mail.have_quote(param);
       res.json({status: 0, info: '回复成功'});
     })  
+  },
+  /*
+  @description: 获取留言板数
+  @params: 留言对象
+  @params: 留言类型
+  @return: 留言板数
+  */
+  getBBSNum (req, res) {
+    var sql = `SELECT COUNT(*) AS num
+               FROM bbs
+               WHERE reply_id = ? AND type = ?`;
+    var sqlParams = [req.query.reply_id, req.query.type];
+    connection.query(sql, sqlParams, (err, result) => {
+      if(err) {
+        console.log('[INSERT ERROR] - ',err.message);
+        return;
+      }
+      res.json({status: 0, info: '获取成功', data: result});
+    });
   }
 }

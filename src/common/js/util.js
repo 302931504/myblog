@@ -34,7 +34,7 @@ export function checkEmail (email) {
 	}
 };
 
-export function initBBS (arr) {
+/* export function initBBS (arr) {
 	if (!arr.length) {
 		return;
 	}
@@ -96,6 +96,23 @@ export function initBBS (arr) {
 	}
 
 	return newArr; 
+}; */
+
+export function initBBS (arr) {
+	let newArr = [];
+	for (let i = 0; i < arr.length; i++) {
+		newArr.push({
+			id: arr[i].bbs_id,
+	        reply_id: arr[i].reply_id,
+	    	name: arr[i].user_name,
+	    	email: arr[i].user_email,
+		    content: arr[i].bbs_content,
+		    time: arr[i].bbs_time,
+		    type: arr[i].type,
+		    child: arr[i].child
+		});
+	}
+	return newArr;
 };
 
 export function trim (s) {

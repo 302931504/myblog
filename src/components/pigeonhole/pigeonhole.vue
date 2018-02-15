@@ -3,7 +3,7 @@
     <div class="content">
       <div class="main">
         <div class="selectType">
-          <a class="all-article" @click="fetchAll">全部文章 (12) </a>
+          <a class="all-article" @click="fetchAll">全部文章 ({{allArticle}}) </a>
         </div>
         <div class="main-content">
           <transition-group name="river">
@@ -31,13 +31,15 @@
   
 <script>
   import {getClassify, getArticleTitle, getClassifyArticle} from '../../api/archives';
+  import {getCount} from '../../api/blog';
 
   export default {
     data () {
       return {
         classify: [],
         articleList: [],
-        errMess: ''
+        errMess: '',
+        allArticle: 0
       };
     },
     created () {
@@ -51,6 +53,7 @@
           }
         });
         this.fetchAll();
+        this.getAllCount();
       },
       getYear (time) {
         let arr = time.split('');
@@ -74,6 +77,14 @@
         getArticleTitle().then(res => {
           if (res.status === 0) {
             this.articleList = res.data;
+          }
+        });
+      },
+      getAllCount () {
+        let isShow = 1;
+        getCount(isShow).then(res => {
+          if (res.status === 0) {
+            this.allArticle = res.data;
           }
         });
       },

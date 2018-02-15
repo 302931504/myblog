@@ -1,17 +1,48 @@
 <template>
   <div class="subscribeWrapper">
-    <h1 class="sub-title"><span class="icon-subscribe"></span>订阅我</h1>
-    <p class="remind">当有新博文发表时，将会以邮件形式通知您。所填信息不会被公开。</p>
+    <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
+    <h1 class="sub-title"><span class="icon-subscribe"></span> 订阅我</h1>
     <div class="entry">
-      <input type="text" name="" placeholder="昵称">
-      <input type="email" name="" placeholder="常用邮箱">
-      <button type="button">订阅</button>
+      <input type="text" name="" placeholder="昵称" v-model="nickname">
+      <input type="email" name="" placeholder="常用邮箱" v-model="email">
+      <button type="button" @click="subMe">订阅</button>
     </div>
+    <p class="remind">当有新博文发表时，将会以邮件形式通知您。所填信息不会被公开。</p>
   </div>
 </template>
 
 <script>
-    
+  import {addUsre} from '../../api/users';
+  import {showAttentionMixin} from '../../common/js/mixin';
+  import Attention from '../../base/attention/attention';
+
+  export default {
+    mixins: [showAttentionMixin],
+    data () {
+      return {
+        nickname: '',
+        email: ''
+      };
+    },
+    methods: {
+      subMe () {
+        const user = {
+          name: this.nickname,
+          email: this.email
+        };
+        addUsre(user).then(res => {
+          if (res.status === 0) {
+            this.showAttention('订阅成功', true);
+            this.nickname = '';
+            this.email = '';
+          }
+        });
+      }
+    },
+    components: {
+      Attention
+    }
+  };
 </script>
 
 <style scoped lang="less" rel="stylesheet/less">
@@ -24,11 +55,12 @@
     .sub-title{
       font-size: 20px;
       color: #dbdedf;
+      margin-bottom: 30px;
     }
     .remind{
-      margin: 20px 0;
-      color: #aeb0b1;
-      font-size: 16px;
+      margin-top: 20px;
+      color: #606669;
+      font-size: 14px;
       line-height: 1.5;
     }
     .entry{
