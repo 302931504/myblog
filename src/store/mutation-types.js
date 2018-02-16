@@ -17,3 +17,7 @@ export const SET_ISQUOTE = 'SET_ISQUOTE';
 export const SET_MANAGER = 'SET_MANAGER';
 
 export const SET_SHOWLIST = 'SET_SHOWLIST';
+
+export const SET_LIKEBLOGS = 'SET_LIKEBLOGS';
+
+export const SAVE_USER = 'SAVE_USER';

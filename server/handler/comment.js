@@ -174,15 +174,17 @@ module.exports = {
   @description: 获取留言(评论)
   @params: 对象留言id
   @params: 留言类型
-  @return: 留言列表
+  @return: 留言列表 
   */
   getComment (req, res) {
     var limit = req.query.limit;
+    var page = req.query.page;
+    var newLimit = limit * page;
     var sql = `SELECT *
                FROM bbs 
                WHERE reply_id = ? AND type = ?
                ORDER BY bbs_time DESC
-               LIMIT 0,${limit}`;
+               LIMIT 0,${newLimit}`;
     var sqlParams = [req.query.reply_id, req.query.type];
     connection.query(sql, sqlParams, function(err, result) {
       if(err) {

@@ -20,7 +20,7 @@
   import PageBtn from '../../base/page-btn/page-btn';
   import Subscribe from '../../base/subscribe/subscribe';
   import Bottom from '../bottom/bottom';
-  import {getOnlineBlog, getCount} from '../../api/blog'; 
+  import {getOnlineBlog, getCount, readArticle} from '../../api/blog'; 
   import {initPageMixin} from '../../common/js/mixin';
   import {mapMutations} from 'vuex';
 
@@ -55,7 +55,11 @@
         });
       },
       selectArticle (id) {
-        this.$router.push({path: `/article/${id}`});
+        readArticle(id).then(res => {
+          if (res.status === 0) {
+            this.$router.push({path: `/article/${id}`});
+          }
+        });
       },
       ...mapMutations({
       })

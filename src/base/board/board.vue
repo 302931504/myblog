@@ -171,6 +171,9 @@
       .more{
         text-align: center;
         margin-top: 20px;
+        p{
+          cursor: pointer;
+        }
       }
       .comWrap{
         margin-top: 80px;

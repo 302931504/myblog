@@ -10,7 +10,7 @@
       <p>你的邮箱<span class="must">*</span>：</p>
       <input type="email" name="" placeholder="必填" v-model="email">
       <div class="rememberInfo">
-        <label for="remember"><input type="checkbox" name="" value="" id="remember">记住个人信息</label>
+        <label for="remember"><input type="checkbox" ref="rem" name="" value="1" id="remember">记住个人信息</label>
       </div>
     </div>
     <button type="button" class="publishBtn" @click.stop="publish">发表</button>
@@ -20,7 +20,7 @@
 <script>
   import bus from '../../common/js/bus';
   import {trim} from '../../common/js/util';
-  import {mapGetters} from 'vuex';
+  import {mapGetters, mapActions} from 'vuex';
 
   export default {
     data () {
@@ -38,7 +38,8 @@
     },
     computed: {
       ...mapGetters([
-        'manager'
+        'manager',
+        'user'
       ])
     },
     created () {
@@ -50,8 +51,18 @@
           this.content = `<blockquote><pre>引用 ${item.name} 的发言：</pre>${tags[0]}</blockquote>`;  
         }
       });
+      this.$nextTick(() => {
+        this.initInfo();
+      });
     },
     methods: {
+      initInfo () {
+        if (this.user.username) {
+          this.nickname = this.user.username;
+          this.email = this.user.email;
+          this.$refs.rem.checked = true;
+        }
+      },
       publish () {
         const item = {
           type: -1,
@@ -60,11 +71,23 @@
           user_name: this.manager.nickname ? this.manager.nickname : this.nickname,
           bbs_content: this.content
         };
+        if (this.$refs.rem.checked) {
+          if (this.user.username !== this.nickname) {
+            const user = {
+              username: this.nickname,
+              email: this.email
+            };
+            this.saveCurrentUser(user);
+          }
+        }
         this.$emit('addBBS', item);
       },
       clickTextarea () {
         this.$refs.textareaBox.style.height = '100px';
-      }
+      },
+      ...mapActions([
+        'saveCurrentUser'
+      ])
     }
   };
 </script>

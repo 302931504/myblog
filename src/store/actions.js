@@ -1,4 +1,5 @@
 import * as types from './mutation-types';
+import {saveBlogs, saveUser} from '../common/js/cache';
 
 export const pushNav = function ({commit, state}, {text, name}) {
 	const index = state.navList.findIndex((nav) => {
@@ -13,7 +14,7 @@ export const pushNav = function ({commit, state}, {text, name}) {
 	}
 };
 
-export const deleteNav = function ({commit, state}, {name}) {
+export const deleteNav = function ({commit, state}, name) {
 	const index = state.navList.findIndex((nav) => {
 		return nav.name === name;
 	});
@@ -27,4 +28,16 @@ export const deleteOthers = function ({commit, state}) {
 	const item = state.navList[index];
 	commit(types.DELETE_ALL_NAV);
 	commit(types.PUSH_NAVLIST, item);
+};
+
+export const pushLikeBlogs = function ({commit}, id) {
+	commit(types.SET_LIKEBLOGS, saveBlogs(id));
+};
+
+export const saveCurrentUser = function ({commit}, {username, email}) {
+	const user = {
+		username,
+		email
+	};
+	commit(types.SAVE_USER, saveUser(user));
 };

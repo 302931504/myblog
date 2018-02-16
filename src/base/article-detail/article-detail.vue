@@ -22,8 +22,8 @@
         </div>
       </article>
       <div class="likeBtn">
-        <span class="icon-like"></span>
-        <p class="num">点赞({{article.blog_likeNum}})</p>
+        <span class="icon-like" @click="like(article.blog_id)" ref="likeIcon"></span>
+        <p class="num" ref="num">点赞({{article.blog_likeNum}})</p>
       </div>
       <div class="boardWrapper">
         <message-board :bbsList="bbsList" 
@@ -44,11 +44,11 @@
 
 <script>
   import {getOneBlog} from '../../api/draft';
-  import {getAdjacent} from '../../api/blog';
+  import {getAdjacent, clickLike} from '../../api/blog';
   import {comment, getComment, addChildBBS, deleteChildBBS, deleteBBS, quote} from '../../api/bbs';
-  import {initTime, initBBS} from '../../common/js/util';
+  import {initTime} from '../../common/js/util';
   import {quoteMixin, showAttentionMixin, cautionMixin} from '../../common/js/mixin';
-  import {mapGetters} from 'vuex';
+  import {mapGetters, mapActions} from 'vuex';
   import MessageBoard from '../message-board/message-board';
   import Attention from '../../base/attention/attention';
   import Comment from '../comment/comment';
@@ -79,7 +79,8 @@
         return this.bbsList ? this.bbsList.length : 0;
       },
       ...mapGetters([
-        'manager'
+        'manager',
+        'likeBlogs'
       ])
     },
     created () {
@@ -92,18 +93,49 @@
           if (res.status === 0) {
             this.article = res.data[0];
             this.getArticleBBS(this.article.blog_id);
+            this.initLikeStyle(this.article.blog_id);
             this.getAdjacentArticle();
           }
         });
       },
+      like (id) {
+        let index = this.likeBlogs.findIndex(blogId => {
+          return blogId === id;
+        });
+        if (index < 0) { 
+          clickLike(id).then(res => {
+            if (res.status === 0) {
+              this.activeLikeStyle();
+              this.article.blog_likeNum += 1;
+              this.pushLikeBlogs(id);
+            }
+          });
+        }
+      },
+      initLikeStyle (id) {
+        let index = this.likeBlogs.findIndex(blogId => {
+          return blogId === id;
+        });
+        if (index >= 0) {
+          this.activeLikeStyle();
+        }
+      },
+      activeLikeStyle () {
+        this.$refs.likeIcon.style.background = '#85b7e2';
+        this.$refs.likeIcon.style.border = '2px solid #85b7e2';
+        this.$refs.likeIcon.style.color = '#fff';
+        this.$refs.num.style.color = '#85b7e2';
+      },
       getArticleBBS (id) {
         const item = {
           reply_id: id,
-          type: 2
+          type: 2,
+          limit: 10,
+          page: 1
         };
         getComment(item).then(res => {
           if (res.status === 0) {
-            this.bbsList = initBBS(res.data);
+            this.bbsList = res.data;
           }
         });
       },
@@ -193,7 +225,10 @@
       },
       _initTime (time) {
         return initTime(time);
-      }
+      },
+      ...mapActions([
+        'pushLikeBlogs'
+      ])
     },
     watch: {
       '$route' (to, from) {
@@ -281,7 +316,7 @@
         border-radius: 50%;
       }
       .num{
-        color: #555;
+        // color: #555;
         font-size: 14px;
         margin-top: 10px;
       }

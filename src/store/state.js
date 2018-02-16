@@ -1,3 +1,5 @@
+import {loadBlogs, loaduser} from '../common/js/cache';
+
 const state = {
   navList: [
     {text: '后台首页', name: 'home'}
@@ -8,7 +10,9 @@ const state = {
   backPath: '',
   isquote: false,
   manager: {},
-  showList: true
+  showList: true,
+  likeBlogs: loadBlogs(),
+  user: loaduser()
 };
 
 export default state;

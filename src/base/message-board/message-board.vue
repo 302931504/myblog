@@ -1,7 +1,7 @@
 <template>
   <div class="messBwrapper">
-    <div class="bbsContent">
-      <h1 class="board-title">留言({{floor}})</h1>
+    <div class="bbsContent"> 
+      <h1 class="board-title" v-show="floor > 0">留言({{floor}})</h1>
       <ul class="parent-mess" @mouseout="currentIndex = -1">
         <li v-for="(item, index) in bbsList" @mouseover="pmouseover(index)">
           <div class="an-info">

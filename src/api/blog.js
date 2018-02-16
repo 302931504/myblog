@@ -70,3 +70,19 @@ export function getOnlineBlog (page) {
 		console.log(err);
 	});
 }
+
+export function readArticle (id) {
+	return axios.get('/api/addLookTimes?id=' + id).then(res => {
+		return Promise.resolve(res.data);
+	}).catch(err => {
+		console.log(err);
+	});
+}
+
+export function clickLike (id) {
+	return axios.get('/api/clickLike?id=' + id).then(res => {
+		return Promise.resolve(res.data);
+	}).catch(err => {
+		console.log(err);
+	});
+}

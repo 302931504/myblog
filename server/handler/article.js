@@ -92,6 +92,42 @@ module.exports = {
     })
   },
   /*
+  @description: 增加文章的浏览次数
+  @params: 文章浏览次数
+  @return: 状态码
+  */
+  addLookTimes (req, res) {
+    var sql = `UPDATE blog
+               SET blog_readNum = blog_readNum + 1
+               WHERE blog_id = ?`;
+    var sqlParam = [req.query.id];
+    connection.query(sql, sqlParam, (err, result) => {
+      if(err){
+        console.log('[UPDATE ERROR] - ',err.message);
+        return;
+      }
+      res.json({status: 0, info: '更新成功'});
+    });
+  },
+  /*
+  @description: 增加文章的点赞次数
+  @params: 文章点赞次数
+  @return: 状态码
+  */
+  clickLike (req, res) {
+    var upSql = `UPDATE blog
+                 SET blog_likeNum = blog_likeNum + 1
+                 WHERE blog_id = ?`;
+    var upSqlParam = [req.query.id];
+    connection.query(upSql, upSqlParam, (err, result) => {
+      if(err){
+        console.log('[UPDATE ERROR] - ',err.message);
+        return;
+      }
+      res.json({status: 0, info: '更新成功'});
+    });             
+  },
+  /*
   @description: 更新文章
   @params: 文章的信息
   @return: 状态码
@@ -104,7 +140,7 @@ module.exports = {
       var sqlParam = [req.body.classify_text];
       connection.query(sql, sqlParam, function(err, result) {
         if(err){
-          console.log('[INSERT ERROR] - ',err.message);
+          console.log('[UPDATE ERROR] - ',err.message);
           return;
         }
         var upSql = `UPDATE blog

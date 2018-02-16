@@ -137,5 +137,23 @@ module.exports = {
       }
       res.json({status: 0, info: '获取成功', data: result});
     });
+  },
+  /*
+  @description: 增加行博的浏览次数
+  @params: 行博浏览次数
+  @return: 状态码
+  */
+  addlikeTimes (req, res) {
+    var sql = `UPDATE walking_blog
+               SET walking_blog_likeNum = walking_blog_likeNum + 1
+               WHERE walking_blog_id = ?`;
+    var sqlParam = [req.query.id];
+    connection.query(sql, sqlParam, (err, result) => {
+      if(err){
+        console.log('[UPDATE ERROR] - ',err.message);
+        return;
+      }
+      res.json({status: 0, info: '更新成功'});
+    });
   }
 }

@@ -32,3 +32,11 @@ export function getWalkDetail (id) {
     console.log(err);
   }); 
 };
+
+export function readWalkingBlog (id) {
+  return axios.get('/api/addlikeTimes?id=' + id).then(res => {
+    return Promise.resolve(res.data);
+  }).catch(err => {
+    console.log(err);
+  });
+};

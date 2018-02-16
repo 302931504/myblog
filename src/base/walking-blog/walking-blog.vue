@@ -52,7 +52,6 @@
   import {getComment, comment, addChildBBS, deleteBBS} from '../../api/bbs';
   import {getWalkDetail} from '../../api/walking-blog';
   import {showAttentionMixin, cautionMixin} from '../../common/js/mixin';
-  import {initBBS} from '../../common/js/util';
 
   export default {
     mixins: [showAttentionMixin, cautionMixin],
@@ -92,14 +91,13 @@
       getComments (id) {
         const item = {
           reply_id: id,
-          type: 1,
+          type: 1, 
           limit: 10,
           page: 1
         };
         getComment(item).then(res => {
-          console.log(res);
           if (!res.status) {
-            this.comments = initBBS(res.data);
+            this.comments = res.data;
             this.commentsCount = this.comments ? this.comments.length : 0;
           }
         });

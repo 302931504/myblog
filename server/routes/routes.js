@@ -25,6 +25,8 @@ module.exports =  (apiRouter) => {
   apiRouter.get('/getAdjacentBlog', article.getAdjacentBlog);
   apiRouter.get('/getOnlineBlogList', article.getOnlineBlogList);
   apiRouter.post('/uploadImg', article.uploadImg);
+  apiRouter.get('/addLookTimes', article.addLookTimes);
+  apiRouter.get('/clickLike', article.clickLike);
 
   apiRouter.get('/getClassify', classify.getClassify);
   apiRouter.get('/deleteClassify', classify.deleteClassify);
@@ -47,6 +49,7 @@ module.exports =  (apiRouter) => {
   apiRouter.get('/getWalkingBlog', walkingBlog.getWalkingBlog);
   apiRouter.get('/deleteWBlog', walkingBlog.deleteWBlog);
   apiRouter.get('/getWalkDetail', walkingBlog.getWalkDetail);
+  apiRouter.get('/addlikeTimes', walkingBlog.addlikeTimes);
 
   apiRouter.get('/getClassifyCount', archives.getClassifyCount);
   apiRouter.get('/getBlogDate', archives.getBlogDate);

@@ -30,6 +30,12 @@ const mutation = {
   },
   [types.SET_SHOWLIST] (state, type) {
     state.showList = type;
+  },
+  [types.SET_LIKEBLOGS] (state, blogs) {
+    state.likeBlogs = blogs;
+  },
+  [types.SAVE_USER] (state, user) {
+    state.user = user;
   }
 };
 

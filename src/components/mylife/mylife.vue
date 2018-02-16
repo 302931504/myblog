@@ -17,7 +17,7 @@
 <script>
   import WalkingList from '../../base/walking-list/walking-list';
   import PageBtn from '../../base/page-btn/page-btn';
-  import {getWalkingBlog} from '../../api/walking-blog';
+  import {getWalkingBlog, readWalkingBlog} from '../../api/walking-blog';
   import {initPageMixin} from '../../common/js/mixin';
 
   export default {
@@ -32,7 +32,11 @@
     },
     methods: {
       selectBlog (id) {
-        this.$router.push({path: `/mylife/${id}`});
+        readWalkingBlog(id).then(res => {
+          if (res.status === 0) {
+            this.$router.push({path: `/mylife/${id}`});
+          }
+        });
       },
       _getWalkingBlog () {
         const item = {

@@ -13,3 +13,7 @@ export const isquote = state => state.isquote;
 export const manager = state => state.manager;
 
 export const showList = state => state.showList;
+
+export const likeBlogs = state => state.likeBlogs;
+
+export const user = state => state.user;

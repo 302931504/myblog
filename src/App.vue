@@ -1,14 +1,16 @@
 <template>
   <div id="app" ref="viewScroll">
     <top-header v-if="!manager.username && currentPath !== '/login'" @subMe="subScroll"></top-header>
-    <div class="aboutNav">
+    <div class="aboutNav" v-if="!manager.username && currentPath !== '/login'">
       <about-nav ref="aboutNav"></about-nav>
     </div>
     <div class="routerView">
       <router-view/>
     </div>
-    <subscribe></subscribe>
-    <bottom></bottom>
+    <div class="bottom" v-if="!manager.username && currentPath !== '/login'">
+      <subscribe></subscribe>
+      <bottom></bottom>
+    </div>
   </div>
 </template>
 
@@ -35,7 +37,9 @@
     },
     methods: {
       showAbout () {
-        this.$refs.aboutNav.toggleAbout();
+        if (!this.manager.username && this.currentPath !== '/login') {
+          this.$refs.aboutNav.toggleAbout();
+        }
       },
       subScroll () {
         this.$refs.viewScroll.scrollTop = this.$refs.viewScroll.scrollHeight;
