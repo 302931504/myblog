@@ -5,12 +5,27 @@
       <div class="writeBlogBox" v-show="!routeId">
         <div class="content">
           <textarea name="content" placeholder="说点儿什么吧..." v-model="content"></textarea>
-          <div class="imgWrapper"><span class="icon-camera"></span></div>
+          <div class="imgWrapper">
+            <span class="icon-camera"></span>
+            <input type="file" ref="upload" name="file" class="file" accept="image/*" @change="getImg" />
+          </div>
         </div>
-        <input type="file" ref="upload" capture="camera" name="file" class="file" accept="image/*" @change="getImg" />
-        <div class="tags">
-          <input type="text" name="tags" placeholder="输入标签，以‘/’分割" v-model="tags">
-          <button type="button" @click.stop="_addWalkingBlog">发布</button>
+        <div class="wirteBottom">
+          <div class="left">
+            <span class="topic">#</span>
+            <input type="text" name="tags" placeholder="输入标签，以‘/’分割" v-model="tags">
+          </div>
+          <div class="right">
+            <p class="range" @mouseover="showRange = true" @mouseout="showRange = false">可见范围：<span class="text">所有人可见</span><i class="icon-circle"></i></p>
+            <button type="button" @click.stop="_addWalkingBlog">发布</button>
+            <div class="rangeView" v-show="showRange">
+              <input type="radio" name="range" value="1">所有人可见<br/>
+              <input type="radio" name="range" value="0">仅自己可见
+            </div>
+          </div>
+        </div>
+        <div class="media">
+          <img ref="imgMedia" src="" alt="">
         </div>  
       </div>
       <div class="walkingListBox">
@@ -39,7 +54,8 @@
         content: '',
         tags: '',
         walkingBlogs: [],
-        walkblogLength: 10
+        walkblogLength: 10,
+        showRange: false
       };
     },
     created () {
@@ -57,6 +73,14 @@
     methods: {
       getImg () {
         this.formData.append('file', this.$refs.upload.files[0]);
+        var file = this.$refs.upload.files[0];
+        if (window.FileReader) {  // 将选择的图片显示出来
+          var fr = new FileReader();
+          fr.onloadend = (e) => {
+            this.$refs.imgMedia.src = e.target.result;
+          };
+          fr.readAsDataURL(file);
+        }
       },
       getByPage () {
         this._getWalkingBlog();
@@ -102,13 +126,7 @@
           if (res.status === 0) {
             let arr = res.data;
             for (let i = 0; i < arr.length; i++) {
-              this.walkingBlogs.push({id: arr[i].walking_blog_id, 
-                                      content: arr[i].walking_blog_content,
-                                      hot: arr[i].walking_blog_likeNum,
-                                      comment_count: arr[i].comment_count, 
-                                      time: arr[i].walking_blog_time,
-                                      tags: arr[i].walking_blog_tags.split('/'),
-                                      img_url: arr[i].w_img_url});
+              this.walkingBlogs = res.data;                        
             }
             this.initPage(this.walkingBlogs.length);
           }
@@ -135,7 +153,8 @@
       .content{
         display: flex;
         textarea{
-          width: 600px;
+          // width: 600px;
+          width: 94%;
           height: 80px;
           resize: none;
           padding: 4px;
@@ -144,7 +163,9 @@
           font-size: 16px;
         }
         .imgWrapper{
-          width: 50px;
+          position: relative;
+          // width: 50px;
+          width: 6%;
           height: 78px;
           line-height: 80px;
           text-align: center;
@@ -155,34 +176,74 @@
         }
       }
       .file{
-        width: 600px;
-        font-size: 16px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 50px;
+        height: 78px;
+        opacity: 0;
         outline: none;
-        border: 1px solid rgb(169, 169, 169);
         border-top: none;
       }
-      .tags{
+      .wirteBottom{
         font-size: 0;
         display: flex;
-        input{
-          width: 600px;
-          font-size: 16px;
-          outline: none;
-          border: 1px solid rgb(169, 169, 169);
-          border-top: none;
-          vertical-align: top;
-          padding: 4px;
-          box-sizing: border-box;
+        justify-content: space-between;
+        border: 1px solid rgb(169, 169, 169);
+        padding: 6px;
+        color: #6b6b6b;
+        .left{
+          .topic{
+            display: inline-block;
+            font-size: 20px;
+            vertical-align: middle;
+            margin-right: 16px;
+          }
+          input{
+            width: 250px;
+            height: 30px;
+            font-size: 12px;
+            border-radius: 30px;
+            padding: 4px;
+            box-sizing: border-box;
+            vertical-align: middle;
+          }
         }
-        button{
-          display: inline-block;
-          width: 50px;
-          height: 30px;
-          color: #fff;
-          background: #1AA094;
-          border: 1px solid #1AA094;
-          border-left: none;
+        .right{
+          position: relative;
+          font-size: 12px;
+          // color: #6b6b6b;
+          vertical-align: middle;
+          .range{
+            display: inline-block;
+            padding: 0 16px;
+            border-left: 1px solid #666;
+            .text{
+              display: inline-block;
+              margin-right: 16px;
+            }
+          }
+          button{
+            display: inline-block;
+            width: 80px;
+            height: 30px;
+            color: #fff;
+            background: #1AA094;
+            border: 1px solid #1AA094;
+            border-left: none;
+          }
+          .rangeView{
+            position: absolute;
+            top: 28px;
+            left: 60px;
+            padding: 10px;
+            background: #fff;
+            border: 1px solid #ddd;
+          }
         }
+      }
+      .media{
+        border: 1px solid rgb(169, 169, 169);
       }  
     }
     .walkingListBox{
