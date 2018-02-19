@@ -2,7 +2,10 @@
   <div class="messWrapper">
     <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
     <div class="content">
-      <div class="board">
+      <div class="noContent" v-show="bbs.length === 0">
+        <no-content :info="noneInfo"></no-content>
+      </div>
+      <div class="board" v-show="bbs.length > 0">
         <message-board :bbsList="bbs"
                        :floor="bbsCount" 
                        @answer="answer" 
@@ -10,9 +13,9 @@
                        @deleteChild="_deleteChildBBS"
                        @quoteto="quoteto">
         </message-board>
-      </div>
-      <div class="more" v-show="bbs.length < bbsCount">
-        <p @click="readMore">加载更多</p>
+        <div class="more" v-show="bbs.length < bbsCount">
+          <p @click="readMore">加载更多</p>
+        </div>
       </div>
       <div class="comWrap">
         <comment @addBBS="addBBS" :placeholder="content"></comment>
@@ -27,6 +30,7 @@
   import Comment from '../../base/comment/comment';
   import Attention from '../../base/attention/attention';
   import Caution from '../../admin/caution/caution';
+  import NoContent from '../no-content/no-content';
   import {comment, addChildBBS, deleteBBS, deleteChildBBS, getComment, quote, getCommentCount} from '../../api/bbs';
   import {showAttentionMixin, cautionMixin, quoteMixin} from '../../common/js/mixin';
   import {mapMutations} from 'vuex';
@@ -37,7 +41,8 @@
       return {
         bbs: [],
         bbsCount: 0,
-        currentPage: 1
+        currentPage: 1,
+        noneInfo: ''
       };
     },
     created () {
@@ -59,8 +64,12 @@
           limit: 10
         };
         getComment(item).then(res => {
-          // console.log(res);
+         if (res.status === 0) {
           this.bbs = res.data;
+         } else {
+          this.bbs = res.data;
+          this.noneInfo = res.info;
+         } 
         });
       },
       getCommentNum () {
@@ -144,7 +153,8 @@
       MessageBoard,
       Comment,
       Attention,
-      Caution
+      Caution,
+      NoContent
     }
   };
 </script>

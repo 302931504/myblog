@@ -52,6 +52,7 @@
   import {getComment, comment, addChildBBS, deleteBBS} from '../../api/bbs';
   import {getWalkDetail} from '../../api/walking-blog';
   import {showAttentionMixin, cautionMixin} from '../../common/js/mixin';
+  import {checkEmail} from '../../common/js/util';
 
   export default {
     mixins: [showAttentionMixin, cautionMixin],
@@ -134,13 +135,6 @@
         });
       },
       _comment () {
-        if (this.content === '') {
-          this.showAttention('请输入内容', false);
-          return;
-        } else if (!this.manager && (this.email === '' || this.name === '')) {
-          this.showAttention('请输入*信息', false);
-          return;
-        }
         if (!this.answerType) {
           const item = {
             reply_id: this.$route.params.id,
@@ -149,6 +143,19 @@
             bbs_content: this.content,
             type: 1
           };
+          if (item.user_email === '' || !checkEmail(item.user_email)) {
+            this.showAttention('邮箱格式错误', false);
+            return;
+          } else if (item.user_name === '') {
+            this.showAttention('请输入昵称', false);
+            return;
+          } else if (item.bbs_content === '') {
+            this.showAttention('请输入内容', false);
+            return;
+          } else if (item.bbs_content.length > 200) {
+            this.showAttention('内容超出限制', false);
+            return;
+          }
           comment(item).then(res => {
             if (res.status === 0) {
               this.showAttention(res.info, true);
@@ -164,6 +171,19 @@
             user_name: this.name,
             bbs_content: this.content
           };
+          if (item.user_email === '' || !checkEmail(item.user_email)) {
+            this.showAttention('邮箱格式错误', false);
+            return;
+          } else if (item.user_name === '') {
+            this.showAttention('请输入昵称', false);
+            return;
+          } else if (item.bbs_content === '') {
+            this.showAttention('请输入内容', false);
+            return;
+          } else if (item.bbs_content.length > 200) {
+            this.showAttention('内容超出限制', false);
+            return;
+          }
           addChildBBS(item).then(res => {
             if (!res.status) {
               this.showAttention(res.info, true);

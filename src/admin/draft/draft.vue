@@ -4,7 +4,9 @@
     <div class="listWrapper" v-show="!routerId">
       <search-box :options="options" @searchKeyBlog="searchBlog" placeholder="请输入关键字" @clickOption="clickClassify"></search-box>
       <blog-list v-show="blogs.length > 0" :blogs="blogs" :type="type" @edit="editBlog" @publish="publish" @delete="deleteBlog" @select="witchArticle"></blog-list>
-      <page-btn  :pageCount="pageCount" :currentPage="currentPage" @next="next" @pre="pre"></page-btn>
+      <div class="pageBtnWrapper" v-show="blogs.length > 0">
+        <page-btn  :pageCount="pageCount" :currentPage="currentPage" @next="next" @pre="pre"></page-btn>
+      </div>
       <no-content v-show="blogs.length === 0" :info="noneInfo"></no-content>
       <caution :showFlag="showFlag" :text="text" @cancel="cancel" @sure="sure"></caution>
     </div>
@@ -16,7 +18,7 @@
   import SearchBox from '../searchBox/searchBox';
   import BlogList from '../blogList/blogList';
   import PageBtn from '../../base/page-btn/page-btn';
-  import NoContent from '../../admin/no-content/no-content';
+  import NoContent from '../../base/no-content/no-content';
   import Attention from '../../base/attention/attention';
   import Caution from '../../admin/caution/caution';
   import {initPageMixin, blogMixin, showAttentionMixin, cautionMixin} from '../../common/js/mixin';
@@ -120,8 +122,9 @@
         getKeyBlog(item).then(res => {
           if (res.status === 0) {
             this.blogs = res.data;
-            this.showBtn = false;
+            this.initPage(this.blogs.length);
           } else {
+            this.blogs = res.data;
             this.noneInfo = res.info;
           }
         });
@@ -134,8 +137,9 @@
         getClassifyBlog(item).then(res => {
           if (res.status === 0) {
             this.blogs = res.data;
-            this.showBtn = false;
+            this.initPage(this.blogs.length);
           } else {
+            this.blogs = res.data;
             this.noneInfo = res.info;
           }
         });

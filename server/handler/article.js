@@ -261,7 +261,11 @@ module.exports = {
         console.log('[INSERT ERROR] - ',err.message);
         return;
       }
-      res.json({status: 0, info: '获取成功', data: result});
+      if (result.length > 0) {
+        res.json({status: 0, info: '获取成功', data: result});
+      } else if (result.length <= 0) {
+        res.json({status: -1, info: '无相关文章', data: result});
+      }
     });
   },
   /*
@@ -281,7 +285,11 @@ module.exports = {
         console.log('[INSERT ERROR] - ',err.message);
         return;
       }
-      res.json({status: 0, info: '获取成功', data: result});
+      if (result.length > 0) {
+        res.json({status: 0, info: '获取成功', data: result});
+      } else if (result.length <= 0) {
+        res.json({status: -1, info: '无相关文章', data: result});
+      }
     }); 
   },
   /*

@@ -4,7 +4,7 @@
     <div class="listWrapper" v-show="!routeId">
       <search-box :options="options" @searchKeyBlog="searchBlog" placeholder="请输入关键字" @clickOption="clickClassify"></search-box>
       <blog-list v-show="blogs.length > 0" :blogs="blogs" :type="type"  @edit="editBlog" @moveDraft="moveDraft" @select="witchArticle"></blog-list>
-      <div class="pageBtnWrapper">
+      <div class="pageBtnWrapper" v-show="blogs.length > 0">
         <page-btn :pageCount="pageCount" :currentPage="currentPage" @next="next" @pre="pre"></page-btn>
       </div>
       <no-content v-show="blogs.length === 0" :info="noneInfo"></no-content>
@@ -18,7 +18,7 @@
   import SearchBox from '../searchBox/searchBox';
   import BlogList from '../blogList/blogList';
   import PageBtn from '../../base/page-btn/page-btn';
-  import NoContent from '../../admin/no-content/no-content';
+  import NoContent from '../../base/no-content/no-content';
   import Attention from '../../base/attention/attention';
   import Caution from '../../admin/caution/caution';
   import {getBlogByPage, getKeyBlog, getClassifyBlog, draftBlog, getCount} from '../../api/blog';
@@ -77,7 +77,7 @@
         getKeyBlog(item).then(res => {
           if (res.status === 0) {
             this.blogs = res.data;
-            this.showBtn = false;
+            this.initPage(this.blogs.length);
           } else {
             this.noneInfo = res.info;
           }
@@ -107,7 +107,10 @@
         getClassifyBlog(item).then(res => {
           if (res.status === 0) {
             this.blogs = res.data;
-            this.showBtn = false;
+            this.initPage(this.blogs.length);
+          } else {
+            this.blogs = res.data;
+            this.noneInfo = res.info;
           }
         });
       }

@@ -15,6 +15,7 @@
   import {addUsre} from '../../api/users';
   import {showAttentionMixin} from '../../common/js/mixin';
   import Attention from '../../base/attention/attention';
+  import {checkEmail} from '../../common/js/util';
 
   export default {
     mixins: [showAttentionMixin],
@@ -30,6 +31,16 @@
           name: this.nickname,
           email: this.email
         };
+        if (this.nickname === '') {
+          this.showAttention('请输入昵称', false);
+          return;
+        } else if (this.email === '' || !checkEmail(this.email)) {
+          this.showAttention('邮箱格式错误', false);
+          return;
+        } else if (this.nickname.length > 20) {
+          this.showAttention('昵称过长', false);
+          return;
+        }
         addUsre(user).then(res => {
           if (res.status === 0) {
             this.showAttention('订阅成功', true);

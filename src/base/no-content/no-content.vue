@@ -16,6 +16,7 @@
 <style scoped lang="less" rel="stylesheet/less">
   .text{
     text-align: center;
+    line-height: 200px;
     color: #000;
   }
 </style>

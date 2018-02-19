@@ -1,5 +1,6 @@
-<template>
+<template> 
   <div class="commentWrapper">
+    <attention ref="attBox" :text="attText" :isOK="attIcon"></attention>
     <div class="content">
       <p>发表评论：</p>
       <textarea v-model="content" @click.stop="clickTextarea" ref="textareaBox" :placeholder="placeholder"></textarea>
@@ -19,10 +20,13 @@
 
 <script>
   import bus from '../../common/js/bus';
-  import {trim} from '../../common/js/util';
+  import Attention from '../../base/attention/attention';
+  import {trim, checkEmail} from '../../common/js/util';
+  import {showAttentionMixin} from '../../common/js/mixin';
   import {mapGetters, mapActions} from 'vuex';
 
   export default {
+    mixins: [showAttentionMixin],
     data () {
       return {
         content: '',
@@ -71,6 +75,19 @@
           user_name: this.manager.nickname ? this.manager.nickname : this.nickname,
           bbs_content: this.content
         };
+        if (item.user_email === '' || !checkEmail(item.user_email)) {
+          this.showAttention('邮箱格式错误', false);
+          return;
+        } else if (item.user_name === '') {
+          this.showAttention('请输入昵称', false);
+          return;
+        } else if (item.bbs_content === '') {
+          this.showAttention('请输入内容', false);
+          return;
+        } else if (item.bbs_content.length > 200) {
+          this.showAttention('内容超出限制', false);
+          return;
+        }
         if (this.$refs.rem.checked) {
           if (this.user.username !== this.nickname) {
             const user = {
@@ -88,6 +105,9 @@
       ...mapActions([
         'saveCurrentUser'
       ])
+    },
+    components: {
+      Attention
     }
   };
 </script>

@@ -2,10 +2,11 @@
   <div class="followUsersWrapper">
     <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
     <search-box :options="options" @clickOption="clickOption"></search-box>
-    <div class="content">
+    <no-content v-show="userList.length === 0" :info="noneInfo"></no-content>
+    <div class="content" v-show="userList.length > 0">
       <follow-list :userList="userList" @deleteUser="_deleteUser"></follow-list>
+      <page-btn class="pageBtn" :pageCount="pageCount" :currentPage="currentPage" @next="next" @pre="pre"></page-btn>
     </div>
-    <page-btn :pageCount="pageCount" :currentPage="currentPage" @next="next" @pre="pre"></page-btn>
     <follow-edit class="userEdit" v-show="showFlag2" :showFlag="showFlag2" @close="closeEdit" @addUser="addUser"></follow-edit>
     <caution :showFlag="showFlag" :text="text" @cancel="cancel" @sure="sure"></caution>
   </div>
@@ -18,6 +19,7 @@
   import FollowEdit from '../../base/followEdit/followEdit';
   import Caution from '../../admin/caution/caution';
   import Attention from '../../base/attention/attention';
+  import NoContent from '../../base/no-content/no-content';
   import {getUserList, deleteUser, getCount} from '../../api/users';
   import {cautionMixin, showAttentionMixin, initPageMixin} from '../../common/js/mixin';
 
@@ -30,7 +32,8 @@
         ],
         showFlag2: false,
         userList: [],
-        usersCount: 0
+        usersCount: 0,
+        noneInfo: ''
       };
     },
     created () {
@@ -78,6 +81,8 @@
         getUserList(this.currentPage).then(res => {
           if (res.status === 0) {
             this.userList = res.data;
+          } else {
+            this.noneInfo = res.info;
           }
         }).catch(err => err);
       } 
@@ -88,7 +93,8 @@
       PageBtn,
       FollowEdit,
       Caution,
-      Attention
+      Attention,
+      NoContent
     }
   };
 </script>
@@ -98,7 +104,9 @@
     color: #000;
     .content{
       margin-top: 10px;
-      margin-bottom: 20px;
+      .pageBtn{
+        margin-top: 20px;
+      }
     }
     .userEdit{
       position: fixed;

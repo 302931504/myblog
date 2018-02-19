@@ -16,25 +16,30 @@
             <input type="text" name="tags" placeholder="输入标签，以‘/’分割" v-model="tags">
           </div>
           <div class="right">
-            <p class="range" @mouseover="showRange = true" @mouseout="showRange = false">可见范围：<span class="text">所有人可见</span><i class="icon-circle"></i></p>
+            <p class="range" @click="showRange = !showRange">可见范围：<span class="text">{{rangeText}}</span><i class="icon-circle"></i></p>
             <button type="button" @click.stop="_addWalkingBlog">发布</button>
             <div class="rangeView" v-show="showRange">
-              <input type="radio" name="range" value="1">所有人可见<br/>
-              <input type="radio" name="range" value="0">仅自己可见
+              <input type="radio" name="range" value="1" v-model="rangeType">所有人可见<br/>
+              <input type="radio" name="range" value="0" v-model="rangeType">仅自己可见
             </div>
           </div>
         </div>
-        <div class="media">
-          <img ref="imgMedia" src="" alt="">
+        <div class="media" v-show="showMedia">
+          <span class="icon-close closeMedia" @click="closeMedia"></span>
+          <div class="imgBox">
+            <span class="icon-close closeImg" @click="closeImg"></span>
+            <img ref="imgMedia" src="" alt="">
+          </div>
         </div>  
       </div>
-      <div class="walkingListBox">
+      <no-content :info="noneInfo" v-show="walkingBlogs.length === 0"></no-content>
+      <div class="walkingListBox" v-show="walkingBlogs.length > 0">
         <walking-list :blogList="walkingBlogs" 
                       @selectBlog="selectBlog" 
                       @deleteBlog="deleteBlog">
         </walking-list>
+        <page-btn :pageCount="pageCount" :currentPage="currentPage" @next="next" @pre="pre"></page-btn>
       </div>
-      <page-btn :pageCount="pageCount" :currentPage="currentPage" @next="next" @pre="pre"></page-btn>
     </div>
   </div>
 </template>
@@ -43,6 +48,7 @@
   import WalkingList from '../../base/walking-list/walking-list'; 
   import Attention from '../../base/attention/attention';
   import PageBtn from '../../base/page-btn/page-btn';
+  import NoContent from '../../base/no-content/no-content';
   import {initPageMixin, showAttentionMixin, cautionMixin} from '../../common/js/mixin';
   import {addWalkingBlog, getWalkingBlog, deleteWBlog} from '../../api/walking-blog';
   import {mapGetters} from 'vuex';
@@ -55,7 +61,11 @@
         tags: '',
         walkingBlogs: [],
         walkblogLength: 10,
-        showRange: false
+        showRange: false,
+        showMedia: false,
+        file: {},
+        rangeType: 0,
+        noneInfo: ''
       };
     },
     created () {
@@ -63,6 +73,9 @@
       this.getByPage();
     },
     computed: {
+      rangeText () {
+        return this.rangeType ? '所有人可见' : '仅自己可见';
+      },
       routeId () {
         return this.$route.params.id;
       },
@@ -72,21 +85,28 @@
     },
     methods: {
       getImg () {
-        this.formData.append('file', this.$refs.upload.files[0]);
-        var file = this.$refs.upload.files[0];
+        this.file = this.$refs.upload.files[0];
+        this.formData.append('file', this.file);
         if (window.FileReader) {  // 将选择的图片显示出来
           var fr = new FileReader();
           fr.onloadend = (e) => {
             this.$refs.imgMedia.src = e.target.result;
           };
-          fr.readAsDataURL(file);
+          fr.readAsDataURL(this.file);
         }
+        console.log(!!this.file);
+      },
+      closeImg () {
+        this.file = {};
+      },
+      closeMedia () {
+        this.showMedia = false;
       },
       getByPage () {
         this._getWalkingBlog();
       },
-      selectBlog (item) {
-        this.$router.push({path: `/admin/mylife/${item.id}`});
+      selectBlog (id) {
+        this.$router.push({path: `/admin/mylife/${id}`});
       },
       deleteBlog (id) {
         deleteWBlog(id).then(res => {
@@ -129,16 +149,26 @@
               this.walkingBlogs = res.data;                        
             }
             this.initPage(this.walkingBlogs.length);
+          } else {
+            this.noneInfo = res.info;
           }
         });
       }
     },
     watch: {
+      file (newObj) {
+        if (newObj.name) {
+          this.showMedia = true;
+        } else {
+          this.showMedia = false;
+        }
+      }
     },
     components: {
       WalkingList,
       PageBtn,
-      Attention
+      Attention,
+      NoContent
     }
   };
 </script>
@@ -243,7 +273,31 @@
         }
       }
       .media{
+        position: relative;
+        padding: 20px;
         border: 1px solid rgb(169, 169, 169);
+        .closeMedia{
+          display: block;
+          position: absolute;
+          top: 4px;
+          right: 4px;
+        }
+        .imgBox{
+          width: 279px;
+          position: relative;
+          .closeImg{
+            display: block;
+            position: absolute;
+            top: 0;
+            right: 0;
+            color: #fff;
+            padding: 4px;
+            background: rgba(0,0,0,.6);
+          }
+          img{
+            width: 100%;
+          }
+        }
       }  
     }
     .walkingListBox{
