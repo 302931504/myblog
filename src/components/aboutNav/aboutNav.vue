@@ -4,9 +4,8 @@
       <span class="icon-back" ref="circle"></span>
     </div>
     <img src="./head.jpg" alt="">
-    <h2>一个好人</h2>
-    <p class="introduction">广东工业大学软件工程在读学生。15年开始学习前端，对架构和开发都很感兴趣。
-     工作时有强迫症。</p>
+    <h2>刘帅</h2>
+    <p class="introduction">现就读于广东工业大学软件工程专业，16年开始接触前端，喜欢前端“即刻可见”的魅力。</p>
     <div class="summation">
       <div class="data">
         <h3>{{blogCount}}</h3>
