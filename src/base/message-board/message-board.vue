@@ -17,7 +17,7 @@
           <div class="an-content" v-html="item.content"></div>
           <div class="an-time">
             <span class="time">{{_initTime(item.time)}}</span>
-            <span class="answer" @click.stop="answer(item)">回复</span>
+            <span class="answer" @click.stop="answer(item)" v-show="showAnswer">回复</span>
             <span class="delete" v-show="manager.username" @click.stop="deletebbs(item.id)">删除</span>
           </div>
           <div class="child-mess" v-show="item.child">
@@ -61,6 +61,10 @@
       isBBS: {
         type: Boolean,
         default: true
+      },
+      showAnswer: {
+        type: Boolean,
+        default: false
       },
       floor: {
         type: Number,
@@ -134,7 +138,7 @@
         blockquote{
           display: block;
           margin-bottom: 5px;
-          padding: 20px 14px;
+          padding: 10px 14px;
           font-size: 12px;
           border-left: 3px solid #eee;
           background-color: #f8f8f8;
@@ -143,18 +147,19 @@
           white-space: pre-line;
           pre{
             font-weight: bold;
+            padding-bottom: 7px;
+            word-wrap: normal;
             word-break: break-all;
             word-wrap: break-word;
             white-space: pre-line;
-            margin-bottom: 18px;
           }
         }
       }
       .an-time{
         font-size: 13px;
         color: #999;
-        .answer{
-          margin: 0 16px;
+        .time, .answer{
+          margin-right: 16px;
         }
       }
     }

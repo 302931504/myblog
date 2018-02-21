@@ -71,6 +71,7 @@
     padding: 26px 32px 40px;
     box-sizing: border-box;
     transition: all 1s;
+    z-index: 1000;
     .showBtn{
       position: absolute;
       top: 30px;

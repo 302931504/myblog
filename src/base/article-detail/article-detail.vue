@@ -95,10 +95,20 @@
             this.getArticleBBS(this.article.blog_id);
             this.initLikeStyle(this.article.blog_id);
             this.getAdjacentArticle();
+          } else {
+            console.log(res);
+            this.article = {
+              blog_title: res.info
+            };
+            // this.article.blog_title = res.info;
           }
         });
       },
       like (id) {
+        if (!this.article.blog_id) {
+          this.showAttention('文章不存在', false);
+          return;
+        }
         let index = this.likeBlogs.findIndex(blogId => {
           return blogId === id;
         });
@@ -177,6 +187,10 @@
         }
       },
       addBBS (item) {
+        if (!this.article.blog_id) {
+          this.showAttention('文章不存在', false);
+          return;
+        }
         item.type = 2;
         if (!this.answerType && !this.isQuote) {
           item.reply_id = this.article.blog_id;

@@ -31,7 +31,8 @@
       return {
         content: '',
         nickname: '',
-        email: ''
+        email: '',
+        quote: ''
       };
     },
     props: {
@@ -47,15 +48,12 @@
       ])
     },
     created () {
-      bus.$on('quote', item => {
-        let tags = item.content.split('</blockquote>');
-        if (tags.length > 1) {
-          this.content = `<blockquote><pre>引用 ${item.name} 的发言：</pre>${trim(tags[1])}</blockquote>`;
-        } else {
-          this.content = `<blockquote><pre>引用 ${item.name} 的发言：</pre>${tags[0]}</blockquote>`;  
-        }
-      });
       this.$nextTick(() => {
+        bus.$on('quote', item => {
+          let quoteContent = item.content.replace(/<blockquote>[\s\S]*<\/blockquote>/, '').replace(/[\r\n]/g, '');
+          this.quote = `<blockquote>\n<pre>引用 ${item.name} 的发言：</pre>\n\n${quoteContent}\n\n</blockquote>\n\n`;
+          this.content = `<blockquote>\n<pre>引用 ${item.name} 的发言：</pre>\n\n${quoteContent}\n\n</blockquote>\n\n`; 
+        }); 
         this.initInfo();
       });
     },
@@ -73,7 +71,7 @@
           parent_id: -1, 
           user_email: this.manager.email ? this.manager.email : this.email,
           user_name: this.manager.nickname ? this.manager.nickname : this.nickname,
-          bbs_content: this.content
+          bbs_content: trim(this.quote) + this.content.replace(/<blockquote>[\s\S]*<\/blockquote>/, '')
         };
         if (item.user_email === '' || !checkEmail(item.user_email)) {
           this.showAttention('邮箱格式错误', false);
@@ -100,11 +98,19 @@
         this.$emit('addBBS', item);
       },
       clickTextarea () {
-        this.$refs.textareaBox.style.height = '100px';
+        this.$refs.textareaBox.style.height = '150px';
       },
       ...mapActions([
         'saveCurrentUser'
       ])
+    },
+    watch: {
+      content (newVal, oldVal) {
+        if (newVal.length > 0 && oldVal.length === 0) {
+          this.clickTextarea();
+          this.$refs.textareaBox.focus();
+        }
+      }
     },
     components: {
       Attention
@@ -133,7 +139,7 @@
         max-width: 600px;
         height: 40px;
         min-height: 40px;
-        max-height: 100px;
+        max-height: 200px;
         padding: 10px;
         transition: all .4s;
       }
@@ -160,5 +166,4 @@
       color: red;
     }
   }
-  
 </style>

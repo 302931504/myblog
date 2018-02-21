@@ -1,4 +1,7 @@
 export function initTime (time) {
+	if (time === '') {
+		return;
+	}
 	let myDate = new Date(time);
 	let Year = myDate.getFullYear();
 	let Month = myDate.getMonth() + 1;
@@ -34,6 +37,8 @@ export function checkEmail (email) {
 	}
 };
 
-export function trim (s) {
-	return s.replace(/(^\s*)|(\s*$)/g, '');
+export function trim (str) {
+    var result;
+    result = str.replace(/[\r\n]/g, '');
+    return result;
 };

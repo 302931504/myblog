@@ -1,22 +1,26 @@
 <template>
-  <div class="mylifeWrapper">
-    <div class="listWrapper">
-      <div class="head">
-        <h1>一个好人</h1>
-        <p>这个世界好人很多，如果你找不到，就成为一个。</p>
+  <transition name="slide">
+    <div class="mylifeWrapper">
+      <div class="listWrapper">
+        <div class="head" v-show="!routerId">
+          <h1>一个好人</h1>
+          <p>这个世界好人很多，如果你找不到，就成为一个。</p>
+        </div>
+        <no-content :info="noneInfo"></no-content>
+        <walking-list :blogList="walkingBlogs"
+                      @selectBlog="selectBlog"></walking-list>             
       </div>
-      <walking-list :blogList="walkingBlogs"
-                    @selectBlog="selectBlog"></walking-list>
+      <div class="pageBtn" v-show="!routerId && walkingBlogs.length > 0">
+        <page-btn :pageCount="pageCount" :currentPage="currentPage" @next="next" @pre="pre"></page-btn>
+      </div> 
     </div>
-    <div class="pageBtn">
-      <page-btn :pageCount="pageCount" :currentPage="currentPage" @next="next" @pre="pre"></page-btn>
-    </div>
-  </div>
+  </transition>
 </template>
 
 <script>
   import WalkingList from '../../base/walking-list/walking-list';
   import PageBtn from '../../base/page-btn/page-btn';
+  import NoContent from '../../base/no-content/no-content';
   import {getWalkingBlog, readWalkingBlog} from '../../api/walking-blog';
   import {initPageMixin} from '../../common/js/mixin';
 
@@ -24,8 +28,14 @@
     mixins: [initPageMixin],
     data () {
       return {
-        walkingBlogs: []
+        walkingBlogs: [],
+        noneInfo: ''
       };
+    },
+    computed: {
+      routerId () {
+        return this.$route.params.id;
+      }
     },
     created () {
       this._getWalkingBlog();
@@ -45,25 +55,18 @@
         };
         getWalkingBlog(item).then(res => { 
           if (res.status === 0) {
-            /* let arr = res.data;
-            for (let i = 0; i < arr.length; i++) {
-              this.walkingBlogs.push({id: arr[i].walking_blog_id, 
-                                      content: arr[i].walking_blog_content,
-                                      hot: arr[i].walking_blog_likeNum,
-                                      comment_count: arr[i].comment_count, 
-                                      time: arr[i].walking_blog_time,
-                                      tags: arr[i].walking_blog_tags.split('/'),
-                                      img_url: arr[i].w_img_url});
-            } */
             this.walkingBlogs = res.data;
             this.initPage(this.walkingBlogs.length);
+          } else {
+            this.noneInfo = res.info;
           }
         });
       }
     },
     components: {
       WalkingList,
-      PageBtn
+      PageBtn,
+      NoContent
     }
   };
 </script>
@@ -100,5 +103,16 @@
       margin: 0 auto;
       margin-top: 26px;
     }
+    .detail{
+      width: 853px;
+      box-sizing: border-box;
+      margin: 0 auto;
+    }
+  }
+  .slide-enter-active, .slide-leave-active{
+    transition: all 0.6s;
+  }
+  .slide-enter, .slide-leave-to{
+    transform: translate3d(100%, 0, 0); 
   }
 </style>

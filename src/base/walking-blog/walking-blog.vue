@@ -10,14 +10,14 @@
         <div class="mainC">
           <div class="main">
             <div class="content">
-              <img :src="url" v-show="wBlog.w_img_url">
+              <img :src="wBlog.w_img_url" v-show="wBlog.w_img_url">
               <div class="text" v-html="wBlog.walking_blog_content"></div>
             </div>
             <div class="tags">
               <span v-for="tag in wBlog.walking_blog_tags">● {{tag}}</span>
             </div>
           </div>
-          <div class="main">
+          <div class="main" v-show="wBlog.walking_blog_id">
             <p class="commentName">评论({{commentsCount}})</p>
             <textarea name="" 
                       class="comment" 
@@ -66,7 +66,7 @@
         comments: [],
         answerType: 0,
         commentsCount: 0,
-        url: 'http://img5.duitang.com/uploads/item/201411/13/20141113195832_PAxSh.jpeg',
+        // url: 'http://img5.duitang.com/uploads/item/201411/13/20141113195832_PAxSh.jpeg',
         placeholder: ''
       };
     },
@@ -86,6 +86,11 @@
             this.wBlog = res.data[0];
             this.wBlog.walking_blog_tags = this.wBlog.walking_blog_tags.split('/');
             this.getComments(id);
+          } else {
+            this.wBlog = {
+              walking_blog_content: res.info,
+              walking_blog_time: '2017-9-20'
+            };
           }
         });
       },
@@ -257,6 +262,7 @@
         background: url('./line.png') bottom repeat-x;
         padding:20px 0 48px 0;
         zoom: 1;
+        box-sizing: border-box;
         .content{
           font-size: 15px;
           color: #737373;

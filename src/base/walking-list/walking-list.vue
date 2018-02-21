@@ -7,7 +7,7 @@
       </div>
       <div class="main">
         <div class="content">
-          <img :src="url" v-show="item.w_img_url">
+          <img :src="item.w_img_url" v-show="item.w_img_url">
           <div class="text" v-html="item.walking_blog_content"></div>
         </div>
         <div class="tags">
@@ -33,7 +33,7 @@
   export default {
     data () {
       return {
-        url: 'http://img5.duitang.com/uploads/item/201411/13/20141113195832_PAxSh.jpeg'
+        // url: 'http://img5.duitang.com/uploads/item/201411/13/20141113195832_PAxSh.jpeg'
       };
     },
     props: {

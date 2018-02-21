@@ -1,28 +1,30 @@
 <template>
-  <div class="messWrapper">
-    <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
-    <div class="content">
-      <div class="noContent" v-show="bbs.length === 0">
-        <no-content :info="noneInfo"></no-content>
-      </div>
-      <div class="board" v-show="bbs.length > 0">
-        <message-board :bbsList="bbs"
-                       :floor="bbsCount" 
-                       @answer="answer" 
-                       @deletebbs="_deleteBBS" 
-                       @deleteChild="_deleteChildBBS"
-                       @quoteto="quoteto">
-        </message-board>
-        <div class="more" v-show="bbs.length < bbsCount">
-          <p @click="readMore">加载更多</p>
+  <transition name="slide">
+    <div class="messWrapper">
+      <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
+      <div class="content">
+        <div class="noContent" v-show="bbs.length === 0">
+          <no-content :info="noneInfo"></no-content>
+        </div>
+        <div class="board" v-show="bbs.length > 0">
+          <message-board :bbsList="bbs"
+                         :floor="bbsCount" 
+                         @answer="answer" 
+                         @deletebbs="_deleteBBS" 
+                         @deleteChild="_deleteChildBBS"
+                         @quoteto="quoteto">
+          </message-board>
+          <div class="more" v-if="bbs.length < bbsCount">
+            <p @click="readMore">加载更多</p>
+          </div>
+        </div>
+        <div class="comWrap">
+          <comment @addBBS="addBBS" :placeholder="content"></comment>
         </div>
       </div>
-      <div class="comWrap">
-        <comment @addBBS="addBBS" :placeholder="content"></comment>
-      </div>
+      <caution :showFlag="showFlag" :text="text" @cancel="cancel" @sure="sure"></caution>
     </div>
-    <caution :showFlag="showFlag" :text="text" @cancel="cancel" @sure="sure"></caution>
-  </div>
+  </transition>
 </template> 
 
 <script>
@@ -67,7 +69,6 @@
          if (res.status === 0) {
           this.bbs = res.data;
          } else {
-          this.bbs = res.data;
           this.noneInfo = res.info;
          } 
         });
@@ -189,5 +190,11 @@
         margin-top: 80px;
       }
     }
+  }
+  .slide-enter-active, .slide-leave-active{
+    transition: all 0.6s;
+  }
+  .slide-enter, .slide-leave-to{
+    transform: translate3d(100%, 0, 0); 
   }
 </style>
