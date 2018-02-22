@@ -54,4 +54,6 @@ module.exports =  (apiRouter) => {
   apiRouter.get('/getClassifyCount', archives.getClassifyCount);
   apiRouter.get('/getBlogDate', archives.getBlogDate);
   apiRouter.get('/getClassifyBlogDate', archives.getClassifyBlogDate);
+  apiRouter.get('/getTags', archives.getTags);
+  apiRouter.get('/getTagBlogDate', archives.getTagBlogDate);
 };

@@ -4,6 +4,7 @@
       <div class="main">
         <div class="selectType">
           <a class="all-article" @click="fetchAll">全部文章 ({{allArticle}}) </a>
+          <a class="tag-article">标签 <span class="icon-circle"></span></a>
         </div>
         <div class="main-content">
           <transition-group name="river">
@@ -111,6 +112,13 @@
           height: 72px;
           line-height: 72px;
           border-bottom: 1px solid #ddd;
+          .tag-article{
+            margin-left: 50px;
+            span{
+              display: inline-block;
+              margin-left: 10px;
+            }
+          }
         }
         .main-content{
           position: relative;

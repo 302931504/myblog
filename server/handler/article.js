@@ -22,7 +22,20 @@ module.exports = {
     if (!checkSession(req)) {
       res.json({status: -1, info: '请先登录'})
     } else{
-      var text = req.body.classify_text;
+      let tags = req.body.tags.split('/');
+      var tagSql = `INSERT IGNORE INTO tags(tag_text)
+                    VALUES ?`;
+      var tagSqlParam = [];
+      for (let i = 0; i < tags.length; i++) {
+        tagSqlParam.push([tags[i]]);
+      }
+      connection.query(tagSql, [tagSqlParam], (err, result) => {
+        if (err) {
+          console.log('[INSERT tags ERROR] - ',err.message);
+          return;
+        }
+      });
+      var text = req.body.classify_text; 
       var sql = `SELECT classify_id FROM classify WHERE classify_text = ?`;
       var sqlParam = [text];
       connection.query(sql,sqlParam,function (err, result) {

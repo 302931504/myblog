@@ -1,14 +1,12 @@
 <template>
     <transition name="showslide">
-      <div class="content" v-show="showFlag">
+      <div class="contentWrap" v-show="showFlag">
         <p class="editBtn" @click.stop="editLabelList">编辑</p>
         <span class="icon-close" @click.stop="closeLabelList"></span>
-        <div class="list">
-          <ul>
-            <li v-for="item in labelList">{{item.text}}
-            <span @click.stop="deleteLabel(item.id)" class="icon-closeall" v-show="showCross"></span></li>
-          </ul>
-        </div>
+        <ul class="list">
+          <li v-for="item in labelList" :class="showCross ?  'dd' : ''">{{item.text}}
+          <span @click.stop="deleteLabel(item.id)" class="icon-closeall" v-show="showCross"></span></li>
+        </ul>
         <div class="addNew">
           <input type="text" name="" v-model="newLabel">
           <button type="button" @click.stop="addLabel">添加</button>
@@ -81,7 +79,7 @@
 </script>
 
 <style scoped lang="less" rel="stylesheet/less">
-  .content{
+  .contentWrap{
     position: relative;
     width: 400px;
     height: 300px;
@@ -99,29 +97,28 @@
     }
     .icon-close{
       position: absolute;
+      display: block;
       top: 4px;
       right: 4px;
     }
     .list{
-      ul{
-        display: flex;
-        flex-wrap: wrap;
-        padding-left: 0;
-        li{
-          position: relative;
-          margin: 6px 10px 0 0;
-          padding: 10px 15px;
-          max-width: 100px;
-          text-align: center;
-          color: #000;
-          background: #eee;
-          list-style: none;
-          .icon-closeAll{
-            position: absolute;
-            top: -2px;
-            right: -2px;
-            cursor: pointer;
-          }
+      display: flex;
+      flex-wrap: wrap;
+      padding-left: 0;
+      li{
+        position: relative;
+        margin: 6px 10px 0 0;
+        padding: 10px 15px;
+        max-width: 100px;
+        text-align: center;
+        color: #000;
+        background: #eee;
+        list-style: none;
+        .icon-closeall{
+          position: absolute;
+          top: -2px;
+          right: -2px;
+          cursor: pointer;
         }
       }
     }
@@ -177,5 +174,87 @@
     width: 0;
     height: 0;
     opacity: 0;
+  }
+
+  .dd{
+    animation: shake 1s infinite;
+    -o-animation: shake 1s infinite;
+    -webkit-animation: shake 1s infinite;
+    -moz-animation: shake 1s infinite;
+  }
+  @keyframes shake {
+    0%, 100% {
+      -webkit-transform: translateX(0);
+    }
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+      -webkit-transform: translateX(-2px);
+    }
+    20%,
+    40%,
+    60%,
+    80% {
+      -webkit-transform: translateX(2px);
+    }
+  }
+  @-o-keyframes shake {
+    /* Opera */
+    0%, 100% {
+      -webkit-transform: translateX(0);
+    }
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+      -webkit-transform: translateX(-2px);
+    }
+    20%,
+    40%,
+    60%,
+    80% {
+      -webkit-transform: translateX(2px);
+    }
+  }
+  @-webkit-keyframes shake {
+    /* Safari 和 Chrome */
+    0%, 100% {
+      -webkit-transform: translateX(0);
+    }
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+      -webkit-transform: translateX(-2px);
+    }
+    20%,
+    40%,
+    60%,
+    80% {
+      -webkit-transform: translateX(2px);
+    }
+  }
+  @-moz-keyframes shake {
+    /* Firefox */
+    0%, 100% {
+      -moz-transform: translateX(0);
+    }
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+      -moz-transform: translateX(-2px);
+    }
+    20%,
+    40%,
+    60%,
+    80% {
+      -moz-transform: translateX(2px);
+    }
   }
 </style>

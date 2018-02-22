@@ -23,3 +23,19 @@ export function getClassifyArticle (classify) {
 		console.log(err);
 	});
 };
+
+export function getTags () {
+	return axios.get('/api/getTags').then(res => {
+		return Promise.resolve(res.data);
+	}).catch(err => {
+		console.log(err);
+	});
+};
+
+export function getTagArticle (tag) {
+	return axios.get('/api/getTagBlogDate?tag=' + tag).then(res => {
+		return Promise.resolve(res.data);
+	}).catch(err => {
+		console.log(err);
+	});
+};

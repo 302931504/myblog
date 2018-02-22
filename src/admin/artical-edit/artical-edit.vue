@@ -36,6 +36,9 @@
         </div>
         <div class="input tagsInput">
           <input type="text" name="tags" class="tags" v-model="tags" placeholder="请输入标签，以‘/’分割">
+          <ul class="tagHistory">
+            <li v-for="item in tagsHistory" @click="selectTag(item.tag_text)">{{item.tag_text}}</li>
+          </ul>
         </div>
       </div>
       <div class="con-item summaryBox">
@@ -87,7 +90,9 @@
       </div>
     </div>
     <attention :text="attText" :isOK="attIcon" ref="attBox"></attention>
-    <label-list class="labelList" :labelList="options" :showFlag="showFlag" @closeLabelList="closeLabelList" @deleteLabel='deleteLabel' @addLabel="addLabel"></label-list>
+    <div class="labelWrapper">
+      <label-list class="labelList" :labelList="options" :showFlag="showFlag" @closeLabelList="closeLabelList" @deleteLabel='deleteLabel' @addLabel="addLabel"></label-list>
+    </div>
   </div>
 </template>
 
@@ -97,6 +102,7 @@
   import OptionList from '../../base/option-list/option-list';
   import {showAttentionMixin} from '../../common/js/mixin';
   import {saveBlog, getClassify, updateBlog, uploadImg} from '../../api/editor';
+  import {getTags} from '../../api/archives';
   import {mapGetters, mapMutations} from 'vuex';
   import _ from 'lodash';
   import marked from 'marked';
@@ -107,7 +113,7 @@
       return hightlight.hightlightAuto(code).value;
     }
   });
-
+ 
   export default {
     mixins: [showAttentionMixin],
     data () {
@@ -121,7 +127,8 @@
         options: [],
         checked: 0,
         showFlag: false,
-        showUpload: false
+        showUpload: false,
+        tagsHistory: []
       };
     },
     computed: {
@@ -137,9 +144,24 @@
     created () {
       this.formData = new FormData();
       this.initBlog();
-      this._getClassify(); 
+      this._getClassify();
+      this.getTagsHistory(); 
     },
     methods: {
+      selectTag (tag) {
+        if (this.tags === '') {
+          this.tags = tag;
+        } else {
+          this.tags += '/' + tag;
+        }
+      },
+      getTagsHistory () {
+        getTags().then(res => {
+          if (res.status === 0) {
+            this.tagsHistory = res.data;
+          }
+        });
+      },
       getImg () {
         if (this.$refs.upload.files.length > 0) {
           this.showUpload = true;
@@ -281,6 +303,7 @@
 
 <style lang="less" rel="stylesheet/less">
   .detailtWrapper{
+    position: relative;
     color: #333;
     padding-bottom: 20px;
     .blogEdit{
@@ -332,6 +355,20 @@
       }
       .tagsInput{
         width: 60%;
+        .tagHistory{
+          margin-top: 10px;
+          width: 300px;
+          li{
+            display: inline-block;
+            padding: 4px 8px;
+            font-size: 13px;
+            color: #fff;
+            background: #ccc;
+            margin: 4px;
+            border-radius: 4px;
+            cursor: pointer;
+          }
+        }
       }
       .manageLabel{
         margin-left: 20px;
@@ -431,7 +468,7 @@
         }
       }
     }
-    .labelList{
+    .labelWrapper{
       position: fixed;
       top: 25%;
       left: 30%;

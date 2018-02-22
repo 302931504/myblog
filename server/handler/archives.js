@@ -108,5 +108,67 @@ module.exports = {
         }); 
       }
     });
+  },
+  /*
+  @description: 获取标签
+  @params: none
+  @return: 标签
+  */
+  getTags (req, res) {
+    var sql = `SELECT * FROM tags`;
+    connection.query(sql, (err, result) => {
+      if (err) {
+        console.log('[SELECT tag ERROR] - ',err.message);
+        return;
+      }
+      else {
+        res.json({status: 0, info: '获取成功', data: result});
+      }
+    });
+  },
+  /*
+  @description: 获取标签文章&日期
+  @params: 标签名
+  @return: 文章列表
+  */
+  getTagBlogDate (req, res) {
+    var sql = `SELECT DATE_FORMAT(blog_pubTime,'%y%m') AS time
+               FROM blog
+               WHERE blog_isShow = 1 AND blog_tags LIKE ?
+               GROUP BY DATE_FORMAT(blog_pubTime,'%y%m')
+               ORDER BY time DESC`;
+    var sqlParam = [`%${req.query.tag}%`];
+    connection.query(sql, sqlParam, (err, result) => {
+      if (err) {
+        console.log('[SELECT getClassifyBlogDate1 ERROR] - ',err.message);
+        return;
+      }
+      if (!result.length) {
+        res.json({status: -1, info: '没有符合此条件的博文'});
+        return;
+      } else {
+        var time = [];
+        for (let i = 0; i < result.length; i++) {
+          time.push({yearMonth: result[i].time, blogs: []});
+        }
+        var sql2 = `SELECT blog_title, blog_id, DATE_FORMAT(blog_pubTime,'%y%m') AS ymonth, DATE_FORMAT(blog_pubTime,'%m-%d') AS mday
+                    FROM blog 
+                    WHERE blog_isShow = 1 AND blog_tags LIKE ?`;
+        connection.query(sql2, sqlParam, (err, result) => {
+          if (err) {
+            console.log('[SELECT getClassifyBlogDate2 ERROR] - ',err.message);
+            return;
+          }
+          for (let i = 0; i < time.length; i++) {
+            for (let j = 0; j < result.length; j++) {
+              if (time[i].yearMonth === result[j].ymonth) {
+                time[i].blogs.push(result[j]);
+              }
+            }
+          }
+          res.json({status: 0, info: '获取成功', data: time});
+        }); 
+      }
+    });
   } 
 }
