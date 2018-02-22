@@ -4,7 +4,10 @@
       <div class="main">
         <div class="selectType">
           <a class="all-article" @click="fetchAll">全部文章 ({{allArticle}}) </a>
-          <a class="tag-article">标签 <span class="icon-circle"></span></a>
+          <a class="tag-article" @click="showTagList = !showTagList">标签 <span class="icon-circle"></span></a>
+          <div class="tagList" v-show="showTagList">
+            <span v-for="item in tagsHistory" @click="selectTag(item.tag_text)">{{item.tag_text}}</span>
+          </div>
         </div>
         <div class="main-content">
           <transition-group name="river">
@@ -31,7 +34,7 @@
 </template>
   
 <script>
-  import {getClassify, getArticleTitle, getClassifyArticle} from '../../api/archives';
+  import {getClassify, getArticleTitle, getClassifyArticle, getTags, getTagArticle} from '../../api/archives';
   import {getCount} from '../../api/blog';
 
   export default {
@@ -40,11 +43,14 @@
         classify: [],
         articleList: [],
         errMess: '',
-        allArticle: 0
+        allArticle: 0,
+        showTagList: false,
+        tagsHistory: []
       };
     },
     created () {
       this.getData();
+      this.getTagsHistory();
     },
     methods: {
       getData () {
@@ -64,6 +70,23 @@
         let arr = time.split('');
         return arr[2] + arr[3];
       },
+      getTagsHistory () {
+        getTags().then(res => {
+          if (res.status === 0) {
+            this.tagsHistory = res.data;
+          }
+        });
+      },
+      selectTag (text) {
+        getTagArticle(text).then(res => {
+          if (res.status === 0) {
+            this.articleList = res.data;
+          } else {
+            this.articleList = [];
+            this.errMess = res.info;
+          }
+        });
+      },
       getClassifyBlog (classify) {
         getClassifyArticle(classify).then(res => {
           if (res.status === 0) {
@@ -78,6 +101,8 @@
         getArticleTitle().then(res => {
           if (res.status === 0) {
             this.articleList = res.data;
+          } else {
+            this.errMess = res.info;
           }
         });
       },
@@ -109,14 +134,56 @@
         float: left;
         width: 70%;
         .selectType{
+          position: relative;
           height: 72px;
           line-height: 72px;
           border-bottom: 1px solid #ddd;
+          a{
+            cursor: pointer;
+          }
           .tag-article{
             margin-left: 50px;
             span{
               display: inline-block;
               margin-left: 10px;
+            }
+          }
+          .tagList{
+            position: absolute;
+            top: 55px;
+            left: 150px;
+            width: 450px;
+            height: 230px;
+            padding: 20px;
+            border: 1px solid #bcc1c8;
+            background: #fff;
+            z-index: 10;
+            font-size: 0;
+            span{
+              background: #888;
+              font-size: 15px;
+              color: #fff;
+              padding: 6px 14px;
+              border-radius: 4px;
+              margin: 2px;
+              transition: all 1s;
+              cursor: pointer;
+              &:hover{
+                background: #444;
+              }
+            }
+            &:before{
+              content: '';
+              position: absolute;
+              top: -11px;
+              left: 43px;
+              display: inline-block;
+              height: 0;
+              width: 19px;
+              padding-top: 11px;
+              text-indent: -9999px;
+              overflow: hidden; 
+              background: url('./arrow.png') transparent no-repeat center top;
             }
           }
         }

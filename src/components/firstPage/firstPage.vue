@@ -6,12 +6,11 @@
     </div>
     <div class="articleList">
       <article-list :blogList="blogList" @selectArticle="selectArticle"></article-list>
+      <no-content :info="noneInfo" style="color: #fff"></no-content>
     </div>
     <div class="pageBtn" v-show="blogCount > 5">
       <page-btn :pageCount="pageCount" :currentPage="currentPage" @next="next" @pre="pre"></page-btn>
     </div>
-    <!-- <subscribe></subscribe>
-    <bottom></bottom> -->
   </div>
 </template>
 
@@ -20,6 +19,7 @@
   import PageBtn from '../../base/page-btn/page-btn';
   import Subscribe from '../../base/subscribe/subscribe';
   import Bottom from '../bottom/bottom';
+  import NoContent from '../../base/no-content/no-content';
   import {getOnlineBlog, getCount, readArticle} from '../../api/blog'; 
   import {initPageMixin} from '../../common/js/mixin';
   import {mapMutations} from 'vuex';
@@ -31,7 +31,8 @@
         blogList: [],
         currentPage: 1,
         limit: 5,
-        blogCount: 0
+        blogCount: 0,
+        noneInfo: ''
       };
     },
     created () {
@@ -51,6 +52,8 @@
         getOnlineBlog(this.currentPage).then(res => {
           if (res.status === 0) {
             this.blogList = res.data;
+          } else {
+            this.noneInfo = res.info;
           }
         });
       },
@@ -68,7 +71,8 @@
       ArticleList,
       PageBtn,
       Subscribe,
-      Bottom
+      Bottom,
+      NoContent
     }
   };
 </script>
