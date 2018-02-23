@@ -21,7 +21,7 @@
         <li @click.stop="lockScreen" @mouseover.stop="hoverOption($event)" @mouseout="hoverout"><i class="icon-lock"></i> 锁屏</li>
         <li class="info" @mouseover.stop="optionOver($event)" @mouseout="optionOut">
           <div class="avatar">
-            <img src="./rick.png" alt="">
+            <img src="./head.jpg" alt="">
             <span class="name">一个好人 <i ref="circle" class="icon-circle"></i></span>
             <div class="optionList" v-show="showList === true">
               <option-list :options="options" :show="showList" ref="optionList" @clickoption="clickoption"></option-list>

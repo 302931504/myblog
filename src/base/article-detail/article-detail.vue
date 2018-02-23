@@ -96,7 +96,6 @@
             this.initLikeStyle(this.article.blog_id);
             this.getAdjacentArticle();
           } else {
-            console.log(res);
             this.article = {
               blog_title: res.info
             };

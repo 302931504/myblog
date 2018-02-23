@@ -40,7 +40,7 @@
     box-shadow: 0 2px 4px rgba(0,0,0,.12);
     border: 1px solid #d2d2d2;
     background-color: #fff;
-    z-index: 200;
+    z-index: 998;
     border-radius: 2px;
     ul{
       padding-left: 0;

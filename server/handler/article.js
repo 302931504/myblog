@@ -102,11 +102,7 @@ module.exports = {
         return;
       }
       if (result.length > 0) {
-        if (result[0].blog_isShow == 0) {
-          res.json({status: -1, info: '你无权浏览该篇文章'});
-        } else {
-          res.json({status: 0, info: '获取成功', data: result});
-        }
+        res.json({status: 0, info: '获取成功', data: result});
       } else {
         res.json({status: -1, info: '文章不存在'});
       }

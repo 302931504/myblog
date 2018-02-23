@@ -11,7 +11,7 @@
 <style scoped lang="less" rel="stylesheet/less">
   .authorWrapper{
     position: fixed;
-    left: 200px;
+    left: 0;
     right: 0;
     bottom: 0;
     color: #333;

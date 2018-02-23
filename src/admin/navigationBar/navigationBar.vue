@@ -1,7 +1,7 @@
 <template>
   <div class="navigationWrapper">
     <div class="avatar">
-      <img src="./rick.png" alt="">
+      <img src="./head.jpg" alt="">
       <p>你好！我是一个好人</p>
     </div>
     <div class="navBar">
@@ -68,7 +68,7 @@
     .navBar{
       margin-top: 20px;
       width: 200px;
-      overflow: hidden;
+      overflow: auto;
       ul{
         padding-left: 0;
       }

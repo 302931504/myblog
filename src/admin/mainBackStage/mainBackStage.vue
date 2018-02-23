@@ -16,7 +16,9 @@
           </div>
         </div>
     </div>
-    <author></author>
+    <div class="author" ref="author" style="left: 200px">
+      <author></author>
+    </div>
     <lock-screen class="screen" v-show="lock" :showFlag="lock" @clear="clear"></lock-screen>
   </div>
 </template>
@@ -109,6 +111,11 @@
       left: 0;
       bottom: 0;
     }
+    .topBarWrapper{
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
     .nav{
       position: fixed;
       top: 60px;
@@ -117,11 +124,11 @@
       height: 100%;
       transition: all .6s;
       z-index: 999;
+      border-right: 2px solid #1AA094;
     }
     .content{
+      margin-top: 60px;
       height: 100%;
-      /* margin-top: 60px; */
-      border-left: 2px solid #1AA094;
       border-top: 5px solid #1AA094;
       transition: all .6s;
       .routerViewWrapper{
