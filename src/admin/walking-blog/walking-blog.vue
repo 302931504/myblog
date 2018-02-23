@@ -94,7 +94,6 @@
           };
           fr.readAsDataURL(this.file);
         }
-        console.log(!!this.file);
       },
       closeImg () {
         this.file = {};

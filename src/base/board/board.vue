@@ -48,7 +48,7 @@
       };
     },
     created () {
-      this.getBBSList();
+      this.getBBSList(); 
       this.getCommentNum();
     },
     computed: {
@@ -109,7 +109,10 @@
           item.to_content = this.quoteObj.content;
           item.old_user = this.quoteObj.name;
           quote(item).then(res => {
-            console.log(res);
+            if (res.status === 0) {
+              this.showAttention(res.info, true);
+              this.routerGo();
+            }
           });
         }
       },

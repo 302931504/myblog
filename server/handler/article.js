@@ -23,7 +23,7 @@ module.exports = {
       res.json({status: -1, info: '请先登录'})
     } else{
       let tags = req.body.tags.split('/');
-      var tagSql = `INSERT IGNORE INTO tags(tag_text)
+      var tagSql = `REPLACE INTO tags(tag_text)
                     VALUES ?`;
       var tagSqlParam = [];
       for (let i = 0; i < tags.length; i++) {
@@ -102,7 +102,11 @@ module.exports = {
         return;
       }
       if (result.length > 0) {
-        res.json({status: 0, info: '获取成功', data: result});
+        if (result[0].blog_isShow == 0) {
+          res.json({status: -1, info: '你无权浏览该篇文章'});
+        } else {
+          res.json({status: 0, info: '获取成功', data: result});
+        }
       } else {
         res.json({status: -1, info: '文章不存在'});
       }
@@ -437,7 +441,7 @@ module.exports = {
   @description: 获取在线文章（包括评论数）
   @params: 页码
   @return: 文章信息
-  */
+  */ 
   getOnlineBlogList (req, res) {
     const limit = 5;
     let offset = (req.query.page - 1) * limit;
@@ -450,7 +454,7 @@ module.exports = {
                    ON B.blog_id = b.reply_id
                WHERE B.blog_isShow = 1 AND c.classify_id = B.classify_id
                ORDER BY B.blog_pubTime DESC
-               LIMIT ?,?;`
+               LIMIT ?,?`;
     var sqlParams = [offset, limit];
     connection.query(sql, sqlParams, function(err, result) {
       if (err) {
@@ -458,7 +462,7 @@ module.exports = {
         return;
       }
       if (result.length > 0) {
-        
+        res.json({status: 0, info: '获取成功', data: result});
       } else {
         res.json({status: -1, info: '暂无文章'});
       }

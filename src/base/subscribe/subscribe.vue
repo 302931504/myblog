@@ -46,6 +46,8 @@
             this.showAttention('订阅成功', true);
             this.nickname = '';
             this.email = '';
+          } else {
+            this.showAttention(res.info, false);
           }
         });
       }

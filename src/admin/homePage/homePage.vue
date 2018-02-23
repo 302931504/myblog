@@ -130,6 +130,7 @@
         .fonts-icon{
           display: inline-block;
           transition: all .4s;
+          animation: spinAround 9s linear infinite;
         }
         .mess-icon{
           background-color: #54ade8;

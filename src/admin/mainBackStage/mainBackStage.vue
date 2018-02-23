@@ -28,7 +28,6 @@
   import Author from '../author/author';
   import LockScreen from '../../base/lock-screen/lock-screen';
   import {mapGetters, mapActions, mapMutations} from 'vuex';
-  import bus from '../../common/js/bus';
 
   const NAVBAR_WIDTH = 200;
 
@@ -49,15 +48,6 @@
       if (!this.manager.username) {
         this.$router.push({path: '/login'});
       }
-    },
-    mounted () {
-      this.$nextTick(() => {
-        bus.$on('quote', (item) => {
-          setTimeout(() => {
-            this.$refs.viewScroll.scrollTop = this.$refs.viewScroll.scrollHeight;
-          }, 300);
-        });
-      });
     },
     methods: {
       toggleNavBar () {

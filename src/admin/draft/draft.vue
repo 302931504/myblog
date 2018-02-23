@@ -151,5 +151,8 @@
 <style scoped lang="less" rel="stylesheet/less">
   .draftWrapper{
     position: relative;
+    .pageBtnWrapper{
+      margin-top: 20px;
+    }
   }
 </style>

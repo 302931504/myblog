@@ -12,14 +12,14 @@
     </div>
     <div class="right">
       <ul>
-        <li class="notice">
+        <li class="notice" @mouseover.stop="hoverOption($event)" @mouseout="hoverout">
           <div><i class="icon-notice"></i> 系统公告</div>
           <div class="remindBox">
             <remind content="系统公告在这里" :isShow="showRemind"></remind>
           </div>
         </li>
-        <li @click.stop="lockScreen"><i class="icon-lock"></i> 锁屏</li>
-        <li class="info" @mouseover="optionOver" @mouseout="optionOut">
+        <li @click.stop="lockScreen" @mouseover.stop="hoverOption($event)" @mouseout="hoverout"><i class="icon-lock"></i> 锁屏</li>
+        <li class="info" @mouseover.stop="optionOver($event)" @mouseout="optionOut">
           <div class="avatar">
             <img src="./rick.png" alt="">
             <span class="name">一个好人 <i ref="circle" class="icon-circle"></i></span>
@@ -28,6 +28,7 @@
             </div>
           </div>
         </li>
+        <span ref="navBottom" class="nav-bottom"></span>
       </ul>
     </div>
   </div>
@@ -49,15 +50,30 @@
           {text: '修改资料', name: 'setup', routername: 'setup'},
           {text: '退出', name: 'logout'}
         ],
-        showRemind: true
+        showRemind: false
       };
     },
     created () {
-      setTimeout(() => {
-        this.showRemind = false;
-      }, 5000);
     },
     methods: {
+      hoverOption (el) {
+        this.$refs.navBottom.style.width = el.currentTarget.clientWidth + 'px';
+        this.$refs.navBottom.style.opacity = 1;
+        this.$refs.navBottom.style.left = el.currentTarget.offsetLeft + 'px';
+      },
+      hoverout () {
+        this.$refs.navBottom.style.opacity = 0;
+      },
+      optionOver (el) {
+      this.showList = true;
+      this.$refs.circle.style.transform = 'rotate(180deg)';
+      this.hoverOption(el); 
+      },
+      optionOut () {
+        this.showList = false;
+        this.$refs.circle.style.transform = 'rotate(0)';
+        this.hoverout();
+      },
       clickOpen () {
         this.$emit('openNav');
       },
@@ -139,15 +155,13 @@
     .right{
       padding-right: 25px;
       ul{
+        position: relative;
         display: flex;
         font-size: 14px;
         li{
           padding: 0 20px;
           transition: all .3s;
           list-style: none;
-          &:hover{
-            border-bottom: 5px solid #23262E; 
-          }
           &.notice{
             position: relative;
             .remindBox{
@@ -179,6 +193,15 @@
               left: 0;
             }
           }
+        }
+        .nav-bottom{
+          position: absolute;
+          top: 60px;
+          height: 5px;
+          background-color: rgba(0,0,0,0.7);
+          z-index: 1000;
+          opacity: 0;
+          transition: all .2s;
         }
       }
     }
