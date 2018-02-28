@@ -50,6 +50,7 @@
     },
     created () {
       this.getData();
+      this.getArchives();
       this.getTagsHistory();
     },
     methods: {
@@ -59,7 +60,6 @@
             this.classify = res.data;
           }
         });
-        this.fetchAll();
         this.getAllCount();
       },
       getYear (time) {
@@ -116,6 +116,15 @@
       },
       selectArticle (id) {
         this.$router.push({path: `/article/${id}`});
+      },
+      getArchives () {
+        if (this.$route.query.type === 'category') {
+          this.getClassifyBlog(this.$route.query.category);
+        } else if (this.$route.query.type === 'tag') {
+          this.selectTag(this.$route.query.tag);
+        } else {
+          this.fetchAll();
+        }
       }
     }
   };

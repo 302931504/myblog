@@ -1,5 +1,4 @@
 import axios from 'axios';
-import qs from 'qs';
 
 export function comment (item) {
 	return axios.post('/api/comment', {
@@ -14,12 +13,12 @@ export function comment (item) {
 };
 
 export function addChildBBS (item) {
-	return axios.post('/api/addChildBBS', qs.stringify({
+	return axios.post('/api/addChildBBS', {
 		parent_id: item.parent_id,
 		user_email: item.user_email,
 		user_name: item.user_name,
 		bbs_child_content: item.bbs_content
-	})).then((res) => {
+	}).then((res) => {
 		return Promise.resolve(res.data);
 	}).catch(err => err);
 };

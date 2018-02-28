@@ -68,7 +68,8 @@
         article: {},
         bbsList: [],
         last: {},
-        next: {}
+        next: {},
+        clickTag: 0
       };
     },
     computed: {
@@ -112,13 +113,19 @@
           return blogId === id;
         });
         if (index < 0) { 
-          clickLike(id).then(res => {
-            if (res.status === 0) {
-              this.activeLikeStyle();
-              this.article.blog_likeNum += 1;
-              this.pushLikeBlogs(id);
-            }
-          });
+          if (this.clickTag === 0) { // 防止快速点击
+            clickLike(id).then(res => {
+              this.clickTag = 1;
+              if (res.status === 0) {
+                this.activeLikeStyle();
+                this.article.blog_likeNum += 1;
+                this.pushLikeBlogs(id);
+              }
+            });
+            setTimeout(() => {
+              this.click = 1;
+            }, 5000);
+          }
         }
       },
       initLikeStyle (id) {
@@ -273,6 +280,10 @@
         text-align: center;
         color: #aeb0b1;
         font-size: 14px;
+        span{
+          display: inline-block;
+          margin-right: 10px;
+        }
       }
       .content{
         margin-top: 24px;

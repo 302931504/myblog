@@ -1,5 +1,4 @@
 import axios from 'axios';
-import qs from 'qs';
 
 export function getBlogByPage (item) {
   return axios.get('/api/getBlogList', {
@@ -31,9 +30,9 @@ export function getClassifyBlog (item) {
 };
 
 export function draftBlog (id) {
-	return axios.post('/api/draftBlog', qs.stringify({
+	return axios.post('/api/draftBlog', {
 		id: id
-	})).then(res => {
+	}).then(res => {
 		return Promise.resolve(res.data);
 	}).catch(err => err);
 };

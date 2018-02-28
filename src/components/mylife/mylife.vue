@@ -8,28 +8,28 @@
         </div>
         <no-content :info="noneInfo"></no-content>
         <walking-list :blogList="walkingBlogs"
-                      @selectBlog="selectBlog"></walking-list>             
+                      @selectBlog="selectBlog"></walking-list>     
+        <div class="loadMore" v-show="!routerId && walkingBlogs.length > 15" @click="readMore">
+          <p>加载更多</p> 
+        </div>
       </div>
-      <div class="pageBtn" v-show="!routerId && walkingBlogs.length > 0">
-        <page-btn :pageCount="pageCount" :currentPage="currentPage" @next="next" @pre="pre"></page-btn>
-      </div> 
     </div>
   </transition>
 </template>
 
 <script>
   import WalkingList from '../../base/walking-list/walking-list';
-  import PageBtn from '../../base/page-btn/page-btn';
   import NoContent from '../../base/no-content/no-content';
-  import {getWalkingBlog, readWalkingBlog} from '../../api/walking-blog';
-  import {initPageMixin} from '../../common/js/mixin';
+  import {getWalkingBlog, readWalkingBlog, getWCount} from '../../api/walking-blog';
 
   export default {
-    mixins: [initPageMixin],
     data () {
       return {
         walkingBlogs: [],
-        noneInfo: ''
+        noneInfo: '',
+        limit: 15,
+        currentPage: 1,
+        wBlogLength: 0
       };
     },
     computed: {
@@ -39,8 +39,14 @@
     },
     created () {
       this._getWalkingBlog();
+      this.getCount();
     },
     methods: {
+      getCount () {
+        getWCount().then(res => {
+          this.wBlogLength = res.data;
+        });
+      },
       selectBlog (id) {
         readWalkingBlog(id).then(res => {
           if (res.status === 0) {
@@ -49,23 +55,22 @@
         });
       },
       _getWalkingBlog () {
-        const item = {
-          page: this.currentPage,
-          limit: this.limit
-        };
-        getWalkingBlog(item).then(res => { 
+        getWalkingBlog(this.limit).then(res => { 
           if (res.status === 0) {
             this.walkingBlogs = res.data;
-            this.initPage(this.walkingBlogs.length);
           } else {
             this.noneInfo = res.info;
           }
         });
+      },
+      readMore () {
+        this.currentPage += 1;
+        this.limit = this.limit * this.currentPage;
+        this._getWalkingBlog();
       }
     },
     components: {
       WalkingList,
-      PageBtn,
       NoContent
     }
   };
@@ -80,6 +85,7 @@
       background: #fff;
       margin: 0 auto;
       margin-top: 50px;
+      padding-bottom: 60px;
       .head{
         text-align: center;
         background: url('./header.jpg') no-repeat;
@@ -98,10 +104,9 @@
         }
       }
     }
-    .pageBtn{
-      width: 853px;
-      margin: 0 auto;
-      margin-top: 26px;
+    .loadMore{
+      text-align: center;
+      margin-top: 10px;
     }
     .detail{
       width: 853px;

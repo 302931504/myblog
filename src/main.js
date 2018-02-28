@@ -5,6 +5,7 @@ import App from './App';
 import router from './router';
 import store from './store';
 import axios from 'axios';
+import 'babel-polyfill';
 import './common/less/index.less';
 
 var instance = axios.create({

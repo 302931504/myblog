@@ -10,8 +10,8 @@
           <img :src="item.w_img_url" v-show="item.w_img_url">
           <div class="text" v-html="item.walking_blog_content"></div>
         </div>
-        <div class="tags">
-          <span v-for="tag in item.walking_blog_tags.split('/')">● {{tag}}</span>
+        <div class="tags" v-show="item.walking_blog_tags !== ''">
+          <span v-for="tag in splitTags(item.walking_blog_tags)">● {{tag}}</span>
         </div>
         <div class="about">
           <span>热度({{item.walking_blog_likeNum}})</span>
@@ -60,6 +60,13 @@
       getMonth (time) {
         let myDate = new Date(time);
         return myDate.getMonth() + 1;
+      },
+      splitTags (tags) {
+        if (tags !== '') {
+          return tags.split('/');
+        } else {
+          return '';
+        }
       },
       clickwalkingBlog (id) {
         this.$emit('selectBlog', id);

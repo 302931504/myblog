@@ -31,6 +31,7 @@
       ])
     },
     created () {
+      // this.$router.push({path: '/', query: {page: 1}});
       setTimeout(() => {
         this.showAbout();
       }, 3000);

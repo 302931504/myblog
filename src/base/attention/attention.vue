@@ -61,7 +61,7 @@
       .icon{
         width: 60px;
         height: 60px;
-        background: url('./bg.png');
+        background: url('../../../static/bg.png');
         background-size: cover;
       }
       .icon-ok{

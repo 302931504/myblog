@@ -8,8 +8,8 @@
       <article-list :blogList="blogList" @selectArticle="selectArticle"></article-list>
       <no-content :info="noneInfo" style="color: #fff"></no-content>
     </div>
-    <div class="pageBtn" v-show="blogCount > 5">
-      <page-btn :pageCount="pageCount" :currentPage="currentPage" @next="next" @pre="pre"></page-btn>
+    <div class="pageBtn">
+      <page-btn :pageCount="pageCount" :currentPage="routePage" @next="next" @pre="pre"></page-btn>
     </div>
   </div>
 </template>
@@ -29,11 +29,19 @@
     data () {
       return {
         blogList: [],
-        currentPage: 1,
         limit: 5,
         blogCount: 0,
         noneInfo: ''
       };
+    },
+    computed: {
+      routePage () {
+        let page = 1;
+        if (this.$route.query.page) {
+          page = parseInt(this.$route.query.page);
+        } 
+        return page;
+      }
     },
     created () {
       this.getByPage();
@@ -49,13 +57,29 @@
         });
       },
       getByPage () {
-        getOnlineBlog(this.currentPage).then(res => {
+        let page = 1;
+        if (this.$route.query.page) {
+          page = this.$route.query.page;
+        }
+        getOnlineBlog(page).then(res => {
           if (res.status === 0) {
             this.blogList = res.data;
           } else {
             this.noneInfo = res.info;
           }
         });
+      },
+      next () {
+        if (this.routePage < this.pageCount) {
+          let page = this.routePage + 1;
+          this.$router.push({path: '/', query: {page: page}});
+        }
+      },
+      pre () {
+        if (this.routePage > 1) {
+          let page = this.routePage - 1;
+          this.$router.push({path: '/', query: {page: page}});
+        }
       },
       selectArticle (id) {
         readArticle(id).then(res => {
@@ -66,6 +90,11 @@
       },
       ...mapMutations({
       })
+    },
+    watch: {
+      '$route' (to, from) {
+        this.getByPage(to.query.page);
+      }
     },
     components: {
       ArticleList,

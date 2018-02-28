@@ -112,7 +112,12 @@ const ArticleDetail = (resolve) => {
 }; 
 
 export default new Router({
+  mode: 'history',
   routes: [
+    {
+      path: '*',
+      redirect: '/'
+    },
     {
       path: '/',
       component: FisrtPage

@@ -2,11 +2,24 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <link rel="icon" href="./src/common/image/favicon.png" type="image/png">
+    <link rel="icon" href="./static/favicon.jpg" type="image/jpg">
     <title>刘帅的个人博客</title>
   </head>
+  <style type="text/css" media="screen">
+  	#music-video{
+  		position: absolute;
+  		right: 20px;
+  		bottom: 20px;
+  		opacity: 0.4;
+  		transition: all .2s;
+  	}
+  	#music-video:hover{
+  		opacity: 1;
+  	}
+  </style>
   <body>
     <div id="app"></div>
     <!-- built files will be auto injected -->
+    <iframe id="music-video" frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="http://music.163.com/outchain/player?type=2&id=461525011&auto=0&height=66"></iframe>
   </body>
 </html>

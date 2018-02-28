@@ -6,11 +6,11 @@ const formidable = require('formidable');
 const fs = require('fs');
 const path = require('path');
 
-var defaultDir = './server/public';
+var defaultDir = '/dist';
 var blogDir = defaultDir + '/blog';
 fs.existsSync(defaultDir) || fs.mkdirSync(defaultDir);
 fs.existsSync(blogDir) || fs.mkdirSync(blogDir);
-fs.existsSync('./server/public/image') || fs.mkdirSync('./server/public/image');
+fs.existsSync('/dist/image') || fs.mkdirSync('/dist/image');
 
 module.exports = {
   /*
@@ -474,7 +474,7 @@ module.exports = {
       res.json({status: -1, info: '请先登录'});
     } else {
       const form = new formidable.IncomingForm();
-      form.uploadDir = './server/public/image';
+      form.uploadDir = '/dist/image';
       form.parse(req, (err, fields, files) => {
         if (err) {
           console.log(err);
@@ -486,7 +486,7 @@ module.exports = {
             console.log(err);
           }
         })
-        newPath = newPath.replace('\\', '/');
+        newPath = '/blog/' + files.photo.name;
         res.json({status: 0, url: newPath});
       });
     }

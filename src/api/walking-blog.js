@@ -6,11 +6,10 @@ export function addWalkingBlog (formData) {
   }).catch(err => err);
 };
 
-export function getWalkingBlog (item) {
+export function getWalkingBlog (limit) {
   return axios.get('/api/getWalkingBlog', {
     params: {
-      page: item.page,
-      limit: item.limit
+      limit: limit
     }
   }).then(res => {
     return Promise.resolve(res.data);
@@ -35,6 +34,14 @@ export function getWalkDetail (id) {
 
 export function readWalkingBlog (id) {
   return axios.get('/api/addlikeTimes?id=' + id).then(res => {
+    return Promise.resolve(res.data);
+  }).catch(err => {
+    console.log(err);
+  });
+};
+
+export function getWCount () {
+  return axios.get('/api/getWalkCount').then(res => {
     return Promise.resolve(res.data);
   }).catch(err => {
     console.log(err);

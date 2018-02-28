@@ -117,17 +117,12 @@
         });
       },
       _addWalkingBlog () {
-        if (this.content === '' || this.tags === '') {
+        if (this.content === '') {
           this.showAttention('请输入必填内容', false);
           return;
         }
         this.formData.append('content', this.content);
         this.formData.append('tags', this.tags);
-        console.log(this.formData.get('content'));
-        /* const blog = {
-          content: this.content,
-          tags: this.tags
-        }; */
         addWalkingBlog(this.formData).then(res => {
           if (res.status === 0) {
             this.routerGo();

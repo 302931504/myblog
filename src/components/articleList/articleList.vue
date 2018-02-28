@@ -6,12 +6,12 @@
         <div class="time">
           <span><i class="icon-clock"></i> {{_initTime(item.blog_pubTime)}}</span>
           <span><i class="icon-update"></i> {{_initTime(item.blog_updateTime)}}</span>
-          <span>{{item.classify_text}}</span>
+          <span class="classify" @click="goarchivesbycategory(item.classify_text)">{{item.classify_text}}</span>
         </div>
         <p>{{item.blog_description}}</p>
         <div class="foot">
           <div class="tags">
-            <span v-for="tag in item.blog_tags.split('/')">{{tag}}</span>
+            <span v-for="tag in item.blog_tags.split('/')" @click="goarchivesbytag(tag)">{{tag}}</span>
           </div>
           <div class="readNum">
             <span>阅读({{item.blog_readNum}})</span>
@@ -43,6 +43,12 @@
       selectArticle (id) {
         this.$emit('selectArticle', id);
       },
+      goarchivesbycategory (text) {
+        this.$router.push({path: '/archives', query: {type: 'category', category: text}});
+      },
+      goarchivesbytag (tag) {
+        this.$router.push({path: '/archives', query: {type: 'tag', tag: tag}});
+      },
       _initTime (time) {
         return initTime(time);
       }
@@ -73,6 +79,10 @@
         span{
           font-size: 12px;
           margin-right: 19px;
+        }
+        .classify{
+          cursor: pointer;
+          color: #7594b3;
         }
       }
       p{

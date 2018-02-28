@@ -3,7 +3,7 @@
     <nav class="navList">
       <div class="list">
         <ul class="nav">
-          <router-link tag="li" class="option" to="/"><span>首页</span></router-link>
+          <router-link tag="li" class="option" to="/?page=1"><span>首页</span></router-link>
           <router-link tag="li" class="option" to="/mylife"><span>行博</span></router-link>
           <router-link tag="li" class="option" to="/archives"><span>归档</span></router-link>
           <router-link tag="li" class="option" to="/board"><span>留言板</span></router-link>

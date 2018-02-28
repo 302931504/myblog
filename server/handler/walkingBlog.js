@@ -4,11 +4,11 @@ const formidable = require('formidable');
 const fs = require('fs');
 const path = require('path');
 
-var defaultDir = './server/public';
+var defaultDir = '/dist';
 var walkingblogDir = defaultDir + '/walkingblog';
 fs.existsSync(defaultDir) || fs.mkdirSync(defaultDir);
 fs.existsSync(walkingblogDir) || fs.mkdirSync(walkingblogDir);
-fs.existsSync('./server/public/image') || fs.mkdirSync('./server/public/image');
+fs.existsSync('/dist/image') || fs.mkdirSync('/dist/image');
 
 module.exports = {
   /*
@@ -22,7 +22,7 @@ module.exports = {
       res.json({status: -1, info: '请先登录'})
     } else {
       const form = new formidable.IncomingForm();
-      form.uploadDir = './server/public/image';
+      form.uploadDir = '/dist/image';
       form.parse(req, (err, fields, files) => {
         if (err) {
           console.log(err);
@@ -38,7 +38,7 @@ module.exports = {
               console.log(err);
             }
           })
-          newPath = newPath.replace('\\', '/');
+          newPath = '/walkingblog/' + files.file.name;
         }
         var addSql = `INSERT INTO walking_blog(walking_blog_content, walking_blog_tags, w_img_url)
                       VALUES(?,?,?)`;
@@ -59,9 +59,7 @@ module.exports = {
   @return: 行博列表
   */
   getWalkingBlog (req, res) {
-    var page = req.query.page;
     var limit = req.query.limit;
-    var offset = (page - 1) * limit;
     var sql = `SELECT w.*, ifnull(b.count, 0) as comment_count
                FROM walking_blog w LEFT JOIN 
                                    (SELECT reply_id, count(*) as count 
@@ -70,7 +68,7 @@ module.exports = {
                                     GROUP BY reply_id) b 
                                    ON w.walking_blog_id = b.reply_id
               ORDER BY w.walking_blog_time DESC
-              LIMIT ${offset}, ${limit}`;
+              LIMIT 0, ${limit}`;
     connection.query(sql, function(err, result) {
       if(err) {
         console.log('[INSERT ERROR] - ',err.message);
@@ -162,6 +160,21 @@ module.exports = {
         return;
       }
       res.json({status: 0, info: '更新成功'});
+    });
+  },
+  /*
+  @description: 获取行博数
+  @params: none
+  @return: 行博数
+  */
+  getWalkCount (req, res) {
+    var sql = 'SELECT COUNT(*) FROM walking_blog';
+    connection.query(sql, (err, result) => {
+      if(err){
+        console.log('[SELECT WALKBLOGCOUNT ERROR] - ',err.message);
+        return;
+      }
+      res.json({status: 0, info: '获取成功', data: result});
     });
   }
 }

@@ -67,7 +67,6 @@
   .loginWrapper{
     width: 100%;
     height: 100%;
-    background: url('./bg.jpg') no-repeat;
     background-size: cover;
   }
   .loading{

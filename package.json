@@ -12,7 +12,9 @@
   },
   "dependencies": {
     "axios": "^0.17.0",
+    "babel-polyfill": "^6.26.0",
     "body-parser": "^1.18.2",
+    "connect-history-api-fallback": "^1.5.0",
     "cookie-parser": "^1.4.3",
     "express": "^4.14.1",
     "express-session": "^1.15.6",
@@ -25,7 +27,6 @@
     "mongoose": "^4.13.0",
     "mysql": "^2.15.0",
     "nodemailer": "^4.4.2",
-    "qs": "^6.5.1",
     "vue": "^2.5.2",
     "vue-markdown": "^2.2.4",
     "vue-router": "^3.0.1",

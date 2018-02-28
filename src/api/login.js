@@ -1,11 +1,10 @@
-import qs from 'qs';
 import axios from 'axios';
 
 export function login (user) {
-  return axios.post('/api/login', qs.stringify({
+  return axios.post('/api/login', {
     username: user.username,
     password: user.password
-  })).then(res => {
+  }).then(res => {
     return Promise.resolve(res.data);
   }).catch(err => err);
 };

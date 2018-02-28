@@ -50,6 +50,7 @@ module.exports =  (apiRouter) => {
   apiRouter.get('/deleteWBlog', walkingBlog.deleteWBlog);
   apiRouter.get('/getWalkDetail', walkingBlog.getWalkDetail);
   apiRouter.get('/addlikeTimes', walkingBlog.addlikeTimes);
+  apiRouter.get('/getWalkCount', walkingBlog.getWalkCount);
 
   apiRouter.get('/getClassifyCount', archives.getClassifyCount);
   apiRouter.get('/getBlogDate', archives.getBlogDate);

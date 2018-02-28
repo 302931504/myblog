@@ -1,4 +1,3 @@
-import qs from 'qs';
 import axios from 'axios';
 
 export function deletBlog (id) {
@@ -14,9 +13,9 @@ export function getOneBlog (id) {
 };
 
 export function publishBlog (id) {
-	return axios.post('/api/publishBlog', qs.stringify({
+	return axios.post('/api/publishBlog', {
 		id: id
-	})).then(res => {
+	}).then(res => {
 		return Promise.resolve(res.data);
 	}).catch(err => err);
 };

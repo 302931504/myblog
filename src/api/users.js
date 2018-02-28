@@ -1,11 +1,10 @@
-import qs from 'qs';
 import axios from 'axios';
 
 export function addUsre (item) {
-	return axios.post('/api/addFollow', qs.stringify({
+	return axios.post('/api/addFollow', {
 		user_name: item.name,
 		user_email: item.email
-	})).then((res) => {
+	}).then((res) => {
 		return Promise.resolve(res.data);
 	}).catch(err => err);
 };

@@ -13,7 +13,7 @@
               <img :src="wBlog.w_img_url" v-show="wBlog.w_img_url">
               <div class="text" v-html="wBlog.walking_blog_content"></div>
             </div>
-            <div class="tags">
+            <div class="tags" v-show="wBlog.walking_blog_tags !== ''">
               <span v-for="tag in wBlog.walking_blog_tags">● {{tag}}</span>
             </div>
           </div>
@@ -84,7 +84,9 @@
         getWalkDetail(id).then(res => {
           if (res.status === 0) {
             this.wBlog = res.data[0];
-            this.wBlog.walking_blog_tags = this.wBlog.walking_blog_tags.split('/');
+            if (this.wBlog.walking_blog_tags !== '') {
+              this.wBlog.walking_blog_tags = this.wBlog.walking_blog_tags.split('/');
+            }
             this.getComments(id);
           } else {
             this.wBlog = {
